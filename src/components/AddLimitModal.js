@@ -25,9 +25,9 @@ const AddEditLimitModal = ({ open, onClose, editData, onSave }) => {
       };
 
       if (editData) {
-        await axios.put(`/api/reading/update/${editData._id}`, data);
+        await axios.put(`http://localhost:5500/api/reading/update/${editData._id}`, data);
       } else {
-        await axios.post('/api/reading/add-reading', data);
+        await axios.post('http://localhost:5500/api/reading/add-reading', data);
       }
 
       toast.success('Limits saved successfully');
