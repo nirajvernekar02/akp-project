@@ -1,122 +1,109 @@
-// // controllers/readingController.js
-// const Reading = require('../models/readingModel');
-
-// // Function to add new readings
-// exports.addReading = async (req, res) => {
-//   try {
-//     const { readings, upperLimit, lowerLimit } = req.body;
-
-//     // Check if the request contains required fields
-//     if (!readings || !upperLimit || !lowerLimit) {
-//       return res.status(400).json({ message: 'Missing required fields.' });
-//     }
-
-//     // Find or create today's reading entry
-//     let readingEntry = await Reading.findOne({
-//       date: { $gte: new Date().setHours(0, 0, 0, 0) },
-//     });
-
-//     if (readingEntry) {
-//       // Append new readings
-//       readingEntry.readings.push(...readings);
-//     } else {
-//       // Create a new entry for today's readings
-//       readingEntry = new Reading({
-//         readings,
-//         upperLimit,
-//         lowerLimit,
-//       });
-//     }
-
-//     // Recalculate metrics immediately to keep everything up-to-date
-//     readingEntry.calculateMetrics();
-
-//     // Save the updated/new reading entry
-//     await readingEntry.save();
-
-//     res.status(200).json({ message: 'Readings added successfully.', data: readingEntry });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error adding readings.', error: error.message });
-//   }
-// };
-
-
-// // Update existing readings for a given day
-// exports.updateReading = async (req, res) => {
-//     try {
-//       const { id } = req.params;
-//       const { readings, upperLimit, lowerLimit } = req.body;
-  
-//       const readingEntry = await Reading.findById(id);
-//       if (!readingEntry) {
-//         return res.status(404).json({ message: 'Reading entry not found.' });
-//       }
-  
-//       // Update fields
-//       if (readings) readingEntry.readings = readings;
-//       if (upperLimit !== undefined) readingEntry.upperLimit = upperLimit;
-//       if (lowerLimit !== undefined) readingEntry.lowerLimit = lowerLimit;
-  
-//       // Recalculate metrics
-//       readingEntry.calculateMetrics();
-  
-//       await readingEntry.save();
-  
-//       res.status(200).json({ message: 'Reading updated successfully.', data: readingEntry });
-//     } catch (error) {
-//       res.status(500).json({ message: 'Error updating reading.', error: error.message });
-//     }
-//   };
-  
-//   // Delete readings for a given day
-//   exports.deleteReading = async (req, res) => {
-//     try {
-//       const { id } = req.params;
-  
-//       const readingEntry = await Reading.findByIdAndDelete(id);
-//       if (!readingEntry) {
-//         return res.status(404).json({ message: 'Reading entry not found.' });
-//       }
-  
-//       res.status(200).json({ message: 'Reading deleted successfully.' });
-//     } catch (error) {
-//       res.status(500).json({ message: 'Error deleting reading.', error: error.message });
-//     }
-//   };
-
-//   // Get all readings
-// exports.getReadings = async (req, res) => {
-//     try {
-//       const readings = await Reading.find();
-//       res.status(200).json({ data: readings });
-//     } catch (error) {
-//       res.status(500).json({ message: 'Error fetching readings.', error: error.message });
-//     }
-//   };
-
 // controllers/readingController.js
 const Reading = require('../models/readingModel');
+const csv = require('csv-parser');
+const fs = require('fs');
+const multer = require('multer');
+const path = require('path');
 
-// Add new readings for today or update if already present
+// Set up multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    if (file.mimetype !== 'text/csv') {
+      return cb(new Error('Only CSV files are allowed'));
+    }
+    cb(null, true);
+  }
+}).single('file');
+
+// Controller methods
+exports.uploadReadings = async (req, res) => {
+  upload(req, res, async function (err) {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const results = [];
+    const targetDate = new Date(req.body.date).setHours(0, 0, 0, 0);
+
+    try {
+      // Read CSV file
+      await new Promise((resolve, reject) => {
+        fs.createReadStream(req.file.path)
+          .pipe(csv())
+          .on('data', (data) => results.push(data))
+          .on('end', resolve)
+          .on('error', reject);
+      });
+
+      // Process CSV data
+      let reading = await Reading.findOne({ date: targetDate });
+      if (!reading) {
+        reading = new Reading({ date: targetDate });
+      }
+
+      // Update readings and limits
+      if (results[0].upperLimit) {
+        reading.upperLimit = parseFloat(results[0].upperLimit);
+      }
+      if (results[0].lowerLimit) {
+        reading.lowerLimit = parseFloat(results[0].lowerLimit);
+      }
+
+      // Add new readings to existing array
+      const newReadings = results.map(row => parseFloat(row.reading)).filter(val => !isNaN(val));
+      reading.readings = [...reading.readings, ...newReadings];
+
+      // Calculate metrics
+      reading.calculateMetrics();
+
+      // Save to database
+      await reading.save();
+
+      // Clean up uploaded file
+      fs.unlinkSync(req.file.path);
+
+      res.json({ message: 'Readings uploaded successfully', reading });
+    } catch (error) {
+      if (req.file) fs.unlinkSync(req.file.path);
+      res.status(500).json({ error: error.message });
+    }
+  });
+};
+
 exports.addOrUpdateReading = async (req, res) => {
   try {
     const { readings, upperLimit, lowerLimit, date } = req.body;
+    const readingDate = new Date(date).setHours(0, 0, 0, 0);
 
-    // Validate request fields
-    if (!readings || !upperLimit || !lowerLimit) {
-      return res.status(400).json({ message: 'Missing required fields.' });
-    }
-
-    const readingDate = date ? new Date(date).setHours(0, 0, 0, 0) : new Date().setHours(0, 0, 0, 0);
-
-    // Find or create today's reading entry
     let readingEntry = await Reading.findOne({ date: readingDate });
 
     if (readingEntry) {
-      // Append new readings if entry exists
+      // Append new readings to existing ones
       readingEntry.readings.push(...readings);
+
+      // Update limits if provided
+      if (upperLimit !== undefined) {
+        readingEntry.upperLimit = upperLimit;
+      }
+      if (lowerLimit !== undefined) {
+        readingEntry.lowerLimit = lowerLimit;
+      }
     } else {
-      // Create a new entry for today's readings
+      // Create a new entry
       readingEntry = new Reading({
         readings,
         upperLimit,
@@ -125,19 +112,18 @@ exports.addOrUpdateReading = async (req, res) => {
       });
     }
 
-    // Recalculate metrics
+    // Calculate metrics regardless of limits being provided or not
     readingEntry.calculateMetrics();
 
-    // Save the updated/new reading entry
     await readingEntry.save();
 
     res.status(200).json({ message: 'Readings added/updated successfully.', data: readingEntry });
   } catch (error) {
+    console.error("Error in addOrUpdateReading:", error);
     res.status(500).json({ message: 'Error adding/updating readings.', error: error.message });
   }
 };
 
-// Update existing readings for a given day
 exports.updateReading = async (req, res) => {
   try {
     const { id } = req.params;
@@ -148,45 +134,71 @@ exports.updateReading = async (req, res) => {
       return res.status(404).json({ message: 'Reading entry not found.' });
     }
 
-    // Update fields
     if (readings) readingEntry.readings = readings;
     if (upperLimit !== undefined) readingEntry.upperLimit = upperLimit;
     if (lowerLimit !== undefined) readingEntry.lowerLimit = lowerLimit;
 
-    // Recalculate metrics
     readingEntry.calculateMetrics();
-
     await readingEntry.save();
 
     res.status(200).json({ message: 'Reading updated successfully.', data: readingEntry });
   } catch (error) {
+    console.error("Error in updateReading:", error);
     res.status(500).json({ message: 'Error updating reading.', error: error.message });
   }
 };
 
-// Delete readings for a given day
 exports.deleteReading = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const readingEntry = await Reading.findByIdAndDelete(id);
+    const { id, index } = req.params;
+    const readingEntry = await Reading.findById(id);
+    
     if (!readingEntry) {
       return res.status(404).json({ message: 'Reading entry not found.' });
     }
-
-    res.status(200).json({ message: 'Reading deleted successfully.' });
+    
+    // Remove the specific reading at the given index
+    readingEntry.readings.splice(index, 1);
+    
+    // Recalculate metrics
+    readingEntry.calculateMetrics();
+    
+    // Save the updated document
+    await readingEntry.save();
+    
+    res.status(200).json({ 
+      message: 'Reading deleted successfully.',
+      data: readingEntry
+    });
   } catch (error) {
+    console.error("Error in deleteReading:", error);
     res.status(500).json({ message: 'Error deleting reading.', error: error.message });
   }
 };
 
-// Get all readings
 exports.getReadings = async (req, res) => {
   try {
-    const readings = await Reading.find();
+    const readings = await Reading.find().sort({ date: -1 });
     res.status(200).json({ data: readings });
   } catch (error) {
+    console.error("Error in getReadings:", error);
     res.status(500).json({ message: 'Error fetching readings.', error: error.message });
   }
 };
 
+exports.getReadingsByDate = async (req, res) => {
+  try {
+    const { date } = req.params;
+    const readingDate = new Date(date).setHours(0, 0, 0, 0);
+    const reading = await Reading.findOne({ date: readingDate });
+    
+    if (!reading) {
+      return res.status(404).json({ message: 'No readings found for the specified date.' });
+    }
+    
+    res.status(200).json({ data: reading });
+  } catch (error) {
+    console.error("Error in getReadingsByDate:", error);
+    res.status(500).json({ message: 'Error fetching readings by date.', error: error.message });
+  }
+};

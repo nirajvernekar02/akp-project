@@ -9,11 +9,13 @@ const ReadingSchema = new mongoose.Schema({
   },
   upperLimit: {
     type: Number,
-    required: true,
+    default:1400,
+    required: false, // Make optional
   },
   lowerLimit: {
     type: Number,
-    required: true,
+    default:1000,
+    required: false, // Make optional
   },
   average: {
     type: Number,
@@ -71,14 +73,26 @@ ReadingSchema.methods.calculateMetrics = function () {
   this.threeSigma = 3 * this.standardDeviation;
   this.sixSigma = 6 * this.standardDeviation;
 
+  console.log("Average:", this.average);
+  console.log("Standard Deviation:", this.standardDeviation);
+  console.log("Three Sigma:", this.threeSigma);
+  console.log("Six Sigma:", this.sixSigma);
+
   // Calculate Cp, Cpk1, Cpk2, and Cpk
-  if (this.sixSigma !== 0) {
-    this.cp = (this.upperLimit - this.lowerLimit) / this.sixSigma;
-  }
-  if (this.threeSigma !== 0) {
-    this.cpk1 = (this.upperLimit - this.average) / this.threeSigma;
-    this.cpk2 = (this.average - this.lowerLimit) / this.threeSigma;
-    this.cpk = Math.min(this.cpk1, this.cpk2);
+  if (this.upperLimit !== undefined && this.lowerLimit !== undefined) {
+    if (this.sixSigma !== 0) {
+      this.cp = (this.upperLimit - this.lowerLimit) / this.sixSigma;
+    }
+    if (this.threeSigma !== 0) {
+      this.cpk1 = (this.upperLimit - this.average) / this.threeSigma;
+      this.cpk2 = (this.average - this.lowerLimit) / this.threeSigma;
+      this.cpk = Math.min(this.cpk1, this.cpk2);
+    }
+
+    console.log("Cp:", this.cp);
+    console.log("Cpk1:", this.cpk1);
+    console.log("Cpk2:", this.cpk2);
+    console.log("Cpk:", this.cpk);
   }
 };
 
