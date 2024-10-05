@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Plus, FileDown, Trash2, Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container, Paper, Table, TableHead, TableBody, TableRow, TableCell,
   TableContainer, Typography, IconButton, Tooltip, Box, Grid, TextField,
-  ThemeProvider, createTheme, CssBaseline, Dialog, DialogTitle, DialogContent,
-  DialogActions, Button
+  ThemeProvider, createTheme, CssBaseline, Dialog, DialogTitle, 
+  DialogContent, DialogActions, Button
 } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, GetApp as ExportIcon } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
@@ -27,16 +28,17 @@ const theme = createTheme({
   },
 });
 
-const MotionDialog = motion(Dialog);
 const MotionTableRow = motion(TableRow);
+const MotionDialog = motion(Dialog);
 
 const ReadingsTable = () => {
+  const navigate = useNavigate();
   const [readingsData, setReadingsData] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [addModalOpen, setAddModalOpen] = useState(false);
-  const [limitModalOpen, setLimitModalOpen] = useState(false);
-  const [editLimitData, setEditLimitData] = useState(null);
-  const [newReadings, setNewReadings] = useState('');
+  const [readings, setReadings] = useState('');
+  const [upperLimit, setUpperLimit] = useState('');
+  const [lowerLimit, setLowerLimit] = useState('');
 
   const fetchReadings = useCallback(async () => {
     try {
@@ -58,7 +60,7 @@ const ReadingsTable = () => {
   const handleDelete = async (readingId) => {
     if (window.confirm('Are you sure you want to delete this reading?')) {
       try {
-        await axios.delete(`http://localhost:5500/api/reading/delete/${readingId}`);
+        await axios.delete(`http://localhost:5500/api/reading/delete/${readingId} `);
         toast.success('Reading deleted successfully');
         fetchReadings();
       } catch (error) {
@@ -76,18 +78,46 @@ const ReadingsTable = () => {
     }
   };
 
-  const handleAddReading = async () => {
+  const handleImportClick = () => {
+    navigate('/import');
+  };
+
+  const handleModalOpen = () => {
+    if (readingsData) {
+      setReadings(readingsData.readings ? readingsData.readings.join(', ') : '');
+      setUpperLimit(readingsData.upperLimit || '');
+      setLowerLimit(readingsData.lowerLimit || '');
+    } else {
+      setReadings('');
+      setUpperLimit('');
+      setLowerLimit('');
+    }
+    setAddModalOpen(true);
+  };
+
+  const handleSave = async () => {
     try {
-      const readingsArray = newReadings.split(',').map(Number);
+      if (!readings) {
+        toast.error('Please enter readings');
+        return;
+      }
+
+      const readingsArray = readings.split(',').map((reading) => parseFloat(reading.trim()));
+      if (readingsArray.some(isNaN)) {
+        toast.error('Please enter valid numeric readings');
+        return;
+      }
+
       const data = {
         readings: readingsArray,
         date: selectedDate,
+        upperLimit: upperLimit ? parseFloat(upperLimit) : undefined,
+        lowerLimit: lowerLimit ? parseFloat(lowerLimit) : undefined,
       };
 
       await axios.post('http://localhost:5500/api/reading/add-reading', data);
       toast.success('Readings added successfully');
       setAddModalOpen(false);
-      setNewReadings('');
       fetchReadings();
     } catch (error) {
       toast.error('Error adding readings');
@@ -127,19 +157,19 @@ const ReadingsTable = () => {
                 size="small"
                 sx={{ mr: 2 }}
               />
-              <Tooltip title="Add New Reading">
-                <IconButton color="primary" onClick={() => setAddModalOpen(true)}>
-                  <AddIcon />
+              <Tooltip title="Import Readings">
+                <IconButton color="primary" onClick={handleImportClick}>
+                  <Upload size={24} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Set Limits">
-                <IconButton color="secondary" onClick={() => setLimitModalOpen(true)}>
-                  <EditIcon />
+              <Tooltip title="Add New Reading">
+                <IconButton color="primary" onClick={handleModalOpen}>
+                  <Plus size={24} />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Export to Excel">
                 <IconButton onClick={handleExportToExcel} disabled={!readingsData}>
-                  <ExportIcon />
+                  <FileDown size={24} />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -213,7 +243,7 @@ const ReadingsTable = () => {
                         <TableCell>
                           <Tooltip title="Delete">
                             <IconButton size="small" onClick={() => handleDelete(readingsData._id)}>
-                              <DeleteIcon fontSize="small" />
+                              <Trash2 size={18} />
                             </IconButton>
                           </Tooltip>
                         </TableCell>
@@ -234,20 +264,38 @@ const ReadingsTable = () => {
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.3 }}
         >
-          <DialogTitle>Add Readings</DialogTitle>
+          <DialogTitle>Add/Edit Readings</DialogTitle>
           <DialogContent>
             <TextField
               label="Readings (comma-separated)"
               fullWidth
               variant="outlined"
-              value={newReadings}
-              onChange={(e) => setNewReadings(e.target.value)}
+              value={readings}
+              onChange={(e) => setReadings(e.target.value)}
+              margin="normal"
+            />
+            <TextField
+              label="Upper Limit"
+              fullWidth
+              variant="outlined"
+              type="number"
+              value={upperLimit}
+              onChange={(e) => setUpperLimit(e.target.value)}
+              margin="normal"
+            />
+            <TextField
+              label="Lower Limit"
+              fullWidth
+              variant="outlined"
+              type="number"
+              value={lowerLimit}
+              onChange={(e) => setLowerLimit(e.target.value)}
               margin="normal"
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setAddModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddReading} color="primary" variant="contained">
+            <Button onClick={handleSave} color="primary" variant="contained">
               Save
             </Button>
           </DialogActions>

@@ -75,21 +75,121 @@ const RunnerChart = () => {
 
   const CustomizedXAxisTick = ({ x, y, payload }) => {
     const date = new Date(payload.value);
+    const dataPoint = data.find(d => d.date === payload.value);
     return (
       <g transform={`translate(${x},${y})`}>
         <text x={0} y={0} dy={16} textAnchor="middle" fill="#666" transform="rotate(-35)">
           {`${date.getDate()}/${date.getMonth() + 1}`}
         </text>
         <text x={0} y={20} dy={16} textAnchor="middle" fill="#666" fontSize="10">
-          {`${data[payload.index]?.time}`}
+          {dataPoint?.time || ''}
         </text>
       </g>
     );
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const chartContent = (
+    <LineChart
+      data={data}
+      margin={{ top: 5, right: 30, left: 20, bottom: 65 }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis 
+        dataKey="date" 
+        height={60} 
+        tick={<CustomizedXAxisTick />}
+      />
+      <YAxis domain={[lowerLimit, upperLimit]} />
+      <Tooltip 
+        formatter={(value, name) => [value, 'Reading']}
+        labelFormatter={(label) => {
+          const date = new Date(label);
+          const dataPoint = data.find(d => d.date === label);
+          return `${date.toLocaleDateString()} ${dataPoint?.time || ''}`;
+        }}
+      />
+      <Legend />
+      <ReferenceArea y1={lowerLimit} y2={yellowLowerLimit} fill="red" fillOpacity={0.3} />
+      <ReferenceArea y1={yellowLowerLimit} y2={greenLowerLimit} fill="yellow" fillOpacity={0.3} />
+      <ReferenceArea y1={greenLowerLimit} y2={greenUpperLimit} fill="green" fillOpacity={0.3} />
+      <ReferenceArea y1={greenUpperLimit} y2={yellowUpperLimit} fill="yellow" fillOpacity={0.3} />
+      <ReferenceArea y1={yellowUpperLimit} y2={upperLimit} fill="red" fillOpacity={0.3} />
+      <Line
+        type="monotone"
+        dataKey="reading"
+        stroke="#8884d8"
+        strokeWidth={3}
+        name="Reading"
+        dot={({ cx, cy, payload }) => (
+          <circle cx={cx} cy={cy} r={6} fill={getColor(payload.reading)} stroke="#8884d8" strokeWidth={2} />
+        )}
+      />
+    </LineChart>
+  );
+
+  const PrintLayout = ({ data, partInfo, limits }) => (
+    <div className="print-only">
+      <div className="print-header">
+        <h1>AKP FOUNDRIES - RUN CHART</h1>
+        <div className="print-info-grid">
+          <div>
+            <label>Part Name:</label>
+            <span>{partInfo.partName}</span>
+          </div>
+          <div>
+            <label>Part Number:</label>
+            <span>{partInfo.partNumber}</span>
+          </div>
+          <div>
+            <label>Process No:</label>
+            <span>{partInfo.processNo}</span>
+          </div>
+          <div>
+            <label>Process Name:</label>
+            <span>{partInfo.processName}</span>
+          </div>
+        </div>
+        <div className="print-limits">
+          <p>Characteristics: G.G. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²</p>
+          <div className="print-date-range">
+            <span>From: {startDate.toLocaleDateString()}</span>
+            <span>To: {endDate.toLocaleDateString()}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="print-chart">
+        {React.cloneElement(chartContent, {
+          width: 800,
+          height: 400
+        })}
+      </div>
+
+      <div className="print-legend">
+        <div className="legend-item">
+          <span className="legend-color green"></span>
+          <span>Control Limit</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color yellow"></span>
+          <span>Warning Limit</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color red"></span>
+          <span>Stop and Correct</span>
+        </div>
+      </div>
+
+      <div className="print-signatures">
+        <div>
+          <p>Operator Sign: _________________</p>
+        </div>
+        <div>
+          <p>H.O.D Sign: _________________</p>
+        </div>
+      </div>
+    </div>
+  );
 
   const groupedData = data.reduce((acc, entry) => {
     const date = new Date(entry.date).toLocaleDateString();
@@ -179,35 +279,14 @@ const RunnerChart = () => {
           <Button variant="contained" onClick={() => setOpenDialog(true)}>
             Add Entry
           </Button>
-          <Button variant="contained" onClick={handlePrint}>
+          <Button variant="contained" onClick={() => window.print()}>
             Print
           </Button>
         </Box>
 
         <Box style={{ height: '500px', width: '100%' }} id="chart-container">
           <ResponsiveContainer>
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 65 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" height={60} tick={<CustomizedXAxisTick />} />
-              <YAxis domain={[lowerLimit, upperLimit]} />
-              <Tooltip />
-              <Legend />
-              <ReferenceArea y1={lowerLimit} y2={yellowLowerLimit} fill="red" fillOpacity={0.3} />
-              <ReferenceArea y1={yellowLowerLimit} y2={greenLowerLimit} fill="yellow" fillOpacity={0.3} />
-              <ReferenceArea y1={greenLowerLimit} y2={greenUpperLimit} fill="green" fillOpacity={0.3} />
-              <ReferenceArea y1={greenUpperLimit} y2={yellowUpperLimit} fill="yellow" fillOpacity={0.3} />
-              <ReferenceArea y1={yellowUpperLimit} y2={upperLimit} fill="red" fillOpacity={0.3} />
-              <Line
-                type="monotone"
-                dataKey="reading"
-                stroke="#8884d8"
-                strokeWidth={3}
-                name="Reading"
-                dot={({ cx, cy, payload }) => (
-                  <circle cx={cx} cy={cy} r={6} fill={getColor(payload.reading)} stroke="#8884d8" strokeWidth={2} />
-                )}
-              />
-            </LineChart>
+            {chartContent}
           </ResponsiveContainer>
         </Box>
 
@@ -242,20 +321,23 @@ const RunnerChart = () => {
           </TableContainer>
         </Box>
 
-        <Box mt={4} display="flex" justifyContent="space-between">
-          <Box>
-            <Typography>Operator Sign: _________________</Typography>
-          </Box>
-          <Box>
-            <Typography>H.O.D Sign: _________________</Typography>
-          </Box>
-        </Box>
-
-        <Box position="absolute" right={40} top="50%" style={{ transform: 'translateY(-50%)' }}>
-          <Typography variant="body1" style={{ color: '#006400', fontWeight: 'bold' }}>Control Limit</Typography>
-          <Typography variant="body1" style={{ color: '#b8860b', fontWeight: 'bold' }}>Warning Limit</Typography>
-          <Typography variant="body1" style={{ color: '#8b0000', fontWeight: 'bold' }}>Stop and Correct</Typography>
-        </Box>
+        <PrintLayout 
+          data={data}
+          partInfo={{
+            partName,
+            partNumber,
+            processNo,
+            processName
+          }}
+          limits={{
+            upper: upperLimit,
+            lower: lowerLimit,
+            yellowUpper: yellowUpperLimit,
+            yellowLower: yellowLowerLimit,
+            greenUpper: greenUpperLimit,
+            greenLower: greenLowerLimit
+          }}
+        />
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New Entry</DialogTitle>
@@ -293,29 +375,104 @@ const RunnerChart = () => {
             <Button onClick={handleAddEntry} color="primary">Add</Button>
           </DialogActions>
         </Dialog>
-      </CardContent>
 
-      <ToastContainer position="bottom-right" />
+        <ToastContainer position="bottom-right" />
 
       <style>{`
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          #chart-container, #chart-container * {
-            visibility: visible;
-          }
-          #chart-container {
-            position: absolute;
-            left: 0;
-            top: 0;
-          }
-          @page {
-            size: landscape;
-          }
-        }
-      `}</style>
+  @media screen {
+    .print-only {
+      display: none;
+    }
+  }
+  
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .print-only, .print-only * {
+      visibility: visible;
+    }
+    .print-only {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    @page {
+      size: landscape;
+      margin: 0.5cm;
+    }
+    
+    .print-header {
+      margin-bottom: 20px;
+    }
+    
+    .print-header h1 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    .print-info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .print-info-grid div {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .print-info-grid label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .print-limits {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .print-chart {
+      height: 400px;
+      margin-bottom: 20px;
+    }
+    
+    .print-legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+    }
+    
+    .legend-color.green { background-color: #006400; }
+    .legend-color.yellow { background-color: #b8860b; }
+    .legend-color.red { background-color: #8b0000; }
+    
+    .print-signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+  }
+`}</style>
+</CardContent>
     </Card>
+ 
   );
 };
 
