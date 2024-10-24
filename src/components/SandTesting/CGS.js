@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { format } from 'date-fns';
 
 const RunnerChart = () => {
   const [data, setData] = useState([]);
@@ -28,6 +29,7 @@ const RunnerChart = () => {
   const [partNumber, setPartNumber] = useState('');
   const [processNo, setProcessNo] = useState('');
   const [processName, setProcessName] = useState('');
+
 
   useEffect(() => {
     fetchData();
@@ -74,15 +76,17 @@ const RunnerChart = () => {
   };
 
   const CustomizedXAxisTick = ({ x, y, payload }) => {
-    const date = new Date(payload.value);
     const dataPoint = data.find(d => d.date === payload.value);
+    if (!dataPoint) return null;
+
+    const date = new Date(dataPoint.date);
+    const formattedDate = format(date, 'dd/MM');
+    const time = dataPoint.time;
+
     return (
       <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={16} textAnchor="middle" fill="#666" transform="rotate(-35)">
-          {`${date.getDate()}/${date.getMonth() + 1}`}
-        </text>
-        <text x={0} y={20} dy={16} textAnchor="middle" fill="#666" fontSize="10">
-          {dataPoint?.time || ''}
+        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-45)">
+          {`${formattedDate} ${time}`}
         </text>
       </g>
     );
@@ -91,21 +95,23 @@ const RunnerChart = () => {
   const chartContent = (
     <LineChart
       data={data}
-      margin={{ top: 5, right: 30, left: 20, bottom: 65 }}
+      margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis 
         dataKey="date" 
-        height={60} 
+        height={90} 
         tick={<CustomizedXAxisTick />}
+        interval={0}
       />
       <YAxis domain={[lowerLimit, upperLimit]} />
       <Tooltip 
         formatter={(value, name) => [value, 'Reading']}
         labelFormatter={(label) => {
-          const date = new Date(label);
           const dataPoint = data.find(d => d.date === label);
-          return `${date.toLocaleDateString()} ${dataPoint?.time || ''}`;
+          if (!dataPoint) return '';
+          const date = new Date(dataPoint.date);
+          return `${format(date, 'dd/MM/yyyy')} ${dataPoint.time}`;
         }}
       />
       <Legend />
@@ -121,12 +127,18 @@ const RunnerChart = () => {
         strokeWidth={3}
         name="Reading"
         dot={({ cx, cy, payload }) => (
-          <circle cx={cx} cy={cy} r={6} fill={getColor(payload.reading)} stroke="#8884d8" strokeWidth={2} />
+          <circle 
+            cx={cx} 
+            cy={cy} 
+            r={6} 
+            fill={getColor(payload.reading)} 
+            stroke="#8884d8" 
+            strokeWidth={2} 
+          />
         )}
       />
     </LineChart>
   );
-
   const PrintLayout = ({ data, partInfo, limits }) => (
     <div className="print-only">
       <div className="print-header">
@@ -284,7 +296,7 @@ const RunnerChart = () => {
           </Button>
         </Box>
 
-        <Box style={{ height: '500px', width: '100%' }} id="chart-container">
+        <Box style={{ height: '500px', width: '100%' }}>
           <ResponsiveContainer>
             {chartContent}
           </ResponsiveContainer>
