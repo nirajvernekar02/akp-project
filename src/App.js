@@ -19,10 +19,13 @@ import EnvironmentalAndSafetyParameters from './components/Environmental and Saf
 import Login from './components/User Management/Login';
 import Register from './components/User Management/Register';
 import Permeability from './components/SandTesting/permeability';
+import { FoundryReadings,FoundryAveragesView } from './components/SandTesting/FoundryReading';
 function App() {
   return (
     <Router>
       <Routes>
+      <Route path="/foundry-reading" element={<FoundryReadings />} />
+      <Route path="/foundry-average" element={<FoundryAveragesView />} />
         <Route path="/runner" element={<RunnerChart />} />
         <Route path="/reading" element={<ReadingsTable />} />
         <Route path="/import" element={<ImportTable />} />
