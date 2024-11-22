@@ -15,12 +15,12 @@ import { format } from 'date-fns';
 
 const RunnerChart = () => {
   const [data, setData] = useState([]);
-  const [upperLimit, setUpperLimit] = useState(1500);
-  const [lowerLimit, setLowerLimit] = useState(1100);
-  const [greenUpperLimit, setGreenUpperLimit] = useState(1400);
-  const [greenLowerLimit, setGreenLowerLimit] = useState(1200);
-  const [yellowUpperLimit, setYellowUpperLimit] = useState(1450);
-  const [yellowLowerLimit, setYellowLowerLimit] = useState(1150);
+  const upperLimit = 1500;
+  const lowerLimit = 1100;
+  const greenUpperLimit = 1400;
+  const greenLowerLimit = 1200;
+  const yellowUpperLimit = 1450;
+  const yellowLowerLimit = 1150;
   const [openDialog, setOpenDialog] = useState(false);
   const [newEntry, setNewEntry] = useState({ date: new Date(), time: '12:00', reading: '' });
   const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 7)));
@@ -40,7 +40,8 @@ const RunnerChart = () => {
       const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
+          endDate: endDate.toISOString(),
+          type:"CGS"
         }
       });
       setData(response.data);
@@ -55,6 +56,7 @@ const RunnerChart = () => {
       const newData = {
         date: newEntry.date,
         time: newEntry.time,
+        type:"CGS",
         reading: Number(newEntry.reading)
       };
       await axios.post('http://localhost:5500/api/runner/runnerData', newData);
@@ -280,13 +282,13 @@ const RunnerChart = () => {
             label="Lower Limit"
             type="number"
             value={lowerLimit}
-            onChange={(e) => setLowerLimit(Number(e.target.value))}
+            // onChange={(e) => setLowerLimit(Number(e.target.value))}
           />
           <TextField
             label="Upper Limit"
             type="number"
             value={upperLimit}
-            onChange={(e) => setUpperLimit(Number(e.target.value))}
+            // onChange={(e) => setUpperLimit(Number(e.target.value))}
           />
           <Button variant="contained" onClick={() => setOpenDialog(true)}>
             Add Entry
@@ -489,229 +491,3 @@ const RunnerChart = () => {
 };
 
 export default RunnerChart;
-
-// import React, { useState, useEffect } from 'react';
-// import {
-//   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
-// } from 'recharts';
-// import {
-//   Card, CardContent, Typography, Button, TextField, Table,
-//   TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-//   Dialog, DialogActions, DialogContent, DialogTitle
-// } from '@mui/material';
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
-// import jsPDF from 'jspdf';
-// import 'jspdf-autotable';
-// import axios from 'axios';
-
-// const RunnerChart = () => {
-//   const [data, setData] = useState([]);
-//   const [upperLimit, setUpperLimit] = useState(1500);
-//   const [lowerLimit, setLowerLimit] = useState(1100);
-//   const [openDialog, setOpenDialog] = useState(false);
-//   const [newEntry, setNewEntry] = useState({ date: new Date(), time: '09:00', reading: '' });
-//   const [startDate, setStartDate] = useState(() => {
-//     const date = new Date();
-//     date.setDate(date.getDate() - 1);
-//     return date;
-//   });
-//   const [endDate, setEndDate] = useState(() => {
-//     const date = new Date();
-//     date.setDate(date.getDate() + 3);
-//     return date;
-//   });
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
-//           params: {
-//             startDate: startDate.toISOString(),
-//             endDate: endDate.toISOString(),
-//           }
-//         });
-//         setData(response.data);
-//       } catch (error) {
-//         console.error('Error fetching data:', error);
-//       }
-//     };
-//     fetchData();
-//   }, [startDate, endDate]);
-
-//   const handleAddEntry = async () => {
-//     try {
-//       const formattedDate = newEntry.date.toISOString().split('T')[0];
-//       const newData = {
-//         date: formattedDate,
-//         time: newEntry.time,
-//         reading: Number(newEntry.reading)
-//       };
-
-//       await axios.post('http://localhost:5500/api/runner/runnerData', newData);
-
-//       setData(prevData => [...prevData, newData]);
-//       setOpenDialog(false);
-//       setNewEntry({ date: new Date(), time: '09:00', reading: '' });
-//     } catch (error) {
-//       console.error('Error adding entry:', error);
-//     }
-//   };
-
-//   const formatXAxis = (tickItem) => {
-//     const date = new Date(tickItem);
-//     return `${date.getDate()}/${date.getMonth() + 1} ${date.getHours()}:00`;
-//   };
-
-//   const getColor = (value) => {
-//     if (value <= 1200 || value >= 1400) return '#ff0000';
-//     if (value > 1200 && value < 1300) return '#ffff00';
-//     return '#00ff00';
-//   };
-
-//   const printChart = () => {
-//     window.print();
-//   };
-
-//   return (
-//     <div>
-//       <Card style={{ maxWidth: '1200px', margin: 'auto', marginTop: '20px' }}>
-//         <CardContent>
-//           <Typography variant="h4" gutterBottom>
-//             AKP FOUNDRIES - RUN CHART
-//           </Typography>
-//           <Typography variant="subtitle1" gutterBottom>
-//             Characteristics: G.G. STRENGTH gm/cm² | Specification: {lowerLimit} TO {upperLimit} gm/cm²
-//           </Typography>
-
-//           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap' }}>
-//             <TextField
-//               label="Lower Limit"
-//               type="number"
-//               value={lowerLimit}
-//               onChange={(e) => setLowerLimit(Number(e.target.value))}
-//               style={{ marginRight: '1rem' }}
-//             />
-            
-//             <TextField
-//               label="Upper Limit"
-//               type="number"
-//               value={upperLimit}
-//               onChange={(e) => setUpperLimit(Number(e.target.value))}
-//               style={{ marginRight: '1rem' }}
-//             />
-
-//             <DatePicker
-//               selected={startDate}
-//               onChange={(date) => setStartDate(date)}
-//               selectsStart
-//               startDate={startDate}
-//               endDate={endDate}
-//             />
-
-//             <DatePicker
-//               selected={endDate}
-//               onChange={(date) => setEndDate(date)}
-//               selectsEnd
-//               startDate={startDate}
-//               endDate={endDate}
-//               minDate={startDate}
-//             />
-
-//             <Button variant="contained" onClick={() => setOpenDialog(true)} style={{ marginRight: '1rem' }}>
-//               Add Entry
-//             </Button>
-//             <Button variant="contained" onClick={printChart}>
-//               Print Chart
-//             </Button>
-//           </div>
-
-//           <div id="chart-container">
-//             <ResponsiveContainer width="100%" height={400}>
-//               <LineChart data={data}>
-//                 <CartesianGrid strokeDasharray="3 3" />
-//                 <XAxis dataKey="date" tickFormatter={formatXAxis} />
-//                 <YAxis domain={[lowerLimit, upperLimit]} />
-//                 <Tooltip />
-//                 <Legend />
-//                 <Line
-//                   type="monotone"
-//                   dataKey="reading"
-//                   stroke="#8884d8"
-//                   name="Reading"
-//                   dot={({ cx, cy, payload }) => (
-//                     <circle cx={cx} cy={cy} r={4} fill={getColor(payload.reading)} />
-//                   )}
-//                 />
-//               </LineChart>
-//             </ResponsiveContainer>
-//           </div>
-//         </CardContent>
-
-//         {/* Add Entry Dialog */}
-//         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-//           <DialogTitle>Add New Entry</DialogTitle>
-//           <DialogContent>
-//             <DatePicker
-//               selected={newEntry.date}
-//               onChange={(date) => setNewEntry(prev => ({ ...prev, date }))}
-//               dateFormat="yyyy-MM-dd"
-//               customInput={<TextField label="Date" fullWidth />}
-//             />
-//             <TextField
-//               label="Time"
-//               type="time"
-//               value={newEntry.time}
-//               onChange={(e) => setNewEntry(prev => ({ ...prev, time: e.target.value }))}
-//               fullWidth
-//               margin="normal"
-//             />
-//             <TextField
-//               label="Reading"
-//               type="number"
-//               value={newEntry.reading}
-//               onChange={(e) => setNewEntry(prev => ({ ...prev, reading: e.target.value }))}
-//               fullWidth
-//               margin="normal"
-//             />
-//           </DialogContent>
-//           <DialogActions>
-//             <Button onClick={() => setOpenDialog(false)} color="primary">
-//               Cancel
-//             </Button>
-//             <Button onClick={handleAddEntry} color="primary">
-//               Add
-//             </Button>
-//           </DialogActions>
-//         </Dialog>
-//       </Card>
-
-//       {/* Custom Print CSS */}
-//       <style>
-//         {`
-//           @media print {
-//             body * {
-//               visibility: hidden;
-//             }
-//             #chart-container, #chart-container * {
-//               visibility: visible;
-//             }
-//             #chart-container {
-//               position: absolute;
-//               top: 0;
-//               left: 0;
-//               width: 100vw;
-//               height: 100vh;
-//               overflow: hidden;
-//             }
-//             .MuiButton-root {
-//               display: none !important;
-//             }
-//           }
-//         `}
-//       </style>
-//     </div>
-//   );
-// };
-
-// export default RunnerChart;

@@ -4,17 +4,17 @@ import {
   Button,
   Typography,
   Container,
-  Paper,
-  CircularProgress,
-  Alert,
   Box,
-  Link
+  Alert,
+  CircularProgress,
+  Link,
+  Paper,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
 
-const Login = () => {
+const FoundrySandTestingLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [credentials, setCredentials] = useState({
@@ -44,68 +44,89 @@ const Login = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Box
+      <Paper
+        elevation={6}
         sx={{
-          mt: 8,
+          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          padding: 4,
+          borderRadius: 2,
         }}
       >
-        <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign In
-            </Typography>
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5" sx={{ fontWeight: 'bold' }}>
+          Foundry Sand Testing Login
+        </Typography>
+        <Typography variant="body2" color="textSecondary" align="center" sx={{ mt: 1, mb: 3 }}>
+          Access your sand testing parameters and results securely.
+        </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
+            {error}
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ width: '100%', mt: 1 }}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            label="Username"
+            name="username"
+            autoComplete="username"
+            autoFocus
+            onChange={handleChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            onChange={handleChange}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={isLoading}
+            sx={{
+              mt: 2,
+              mb: 2,
+              py: 1.5,
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#1565c0',
+              },
+            }}
+          >
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
+          </Button>
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Link href="#" variant="body2" color="primary">
+              Forgot password?
+            </Link>
           </Box>
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-          <form onSubmit={handleSubmit}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              onChange={handleChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              autoComplete="current-password"
-              onChange={handleChange}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={isLoading}
-              sx={{ mt: 3, mb: 2 }}
-            >
-              {isLoading ? <CircularProgress size={24} /> : 'Sign In'}
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Box>
-          </form>
-        </Paper>
+        </form>
+      </Paper>
+
+      <Box mt={8} textAlign="center">
+        <Typography variant="body2" color="textSecondary">
+          © {new Date().getFullYear()} AKP Industries. All rights reserved.
+        </Typography>
       </Box>
     </Container>
   );
 };
 
-export default Login;
+export default FoundrySandTestingLogin;

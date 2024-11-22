@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import * as XLSX from 'xlsx';
 import {
   Box,
   Button,
@@ -23,15 +25,21 @@ import {
   Typography,
   IconButton,
   Grid,
-  Divider
+  Snackbar,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Add as AddIcon,
+  Upload as UploadIcon,
+  Download as DownloadIcon,
   Close as CloseIcon,
-  CalendarToday as CalendarIcon
-} from 'lucide-react';
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
 
-// Parameters list
+const API_BASE_URL = 'http://localhost:5500/api/foundry';
+
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },
   { id: 'activeClay', label: 'Active Clay %' },
@@ -53,120 +61,234 @@ const parameters = [
   { id: 'totalDustCollected', label: 'Total Dust Collected kg' }
 ];
 
-const AddReadingDialog = ({ open, onClose, onAdd }) => {
+const formatIndianDateTime = (date) => {
+  return new Date(date).toLocaleString('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+};
+
+const formatIndianDate = (date) => {
+  return new Date(date).toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+};
+const AddReadingDialog = ({ open, onClose, onAdd, loading }) => {
   const [newReading, setNewReading] = useState({
     parameter: '',
     value: '',
-    time: new Date().toTimeString().slice(0, 5)
+    timestamp: new Date().toISOString().slice(0, 16)
   });
 
-  const handleAdd = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     onAdd(newReading);
-    setNewReading({
-      parameter: '',
-      value: '',
-      time: new Date().toTimeString().slice(0, 5)
-    });
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          Add New Reading
-          <IconButton onClick={onClose} size="small">
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel>Parameter</InputLabel>
-            <Select
-              value={newReading.parameter}
-              onChange={(e) => setNewReading(prev => ({ ...prev, parameter: e.target.value }))}
-              label="Parameter"
-            >
-              {parameters.map(param => (
-                <MenuItem key={param.id} value={param.id}>
-                  {param.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            fullWidth
-            type="number"
-            label="Value"
-            value={newReading.value}
-            onChange={(e) => setNewReading(prev => ({ ...prev, value: e.target.value }))}
-          />
-          <TextField
-            fullWidth
-            type="time"
-            label="Time"
-            value={newReading.time}
-            onChange={(e) => setNewReading(prev => ({ ...prev, time: e.target.value }))}
-            InputLabelProps={{ shrink: true }}
-          />
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleAdd} variant="contained" disabled={!newReading.parameter || !newReading.value}>
-          Add Reading
-        </Button>
-      </DialogActions>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            Add New Reading
+            <IconButton onClick={onClose} size="small">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <FormControl fullWidth required>
+              <InputLabel>Parameter</InputLabel>
+              <Select
+                value={newReading.parameter}
+                onChange={(e) => setNewReading(prev => ({ ...prev, parameter: e.target.value }))}
+                label="Parameter"
+              >
+                {parameters.map(param => (
+                  <MenuItem key={param.id} value={param.id}>
+                    {param.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              fullWidth
+              required
+              type="number"
+              label="Value"
+              value={newReading.value}
+              onChange={(e) => setNewReading(prev => ({ ...prev, value: e.target.value }))}
+            />
+            <TextField
+              fullWidth
+              required
+              type="datetime-local"
+              label="Timestamp"
+              value={newReading.timestamp}
+              onChange={(e) => setNewReading(prev => ({ ...prev, timestamp: e.target.value }))}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} disabled={loading}>Cancel</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading || !newReading.parameter || !newReading.value}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Add Reading'}
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };
-
 const FoundryReadings = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [readings, setReadings] = useState([]);
+  const [stats, setStats] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [expandedParameters, setExpandedParameters] = useState([]);
 
-  useEffect(() => {
-    fetchReadings(selectedDate);
-  }, [selectedDate]);
+  const fetchData = async (date) => {
+    try {
+      setLoading(true);
+      
+      const startDate = new Date(date);
+      startDate.setHours(0, 0, 0, 0);
+      
+      const endDate = new Date(date);
+      endDate.setHours(23, 59, 59, 999);
 
-  const fetchReadings = async (date) => {
-    // Simulated API call
-    const simulatedData = parameters.map(param => ({
-      parameter: param.id,
-      readings: Array(Math.floor(Math.random() * 3) + 1).fill(null).map(() => ({
-        value: (Math.random() * 100).toFixed(2),
-        timestamp: new Date().toISOString()
-      }))
-    }));
-    setReadings(simulatedData);
+      const readingsResponse = await axios.get(`${API_BASE_URL}/readings/${date}`);
+      setReadings(readingsResponse.data);
+      
+      const statsResponse = await axios.get(`${API_BASE_URL}/stats`, {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        }
+      });
+      setStats(statsResponse.data);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddReading = (newReading) => {
-    const timestamp = `${selectedDate}T${newReading.time}`;
-    setReadings(prev => {
-      const updated = [...prev];
-      const parameterIndex = updated.findIndex(p => p.parameter === newReading.parameter);
-      if (parameterIndex >= 0) {
-        updated[parameterIndex].readings.push({
-          value: newReading.value,
-          timestamp
-        });
-      }
-      return updated;
+  useEffect(() => {
+    fetchData(selectedDate);
+  }, [selectedDate]);
+
+  const handleAddReading = async (newReading) => {
+    try {
+      setLoading(true);
+      await axios.post(`${API_BASE_URL}/readings`, newReading);
+      setSuccess('Reading added successfully');
+      setIsModalOpen(false);
+      fetchData(selectedDate);
+    } catch (err) {
+      console.error('Error adding reading:', err);
+      setError('Failed to add reading');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setLoading(true);
+      await axios.post(`${API_BASE_URL}/import-csv`, formData);
+      setSuccess('CSV imported successfully');
+      fetchData(selectedDate);
+    } catch (err) {
+      console.error('Error importing CSV:', err);
+      setError('Failed to import CSV');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportToExcel = () => {
+    // Prepare data for export
+    const exportData = readings.map(reading => {
+      const parameter = parameters.find(p => p.id === reading.parameter);
+      return {
+        'Parameter': parameter?.label || reading.parameter,
+        'Value': reading.value,
+        'Date & Time': formatIndianDateTime(reading.timestamp)
+      };
     });
-    setIsModalOpen(false);
+
+    // Create workbook and add data
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Readings');
+
+    // Save file
+    XLSX.writeFile(wb, `Foundry_Readings_${formatIndianDate(selectedDate)}.xlsx`);
+  };
+
+  const handleParameterExpand = (parameterId) => {
+    if (expandedParameters.includes(parameterId)) {
+      setExpandedParameters(expandedParameters.filter(id => id !== parameterId));
+    } else {
+      setExpandedParameters([...expandedParameters, parameterId]);
+    }
+  };
+
+  const formatValue = (value) => {
+    return typeof value === 'number' ? value.toFixed(2) : value;
   };
 
   return (
     <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
+        Foundry Sand Testing Parameters
+      </Typography>
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+      >
+        <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>
+      </Snackbar>
+      
+      <Snackbar
+        open={!!success}
+        autoHideDuration={6000}
+        onClose={() => setSuccess(null)}
+      >
+        <Alert severity="success" onClose={() => setSuccess(null)}>{success}</Alert>
+      </Snackbar>
+
       <Grid container spacing={3}>
-        {/* Left side - Date selection and readings list */}
         <Grid item xs={12} md={4}>
-          <Card>
+          <Card elevation={3}>
             <CardContent>
-              <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
+              <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
                 <TextField
                   type="date"
                   value={selectedDate}
@@ -182,38 +304,98 @@ const FoundryReadings = () => {
                   Add
                 </Button>
               </Box>
-              <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-                {readings.map(({ parameter, readings: paramReadings }) => (
-                  <Paper key={parameter} sx={{ p: 2, mb: 2 }}>
-                    <Typography variant="subtitle2" gutterBottom>
-                      {parameters.find(p => p.id === parameter)?.label}
-                    </Typography>
-                    {paramReadings.map((reading, idx) => (
-                      <Box
-                        key={idx}
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          mt: 1
-                        }}
-                      >
-                        <Typography variant="body2">{reading.value}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {new Date(reading.timestamp).toLocaleTimeString()}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Paper>
-                ))}
+
+              <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<UploadIcon />}
+                  fullWidth
+                >
+                  Import CSV
+                  <input
+                    type="file"
+                    hidden
+                    accept=".csv"
+                    onChange={handleFileUpload}
+                  />
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<DownloadIcon />}
+                  onClick={handleExportToExcel}
+                  fullWidth
+                >
+                  Export Excel
+                </Button>
+              </Box>
+
+              <Box sx={{ maxHeight: 'calc(100vh - 250px)', overflow: 'auto' }}>
+                {loading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                    <CircularProgress />
+                  </Box>
+                ) : (
+                  parameters.map(param => {
+                    const paramReadings = readings.filter(r => r.parameter === param.id);
+                    if (paramReadings.length === 0) return null;
+
+                    const isExpanded = expandedParameters.includes(param.id);
+
+                    return (
+                      <Paper key={param.id} sx={{ p: 2, mb: 2 }} elevation={2}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="subtitle2" color="primary">
+                            {param.label}
+                          </Typography>
+                          <IconButton size="small" onClick={() => handleParameterExpand(param.id)}>
+                            {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                          </IconButton>
+                        </Box>
+                        {isExpanded ? (
+                          <Box sx={{ maxHeight: '300px', overflow: 'auto' }}>
+                            {paramReadings.map((reading, idx) => (
+                              <Box
+                                key={idx}
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  mt: 1,
+                                  p: 1,
+                                  bgcolor: 'background.default',
+                                  borderRadius: 1
+                                }}
+                              >
+                                <Typography variant="body2">{formatValue(reading.value)}</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  {formatIndianDateTime(reading.timestamp)}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                        ) : (
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                            <Typography variant="body2">{formatValue(paramReadings[0].value)}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {formatIndianDateTime(paramReadings[0].timestamp)}
+                            </Typography>
+                          </Box>
+                        )}
+                      </Paper>
+                    );
+                  })
+                )}
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Right side - Daily averages table */}
         <Grid item xs={12} md={8}>
-          <Card>
+          <Card elevation={3}>
             <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Daily Statistics - {formatIndianDate(selectedDate)}
+              </Typography>
               <TableContainer>
                 <Table size="small">
                   <TableHead>
@@ -226,18 +408,17 @@ const FoundryReadings = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {readings.map(({ parameter, readings: paramReadings }) => {
-                      const values = paramReadings.map(r => parseFloat(r.value));
-                      const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    {stats.map((stat) => {
+                      const paramInfo = parameters.find(p => p.id === stat.parameter);
+                      if (!paramInfo) return null;
+
                       return (
-                        <TableRow key={parameter}>
-                          <TableCell>
-                            {parameters.find(p => p.id === parameter)?.label}
-                          </TableCell>
-                          <TableCell align="right">{avg.toFixed(2)}</TableCell>
-                          <TableCell align="right">{Math.min(...values).toFixed(2)}</TableCell>
-                          <TableCell align="right">{Math.max(...values).toFixed(2)}</TableCell>
-                          <TableCell align="right">{values.length}</TableCell>
+                        <TableRow key={stat.parameter}>
+                          <TableCell>{paramInfo.label}</TableCell>
+                          <TableCell align="right">{formatValue(stat.average)}</TableCell>
+                          <TableCell align="right">{formatValue(stat.min)}</TableCell>
+                          <TableCell align="right">{formatValue(stat.max)}</TableCell>
+                          <TableCell align="right">{stat.count}</TableCell>
                         </TableRow>
                       );
                     })}
@@ -253,76 +434,10 @@ const FoundryReadings = () => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onAdd={handleAddReading}
+        loading={loading}
       />
     </Box>
   );
 };
 
-const FoundryAveragesView = () => {
-  const [averages, setAverages] = useState([]);
-
-  useEffect(() => {
-    fetchAverages();
-  }, []);
-
-  const fetchAverages = async () => {
-    // Simulated API call
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 9);
-
-    const simulatedData = Array(10).fill(null).map((_, i) => {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-      return {
-        date: date.toISOString().split('T')[0],
-        ...parameters.reduce((acc, param) => ({
-          ...acc,
-          [param.id]: (Math.random() * 100).toFixed(2)
-        }), {})
-      };
-    });
-
-    setAverages(simulatedData);
-  };
-
-  return (
-    <Box sx={{ p: 3 }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            10-Day Averages
-          </Typography>
-          <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)' }}>
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  {parameters.map(param => (
-                    <TableCell key={param.id} align="right" sx={{ whiteSpace: 'nowrap' }}>
-                      {param.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {averages.map((day) => (
-                  <TableRow key={day.date}>
-                    <TableCell>{day.date}</TableCell>
-                    {parameters.map(param => (
-                      <TableCell key={param.id} align="right">
-                        {day[param.id]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
-    </Box>
-  );
-};
-
-export { FoundryReadings, FoundryAveragesView };
+export default FoundryReadings;

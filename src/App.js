@@ -19,22 +19,31 @@ import EnvironmentalAndSafetyParameters from './components/Environmental and Saf
 import Login from './components/User Management/Login';
 import Register from './components/User Management/Register';
 import Permeability from './components/SandTesting/permeability';
-import { FoundryReadings,FoundryAveragesView } from './components/SandTesting/FoundryReading';
+import FoundryAverages from './components/SandTesting/FoundryAverage';
+import FoundryReadings from './components/SandTesting/FoundryReading';
+import SandDashboard from './components/SandTesting/Dashboard';
+import Moisture from './components/SandTesting/moisture';
+import Compactability from './components/SandTesting/compactablity'
+import SpcDashboard from './components/SandTesting/spcDashboard'
 function App() {
   return (
     <Router>
       <Routes>
       <Route path="/foundry-reading" element={<FoundryReadings />} />
-      <Route path="/foundry-average" element={<FoundryAveragesView />} />
+      <Route path="/foundry-average" element={<FoundryAverages />} />
+      <Route path="/sand-dashboard" element={<SandDashboard />} />
         <Route path="/runner" element={<RunnerChart />} />
         <Route path="/reading" element={<ReadingsTable />} />
+        <Route path="/moisture" element={<Moisture />} />
+        <Route path="/compactability" element={<Compactability />} />
         <Route path="/import" element={<ImportTable />} />
-        <Route path="/" element={<Dashboard />} />
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/register' element={<Register/>}/>
+        {/* <Route path="/" element={<Dashboard />} /> */}
+        <Route path='/' element={<Login/>}/>
+        {/* <Route path='/register' element={<Register/>}/> */}
         <Route path="/sand-testing" element={<SandTesting />} />
         <Route path="/permeability" element={<Permeability/>} />
-        <Route path="/mold-testing" element={<MoldingAndCoreMakingParameters />} />
+        <Route path="/spcdas" element={<SpcDashboard/>} />
+        {/* <Route path="/mold-testing" element={<MoldingAndCoreMakingParameters />} />
         <Route path="/metal-pouring" element={<MetalPouringParameters />} />
         <Route path="/furnace-operation" element={<FurnaceOperationParameters />} />
         <Route path="/cooling-solidification" element={<CoolingAndSolidificationParameters />} />
@@ -43,7 +52,7 @@ function App() {
         <Route path="/inventory-raw-material" element={<InventoryAndRawMaterialParameters />} />
         <Route path="/quality-control" element={<QualityControlParameters />} />
         <Route path="/production-efficiency" element={<ProductionAndEfficiencyParameters />} />
-        <Route path="/environmental-safety" element={<EnvironmentalAndSafetyParameters />} />
+        <Route path="/environmental-safety" element={<EnvironmentalAndSafetyParameters />} /> */}
       </Routes>
     </Router>
   );

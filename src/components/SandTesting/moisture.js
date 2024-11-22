@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea
@@ -17,13 +15,13 @@ import { format } from 'date-fns';
 
 const RunnerChart = () => {
   const [data, setData] = useState([]);
-  // Updated limits
-  const upperLimit = 160;  // Maximum preamibility limit
-  const lowerLimit = 110;  // Minimum preamibility limit
-  const greenUpperLimit = 145;  // Upper green (control) limit
-  const greenLowerLimit = 125;  // Lower green (control) limit
-  const yellowUpperLimit = 155;  // Upper yellow (warning) limit
-  const yellowLowerLimit = 115;  // Lower yellow (warning) limit
+  // Updated limits for moisture
+  const upperLimit = 4.55;  // Maximum moisture limit
+  const lowerLimit = 3.50;  // Minimum moisture limit
+  const greenUpperLimit = 4.20;  // Upper green (control) limit
+  const greenLowerLimit = 3.80;  // Lower green (control) limit
+  const yellowUpperLimit = 4.40;  // Upper yellow (warning) limit
+  const yellowLowerLimit = 3.60;  // Lower yellow (warning) limit
 
   const [openDialog, setOpenDialog] = useState(false);
   const [newEntry, setNewEntry] = useState({ date: new Date(), time: '12:00', reading: '' });
@@ -44,7 +42,7 @@ const RunnerChart = () => {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
-          type: "permeability"
+          type: "moisture"
         }
       });
       setData(response.data);
@@ -59,7 +57,7 @@ const RunnerChart = () => {
       const newData = {
         date: newEntry.date,
         time: newEntry.time,
-        type: "permeability",
+        type: "moisture",
         reading: Number(newEntry.reading)
       };
       await axios.post('http://localhost:5500/api/runner/runnerData', newData);
@@ -97,6 +95,15 @@ const RunnerChart = () => {
     );
   };
 
+  // Generate ticks with 0.1 intervals from 3.6 to 4.4
+  const generateTicks = () => {
+    const ticks = [];
+    for (let i = lowerLimit; i <= upperLimit; i += 0.1) {
+      ticks.push(Number(i.toFixed(2)));
+    }
+    return ticks;
+  };
+
   const chartContent = (
     <LineChart
       data={data}
@@ -110,11 +117,12 @@ const RunnerChart = () => {
         interval={0}
       />
       <YAxis 
-        domain={[lowerLimit, upperLimit]} 
-        ticks={[110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]} // Added specific ticks with gap of 5
+        domain={[lowerLimit, upperLimit]}
+        ticks={generateTicks()}
+        tickFormatter={(value) => value.toFixed(2)}
       />
       <Tooltip 
-        formatter={(value, name) => [value, 'Reading']}
+        formatter={(value, name) => [value.toFixed(2), 'Reading']}
         labelFormatter={(label) => {
           const dataPoint = data.find(d => d.date === label);
           if (!dataPoint) return '';
@@ -123,7 +131,6 @@ const RunnerChart = () => {
         }}
       />
       <Legend />
-      {/* Updated Reference Areas for new ranges */}
       <ReferenceArea y1={lowerLimit} y2={yellowLowerLimit} fill="red" fillOpacity={0.3} />
       <ReferenceArea y1={yellowLowerLimit} y2={greenLowerLimit} fill="yellow" fillOpacity={0.3} />
       <ReferenceArea y1={greenLowerLimit} y2={greenUpperLimit} fill="green" fillOpacity={0.3} />
@@ -172,7 +179,7 @@ const RunnerChart = () => {
           </div>
         </div>
         <div className="print-limits">
-          <p>Characteristics: PREAMIBILITY LIMIT | Specification: {limits.lower} TO {limits.upper}</p>
+          <p>Characteristics: MOISTURE LIMIT | Specification: {limits.lower.toFixed(2)} TO {limits.upper.toFixed(2)}</p>
           <div className="print-date-range">
             <span>From: {startDate.toLocaleDateString()}</span>
             <span>To: {endDate.toLocaleDateString()}</span>
@@ -190,15 +197,15 @@ const RunnerChart = () => {
       <div className="print-legend">
         <div className="legend-item">
           <span className="legend-color green"></span>
-          <span>Control Limit ({greenLowerLimit} - {greenUpperLimit})</span>
+          <span>Control Limit ({greenLowerLimit.toFixed(2)} - {greenUpperLimit.toFixed(2)})</span>
         </div>
         <div className="legend-item">
           <span className="legend-color yellow"></span>
-          <span>Warning Limit ({yellowLowerLimit} - {greenLowerLimit}, {greenUpperLimit} - {yellowUpperLimit})</span>
+          <span>Warning Limit ({yellowLowerLimit.toFixed(2)} - {greenLowerLimit.toFixed(2)}, {greenUpperLimit.toFixed(2)} - {yellowUpperLimit.toFixed(2)})</span>
         </div>
         <div className="legend-item">
           <span className="legend-color red"></span>
-          <span>Stop and Correct (Below {yellowLowerLimit}, Above {yellowUpperLimit})</span>
+          <span>Stop and Correct (Below {yellowLowerLimit.toFixed(2)}, Above {yellowUpperLimit.toFixed(2)})</span>
         </div>
       </div>
 
@@ -212,15 +219,6 @@ const RunnerChart = () => {
       </div>
     </div>
   );
-
-  const groupedData = data.reduce((acc, entry) => {
-    const date = new Date(entry.date).toLocaleDateString();
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(entry);
-    return acc;
-  }, {});
 
   return (
     <Card style={{ maxWidth: '1200px', margin: 'auto', marginTop: '20px', padding: '20px' }}>
@@ -265,7 +263,7 @@ const RunnerChart = () => {
         </Grid>
 
         <Typography variant="subtitle1" gutterBottom>
-          Characteristics: PREAMIBILITY LIMIT | Specification: {lowerLimit} TO {upperLimit}
+          Characteristics: MOISTURE LIMIT | Specification: {lowerLimit.toFixed(2)} TO {upperLimit.toFixed(2)}
         </Typography>
 
         <Box display="flex" justifyContent="space-between" marginBottom="1rem" flexWrap="wrap">
@@ -324,7 +322,14 @@ const RunnerChart = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.entries(groupedData).map(([date, entries]) => (
+                {Object.entries(data.reduce((acc, entry) => {
+                  const date = new Date(entry.date).toLocaleDateString();
+                  if (!acc[date]) {
+                    acc[date] = [];
+                  }
+                  acc[date].push(entry);
+                  return acc;
+                }, {})).map(([date, entries]) => (
                   <React.Fragment key={date}>
                     <TableRow>
                       <TableCell colSpan={3} style={{ fontWeight: 'bold' }}>{date}</TableCell>
@@ -333,7 +338,7 @@ const RunnerChart = () => {
                       <TableRow key={`${date}-${index}`}>
                         <TableCell></TableCell>
                         <TableCell>{entry.time}</TableCell>
-                        <TableCell>{entry.reading}</TableCell>
+                        <TableCell>{entry.reading.toFixed(2)}</TableCell>
                       </TableRow>
                     ))}
                   </React.Fragment>
@@ -342,24 +347,6 @@ const RunnerChart = () => {
             </Table>
           </TableContainer>
         </Box>
-
-        <PrintLayout 
-          data={data}
-          partInfo={{
-            partName,
-            partNumber,
-            processNo,
-            processName
-          }}
-          limits={{
-            upper: upperLimit,
-            lower: lowerLimit,
-            yellowUpper: yellowUpperLimit,
-            yellowLower: yellowLowerLimit,
-            greenUpper: greenUpperLimit,
-            greenLower: greenLowerLimit
-          }}
-        />
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New Entry</DialogTitle>
@@ -390,6 +377,9 @@ const RunnerChart = () => {
               onChange={(e) => setNewEntry(prev => ({ ...prev, reading: e.target.value }))}
               fullWidth
               margin="normal"
+              inputProps={{
+                step: "0.01"
+              }}
             />
           </DialogContent>
           <DialogActions>

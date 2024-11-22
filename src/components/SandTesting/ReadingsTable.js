@@ -146,7 +146,7 @@ const ReadingsTable = () => {
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
             <Typography variant="h4" component="h1" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-              Mold Hardness Readings
+              SPC
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <TextField
