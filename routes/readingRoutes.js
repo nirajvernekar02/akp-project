@@ -1,13 +1,15 @@
-// routes/readingRoutes.js
+// 
+
+// routes/combinedRoutes.js
 const express = require('express');
 const router = express.Router();
-const readingController = require('../controllers/readingController');
+const combinedReadingController = require('../controllers/readingController');
 
-router.post('/add-reading', readingController.addOrUpdateReading);
-router.put('/update/:id', readingController.updateReading);
-router.delete('/delete/:id/:index', readingController.deleteReading);
-router.get('/all', readingController.getReadings);
-router.get('/by-date/:date', readingController.getReadingsByDate);
-router.post('/upload', readingController.uploadReadings);
+// Routes for readings and metrics
+router.get('/readings', combinedReadingController.getReadingsByDateRange);
+router.post('/readings', combinedReadingController.addReading);
+router.post('/readings/upload', combinedReadingController.uploadReadings);
+router.put('/readings/:id/limits', combinedReadingController.updateLimits);
+router.delete('/readings/:id/:readingId', combinedReadingController.deleteReading);
 
 module.exports = router;
