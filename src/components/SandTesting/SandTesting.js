@@ -14,43 +14,220 @@ import {
   Select,
   MenuItem,
   useTheme,
+  Paper,
+  IconButton,
+  Tooltip,
+  Zoom,
+  Fade,
+  Alert,
+  Snackbar,
+  Container,
 } from '@mui/material';
-import { Science as ScienceIcon } from '@mui/icons-material';
-import dayjs from 'dayjs';
+import {
+  Science as ScienceIcon,
+  Add as AddIcon,
+  WaterDrop as WaterIcon,
+  Speed as SpeedIcon,
+  Compress as CompressIcon,
+  Air as AirIcon,
+  Close as CloseIcon,
+} from '@mui/icons-material';
 
-// DashboardTile component
 const DashboardTile = ({ title, description, Icon, color, onClick }) => {
+  const [elevated, setElevated] = useState(false);
+
   return (
-    <Card
+    <Zoom in={true} style={{ transitionDelay: '150ms' }}>
+      <Card
+        sx={{
+          minHeight: 220,
+          cursor: 'pointer',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          borderRadius: '16px',
+          backgroundColor: 'white',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: elevated ? '0 8px 32px rgba(0, 0, 0, 0.15)' : '0 4px 20px rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: elevated ? 'translateY(-8px)' : 'none',
+          '&:hover': {
+            backgroundColor: `${color}08`,
+          },
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            backgroundColor: color,
+            transition: 'transform 0.3s ease-in-out',
+            transform: elevated ? 'scaleX(1)' : 'scaleX(0)',
+          },
+        }}
+        onClick={onClick}
+        onMouseEnter={() => setElevated(true)}
+        onMouseLeave={() => setElevated(false)}
+      >
+        <CardContent sx={{ width: '100%', p: 3 }}>
+          <Icon sx={{ 
+            fontSize: 72, 
+            color,
+            mb: 2,
+            transition: 'transform 0.3s ease',
+            transform: elevated ? 'scale(1.1)' : 'scale(1)',
+          }} />
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              fontWeight: 700,
+              mb: 1,
+              color: 'text.primary',
+            }}
+          >
+            {title}
+          </Typography>
+          <Typography 
+            variant="body2" 
+            color="text.secondary"
+            sx={{
+              opacity: 0.8,
+              lineHeight: 1.6,
+            }}
+          >
+            {description}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Zoom>
+  );
+};
+
+const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubmit }) => {
+  const theme = useTheme();
+
+  return (
+    <Modal 
+      open={open} 
+      onClose={handleClose}
+      closeAfterTransition
       sx={{
-        minHeight: 180,
-        cursor: 'pointer',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        textAlign: 'center',
-        borderRadius: '12px',
-        backgroundColor: 'white',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': {
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
-          transform: 'scale(1.05)',
-        },
+        justifyContent: 'center',
       }}
-      onClick={onClick}
     >
-      <CardContent>
-        <Icon sx={{ fontSize: 60, color, mb: 1 }} />
-        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-          {title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {description}
-        </Typography>
-      </CardContent>
-    </Card>
+      <Fade in={open}>
+        <Paper
+          sx={{
+            width: '100%',
+            maxWidth: 480,
+            borderRadius: '20px',
+            boxShadow: theme.shadows[24],
+            p: 4,
+            mx: 3,
+            position: 'relative',
+          }}
+        >
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          
+          <Typography variant="h5" component="h2" fontWeight={700} mb={3}>
+            Add New Reading
+          </Typography>
+          
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Date"
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                />
+              </Grid>
+              
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Time"
+                  type="time"
+                  name="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                />
+              </Grid>
+              
+              <Grid item xs={12}>
+                <TextField
+                  label="Reading Value"
+                  type="number"
+                  name="reading"
+                  value={formData.reading}
+                  onChange={handleChange}
+                  fullWidth
+                  placeholder="Enter measurement value"
+                />
+              </Grid>
+              
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel>Measurement Type</InputLabel>
+                  <Select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    label="Measurement Type"
+                  >
+                    <MenuItem value="GCS">Green Compressive Strength (GCS)</MenuItem>
+                    <MenuItem value="Moisture">Moisture Content</MenuItem>
+                    <MenuItem value="Compactibility">Compactibility</MenuItem>
+                    <MenuItem value="Permeability">Permeability</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={handleClose}
+                fullWidth
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  height: 48,
+                  fontWeight: 600,
+                }}
+              >
+                Save Reading
+              </Button>
+            </Box>
+          </form>
+        </Paper>
+      </Fade>
+    </Modal>
   );
 };
 
@@ -58,6 +235,7 @@ const SandTesting = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
     time: '',
@@ -80,126 +258,115 @@ const SandTesting = () => {
     e.preventDefault();
     console.log(formData);
     handleClose();
+    setOpenSnackbar(true);
   };
 
-  return (
-    <Box sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-        Sand Testing Dashboard
-      </Typography>
-      <Button variant="contained" color="primary" onClick={handleOpen} sx={{ mb: 2 }}>
-        Add New Reading
-      </Button>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={4}>
-          <DashboardTile
-            title="Green Compressive Strength (GCS)"
-            description="Indicates the compactness and strength of green sand."
-            Icon={ScienceIcon}
-            color={theme.palette.primary.main}
-            onClick={() => navigate('/runner')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <DashboardTile
-            title="Moisture Content"
-            description="Optimal moisture levels ensure good mold strength and prevent casting defects."
-            Icon={ScienceIcon}
-            color={theme.palette.secondary.main}
-            onClick={() => navigate('/moisture')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <DashboardTile
-            title="Compactibility"
-            description="Measures the mold’s capability to retain shape under pressure."
-            Icon={ScienceIcon}
-            color={theme.palette.success.main}
-            onClick={() => navigate('/compactability')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <DashboardTile
-            title="Permeability"
-            description="Determines the ability of gases to escape from the mold during casting."
-            Icon={ScienceIcon}
-            color={theme.palette.warning.main}
-            onClick={() => navigate('/permeability')}
-          />
-        </Grid>
-      </Grid>
+  const tiles = [
+    {
+      title: "Green Compressive Strength",
+      description: "Indicates the compactness and strength of green sand molds",
+      Icon: CompressIcon,
+      color: theme.palette.primary.main,
+      path: '/runner'
+    },
+    {
+      title: "Moisture Content",
+      description: "Measures water content to ensure optimal mold strength",
+      Icon: WaterIcon,
+      color: theme.palette.secondary.main,
+      path: '/moisture'
+    },
+    {
+      title: "Compactibility",
+      description: "Evaluates the mold's ability to maintain shape under pressure",
+      Icon: SpeedIcon,
+      color: theme.palette.success.main,
+      path: '/compactability'
+    },
+    {
+      title: "Permeability",
+      description: "Measures gas escape capability during the casting process",
+      Icon: AirIcon,
+      color: theme.palette.warning.main,
+      path: '/permeability'
+    }
+  ];
 
-      {/* Modal for adding new reading */}
-      <Modal open={openModal} onClose={handleClose}>
-        <Box
-          sx={{
-            width: 400,
-            bgcolor: 'background.paper',
-            borderRadius: '12px',
-            boxShadow: 24,
-            p: 4,
-            mx: 'auto',
-            mt: '20vh',
-          }}
-        >
-          <Typography variant="h6" component="h2" gutterBottom>
-            Add New Reading
+  return (
+    <Container maxWidth="xl">
+      <Box sx={{ flexGrow: 1, py: 4, mt: 8 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 4 
+        }}>
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              fontWeight: 800,
+              background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Sand Testing Dashboard
           </Typography>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Date"
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
+          
+          <Tooltip title="Add New Reading" arrow>
+            <Button
+              variant="contained"
+              onClick={handleOpen}
+              startIcon={<AddIcon />}
+              sx={{
+                borderRadius: '12px',
+                px: 3,
+                py: 1.5,
+                boxShadow: theme.shadows[4],
               }}
-              fullWidth
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Time"
-              type="time"
-              name="time"
-              value={formData.time}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              fullWidth
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Reading"
-              type="number"
-              name="reading"
-              value={formData.reading}
-              onChange={handleChange}
-              fullWidth
-              sx={{ mb: 2 }}
-            />
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel id="type-label">Type</InputLabel>
-              <Select
-                labelId="type-label"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-              >
-                <MenuItem value="GCS">Green Compressive Strength (GCS)</MenuItem>
-                <MenuItem value="Moisture">Moisture Content</MenuItem>
-                <MenuItem value="Compactibility">Compactibility</MenuItem>
-                <MenuItem value="Permeability">Permeability</MenuItem>
-              </Select>
-            </FormControl>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Submit
+            >
+              New Reading
             </Button>
-          </form>
+          </Tooltip>
         </Box>
-      </Modal>
-    </Box>
+
+        <Grid container spacing={3}>
+          {tiles.map((tile, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <DashboardTile
+                {...tile}
+                onClick={() => navigate(tile.path)}
+              />
+            </Grid>
+          ))}
+        </Grid>
+
+        <AddReadingModal
+          open={openModal}
+          handleClose={handleClose}
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+        />
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert 
+            onClose={() => setOpenSnackbar(false)} 
+            severity="success"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            Reading added successfully!
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 };
 

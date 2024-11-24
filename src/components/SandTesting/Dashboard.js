@@ -8,36 +8,166 @@ import {
   CardContent,
   Grid,
   Box,
-  Divider,
-  Chip,
   Container,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  Avatar,
+  useTheme,
+  Fade,
+  Tooltip,
+  Divider
 } from '@mui/material';
 import {
   Science as ScienceIcon,
   Timeline as TimelineIcon,
-  ChevronRight as ChevronRightIcon,
+  Menu as MenuIcon,
   LocationOn as LocationIcon,
   Schedule as ScheduleIcon,
-  Sensors as SensorsIcon,
-  BarChart as BarChartIcon,
-  ShowChart as ShowChartIcon,
-  CloudUpload as CloudUploadIcon,
-  Menu as MenuIcon
+  Person as PersonIcon
 } from '@mui/icons-material';
 
+const DashboardCard = ({ title, icon: Icon, progress, secondaryMetric, secondaryValue, color, onClick }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <Fade in={true} timeout={800}>
+      <Card 
+        onClick={onClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        sx={{ 
+          height: '100%',
+          cursor: 'pointer',
+          borderRadius: 4,
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'all 0.3s ease-in-out',
+          transform: isHovered ? 'translateY(-8px)' : 'none',
+          boxShadow: isHovered ? 
+            '0 12px 24px -10px rgba(0,0,0,0.15)' : 
+            '0 6px 12px -6px rgba(0,0,0,0.1)',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: `linear-gradient(90deg, ${color}CC, ${color})`,
+            transition: 'transform 0.3s ease-in-out',
+            transform: isHovered ? 'scaleX(1)' : 'scaleX(0)',
+          }
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            mb: 3,
+            gap: 2 
+          }}>
+            <Avatar
+              sx={{
+                bgcolor: `${color}22`,
+                color: color,
+                width: 56,
+                height: 56,
+                transition: 'all 0.3s ease',
+                transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+              }}
+            >
+              <Icon sx={{ fontSize: 32 }} />
+            </Avatar>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700,
+                color: 'text.primary',
+                transition: 'color 0.3s ease',
+              }}
+            >
+              {title}
+            </Typography>
+          </Box>
+
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            mb: 2
+          }}>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: 'text.secondary',
+                fontWeight: 500 
+              }}
+            >
+              Progress
+            </Typography>
+            <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <CircularProgress 
+                variant="determinate" 
+                value={progress} 
+                size={64}
+                thickness={6}
+                sx={{ 
+                  color: color,
+                  opacity: 0.8,
+                  transition: 'all 0.3s ease',
+                  transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                }}
+              />
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  position: 'absolute', 
+                  left: '50%', 
+                  top: '50%', 
+                  transform: 'translate(-50%, -50%)',
+                  fontWeight: 700,
+                  color: 'text.primary'
+                }}
+              >
+                {progress}%
+              </Typography>
+            </Box>
+          </Box>
+
+          <Divider sx={{ my: 2, opacity: 0.1 }} />
+
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            mt: 2
+          }}>
+            <Typography 
+              variant="body2" 
+              sx={{ color: 'text.secondary' }}
+            >
+              {secondaryMetric}
+            </Typography>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 700,
+                color: color
+              }}
+            >
+              {secondaryValue}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    </Fade>
+  );
+};
+
 const Dashboard = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [foundryLocation, setFoundryLocation] = useState('Belgaum');
-  const [shift, setShift] = useState(1);
-  const [sandTestingProgress, setSandTestingProgress] = useState(75);
-  const [spcProgress, setSpcProgress] = useState(85);
-  const [defectRate, setDefectRate] = useState(2.5);
-  const [energyConsumption, setEnergyConsumption] = useState(12345);
-  const [productionVolume, setProductionVolume] = useState(2500);
-  const [onTimeDelivery, setOnTimeDelivery] = useState(92.3);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -47,19 +177,22 @@ const Dashboard = () => {
   }, []);
 
   const user = {
-    name: "John Doe",
-    designation: "Quality Engineer"
-  };
-
-  const handleCardClick = (path) => {
-    navigate(path);
+    name: "Admin",
+    designation: "Quality Manager"
   };
 
   return (
-    <Container maxWidth={false} disableGutters sx={{ bgcolor: '#f0f2f5', minHeight: '100vh' }}>
-      {/* App Bar */}
-      <AppBar position="static" sx={{ bgcolor: '#1976d2', color: '#fff', boxShadow: 'none' }}>
-        <Toolbar>
+    <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh' }}>
+      <AppBar 
+        position="static" 
+        elevation={0}
+        sx={{ 
+          bgcolor: 'white', 
+          borderBottom: '1px solid',
+          borderColor: 'divider'
+        }}
+      >
+        <Toolbar sx={{ px: { xs: 2, sm: 4 } }}>
           <IconButton
             size="large"
             edge="start"
@@ -69,225 +202,136 @@ const Dashboard = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-            AKP Ferrocast Pvt Limited
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ textAlign: 'right' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: '500' }}>{user.name}</Typography>
-              <Typography variant="caption" color="text.secondary">
-                {user.designation}
-              </Typography>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 800,
+                color: theme.palette.primary.main,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
+              }}
+            >
+              AKP FOUNDRIES
+            </Typography>
+            <Typography 
+              variant="body2"
+              sx={{ 
+                color: 'text.secondary',
+                borderLeft: '2px solid',
+                borderColor: 'divider',
+                pl: 2,
+                display: { xs: 'none', sm: 'block' }
+              }}
+            >
+              Quality Management System
+            </Typography>
+          </Box>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 3,
+            color: 'text.primary' 
+          }}>
+            <Tooltip title="Current Location" arrow>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1,
+                display: { xs: 'none', md: 'flex' }
+              }}>
+                <LocationIcon color="action" sx={{ fontSize: 20 }} />
+                <Typography variant="body2">Belgaum</Typography>
+              </Box>
+            </Tooltip>
+
+            <Tooltip title="Current Time" arrow>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1,
+                display: { xs: 'none', md: 'flex' }
+              }}>
+                <ScheduleIcon color="action" sx={{ fontSize: 20 }} />
+                <Typography variant="body2">
+                  {currentDateTime.toLocaleTimeString()}
+                </Typography>
+              </Box>
+            </Tooltip>
+
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              borderLeft: '1px solid',
+              borderColor: 'divider',
+              pl: 2
+            }}>
+              <Avatar sx={{ 
+                width: 36, 
+                height: 36,
+                bgcolor: theme.palette.primary.main 
+              }}>
+                <PersonIcon />
+              </Avatar>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  {user.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {user.designation}
+                </Typography>
+              </Box>
             </Box>
-            <IconButton color="inherit">
-              <CloudUploadIcon />
-            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
 
-      {/* Main Content */}
-      <Box sx={{ p: 4 }}>
-        <Grid container spacing={4}>
-          {/* Sand Testing Card */}
-          <Grid item xs={12} md={6} lg={4}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                borderRadius: 3,
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                '&:hover': { boxShadow: 8, transform: 'scale(1.05)' },
-                bgcolor: '#42a5f5',
-                color: 'white'
-              }}
-              onClick={() => handleCardClick('/sand-testing')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <ScienceIcon sx={{ mr: 1, fontSize: 30 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Sand Testing</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Progress</Typography>
-                  <CircularProgress 
-                    variant="determinate" 
-                    value={sandTestingProgress} 
-                    size={50}
-                    thickness={5}
-                    sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  />
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{sandTestingProgress}%</Typography>
-                </Box>
-              </CardContent>
-              <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.5)' }} />
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Shift</Typography>
-                  <Chip 
-                    label={`Shift ${shift}`}
-                    color="primary"
-                    size="medium"
-                    sx={{ fontWeight: 'bold' }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            mb: 4, 
+            fontWeight: 800,
+            color: 'text.primary',
+            textAlign: 'center'
+          }}
+        >
+          Process Control Dashboard
+        </Typography>
+
+        <Grid container spacing={4} sx={{ mb: 4 }}>
+          <Grid item xs={12} md={6}>
+            <DashboardCard
+              title="Sand Testing"
+              icon={ScienceIcon}
+              progress={75}
+              secondaryMetric="Current Shift"
+              secondaryValue="Shift 1"
+              color={theme.palette.primary.main}
+              onClick={() => navigate('/sand-testing')}
+            />
           </Grid>
 
-          {/* SPC Card */}
-          <Grid item xs={12} md={6} lg={4}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                borderRadius: 3,
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                '&:hover': { boxShadow: 8, transform: 'scale(1.05)' },
-                bgcolor: '#66bb6a',
-                color: 'white'
-              }}
-              onClick={() => handleCardClick('/spcdas')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <TimelineIcon sx={{ mr: 1, fontSize: 30 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Statistical Process Control</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Progress</Typography>
-                  <CircularProgress 
-                    variant="determinate" 
-                    value={spcProgress} 
-                    size={50}
-                    thickness={5}
-                    sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  />
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{spcProgress}%</Typography>
-                </Box>
-              </CardContent>
-              <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.5)' }} />
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Defect Rate</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{defectRate}%</Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Energy Consumption Card */}
-          <Grid item xs={12} md={6} lg={4}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                borderRadius: 3,
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                '&:hover': { boxShadow: 8, transform: 'scale(1.05)' },
-                bgcolor: '#ffa000',
-                color: 'white'
-              }}
-              onClick={() => handleCardClick('/energy-consumption')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <SensorsIcon sx={{ mr: 1, fontSize: 30 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Energy Consumption</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Consumption</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{energyConsumption} kWh</Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Production Volume Card */}
-          <Grid item xs={12} md={6} lg={4}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                borderRadius: 3,
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                '&:hover': { boxShadow: 8, transform: 'scale(1.05)' },
-                bgcolor: '#9575cd',
-                color: 'white'
-              }}
-              onClick={() => handleCardClick('/production-volume')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <BarChartIcon sx={{ mr: 1, fontSize: 30 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Production Volume</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Volume</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{productionVolume}</Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* On-Time Delivery Card */}
-          <Grid item xs={12} md={6} lg={4}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                borderRadius: 3,
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                '&:hover': { boxShadow: 8, transform: 'scale(1.05)' },
-                bgcolor: '#26a69a',
-                color: 'white'
-              }}
-              onClick={() => handleCardClick('/on-time-delivery')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <ShowChartIcon sx={{ mr: 1, fontSize: 30 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>On-Time Delivery</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">Rate</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{onTimeDelivery}%</Typography>
-                </Box>
-              </CardContent>
-            </Card>
+          <Grid item xs={12} md={6}>
+            <DashboardCard
+              title="Statistical Process Control"
+              icon={TimelineIcon}
+              progress={85}
+              secondaryMetric="Defect Rate"
+              secondaryValue="2.5%"
+              color={theme.palette.secondary.main}
+              onClick={() => navigate('/spcdas')}
+            />
           </Grid>
         </Grid>
-        
-        {/* Additional Details */}
-        <Box sx={{ mt: 4 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={4}>
-              <Card sx={{ borderRadius: 3, boxShadow: 2, p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <LocationIcon color="primary" />
-                  <Typography variant="body1">{foundryLocation}</Typography>
-                </Box>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Card sx={{ borderRadius: 3, boxShadow: 2, p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <ScheduleIcon color="primary" />
-                  <Typography variant="body1">{currentDateTime.toLocaleString()}</Typography>
-                </Box>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Card sx={{ borderRadius: 3, boxShadow: 2, p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Chip 
-                    label={`Shift ${shift}`}
-                    color="primary"
-                    size="medium"
-                    sx={{ fontWeight: 'bold' }}
-                  />
-                </Box>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

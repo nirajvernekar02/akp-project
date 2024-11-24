@@ -12,6 +12,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
+import StatisticalParametersChart from './StasticalChart';
 
 const RunnerChart = () => {
   const [data, setData] = useState([]);
@@ -54,6 +55,7 @@ const RunnerChart = () => {
             date: day.date,
             reading: reading.reading,
             time: reading.time,
+            remark: reading.remark, // Add this line
             formattedDate: format(new Date(day.date), 'MM/dd') + ' ' + reading.time,
             cp: day.cp || 0,
             cpk: day.cpk || 0
@@ -99,14 +101,13 @@ const RunnerChart = () => {
       toast.error('Failed to add new entry. Please try again.');
     }
   };
-
   const getColor = (value) => {
-    if (value <= limits.yellowLower || value >= limits.yellowUpper) return '#ff0000';
-    if (value > limits.yellowLower && value < limits.greenLower) return '#ffff00';
-    if (value > limits.greenUpper && value < limits.yellowUpper) return '#ffff00';
-    return '#00ff00';
+    if (value <= limits.yellowLower || value >= limits.yellowUpper) return '#FF0000'; // Bright Red
+    if (value > limits.yellowLower && value < limits.greenLower) return '#FFD700'; // Bright Golden Yellow
+    if (value > limits.greenUpper && value < limits.yellowUpper) return '#FFD700'; // Bright Golden Yellow
+    return '#00FF00'; // Bright Green
   };
-
+  
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length > 0) {
       const data = payload[0].payload;
@@ -118,6 +119,7 @@ const RunnerChart = () => {
         }}>
           <p>{`Date: ${data.formattedDate}`}</p>
           <p>{`Reading: ${data.reading}`}</p>
+          {data.remark && <p>{`Remark: ${data.remark}`}</p>}
           {showCpCpk && (
             <>
               <p>{`Cp: ${data.cp?.toFixed(2) || 'N/A'}`}</p>
@@ -130,7 +132,7 @@ const RunnerChart = () => {
     return null;
   };
 
-  const PrintLayout = ({ data, partInfo, limits }) => (
+  const PrintLayout = ({ data, partInfo, limits, showCpCpk }) => (
     <div className="print-only">
       <div className="print-header">
         <h1>AKP FOUNDRIES - RUN CHART</h1>
@@ -167,6 +169,12 @@ const RunnerChart = () => {
           height: 400
         })}
       </div>
+
+      {showCpCpk && (
+        <div className="print-statistical-chart">
+          <StatisticalParametersChart data={data} />
+        </div>
+      )}
   
       <div className="print-legend">
         <div className="legend-item">
@@ -210,11 +218,11 @@ const RunnerChart = () => {
       <YAxis domain={[limits.lower, limits.upper]} />
       <Tooltip content={<CustomTooltip />} />
       <Legend />
-      <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.8} />
+      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.5} />
+      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.5} />
+      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.5} />
+      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.8} />
       <Line
         type="monotone"
         dataKey="reading"
@@ -232,26 +240,6 @@ const RunnerChart = () => {
           />
         )}
       />
-      {showCpCpk && (
-        <>
-          <Line
-            type="monotone"
-            dataKey="cp"
-            stroke="#82ca9d"
-            strokeWidth={2}
-            name="Cp"
-            dot={false}
-          />
-          <Line
-            type="monotone"
-            dataKey="cpk"
-            stroke="#ffc658"
-            strokeWidth={2}
-            name="Cpk"
-            dot={false}
-          />
-        </>
-      )}
     </LineChart>
   );
 
@@ -350,23 +338,7 @@ const RunnerChart = () => {
     greenUpper: limits.greenUpper,
     greenLower: limits.greenLower
   }}
-/>          <PrintLayout 
-  data={data}
-  partInfo={{
-    partName,
-    partNumber,
-    processNo,
-    processName
-  }}
-  limits={{
-    upper: limits.upper,
-    lower: limits.lower,
-    yellowUpper: limits.yellowUpper,
-    yellowLower: limits.yellowLower,
-    greenUpper: limits.greenUpper,
-    greenLower: limits.greenLower
-  }}
-/>
+/>        
             <Button variant="contained" onClick={() => setOpenDialog(true)}>
               Add Entry
             </Button>
@@ -381,6 +353,10 @@ const RunnerChart = () => {
             {chartContent}
           </ResponsiveContainer>
         </Box>
+
+        {showCpCpk && (
+  <StatisticalParametersChart data={data} />
+)}
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New Entry</DialogTitle>

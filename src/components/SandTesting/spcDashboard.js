@@ -3,263 +3,273 @@ import {
   Box,
   Card,
   CardContent,
-  Button,
-  TextField,
   Grid,
   Typography,
-  Snackbar,
-  Alert,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Paper
+  Chip,
+  LinearProgress,
+  IconButton,
+  Tooltip,
+  Paper,
+  Tab,
+  Tabs,
+  CircularProgress
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import {
+  Science,
+  Speed,
+  ThermostatAuto,
+  Scale,
+  Warning,
+  CheckCircle,
+  Info,
+  Assessment,
+  Timeline
+} from '@mui/icons-material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const parameters = [
-  { id: 'totalClay', label: 'Total Clay %' },
-  { id: 'activeClay', label: 'Active Clay %' },
-  { id: 'deadClay', label: 'Dead Clay %' },
-  { id: 'volatileMatter', label: 'Volatile Matter %' },
-  { id: 'lossOnIgnition', label: 'Loss on Ignition %' },
-  { id: 'greenCompressiveStrength', label: 'Green Compressive Strength gm/cm²' },
-  { id: 'compactibility', label: 'Compactibility %' },
-  { id: 'moisture', label: 'Moisture %' },
-  { id: 'permeabilityNumber', label: 'Permeability Number' },
-  { id: 'wetTensileStrength', label: 'Wet Tensile Strength gm/cm²' },
-  { id: 'bentoniteAddition', label: 'Bentonite Addition Kg/%' },
-  { id: 'coalDustAddition', label: 'Coal Dust Addition Kg' },
-  { id: 'sandTemperature', label: 'Sand Temperature at Moulding Box' },
-  { id: 'newSandAdditionTime', label: 'New Sand Addition Timer (sec)' },
-  { id: 'newSandAdditionWeight', label: 'New Sand Addition Weight (kg)' },
-  { id: 'dailyDustCollected1', label: 'Daily Dust Collected 1 (Old) kg' },
-  { id: 'dailyDustCollected2', label: 'Daily Dust Collected 2 (New) kg' },
-  { id: 'totalDustCollected', label: 'Total Dust Collected kg' }
-];
+// Parameter groups with their configurations
+const parameterGroups = {
+  clay: {
+    icon: <Science />,
+    title: "Clay Parameters",
+    color: "#1976d2",
+    items: ['totalClay', 'activeClay', 'deadClay']
+  },
+  strength: {
+    icon: <Speed />,
+    title: "Strength Parameters",
+    color: "#2e7d32",
+    items: ['greenCompressiveStrength', 'wetTensileStrength', 'compactibility']
+  },
+  composition: {
+    icon: <Scale />,
+    title: "Composition Parameters",
+    color: "#9c27b0",
+    items: ['volatileMatter', 'lossOnIgnition', 'moisture']
+  },
+  temperature: {
+    icon: <ThermostatAuto />,
+    title: "Process Parameters",
+    color: "#ed6c02",
+    items: ['sandTemperature', 'newSandAdditionTime', 'newSandAdditionWeight']
+  }
+};
 
-const API_BASE_URL = 'http://localhost:5500/api/foundry';
+// Parameter limits configuration
+const parameterLimits = {
+  totalClay: { min: 7, max: 10, unit: '%' },
+  activeClay: { min: 3.5, max: 5, unit: '%' },
+  deadClay: { min: 3.5, max: 5, unit: '%' },
+  volatileMatter: { min: 25, max: 30, unit: '%' },
+  lossOnIgnition: { min: 4, max: 6, unit: '%' },
+  greenCompressiveStrength: { min: 1200, max: 1800, unit: 'gm/cm²' },
+  compactibility: { min: 40, max: 50, unit: '%' },
+  moisture: { min: 3, max: 4.5, unit: '%' },
+  permeabilityNumber: { min: 120, max: 180, unit: '' },
+  wetTensileStrength: { min: 200, max: 300, unit: 'gm/cm²' },
+  sandTemperature: { min: 38, max: 45, unit: '°C' },
+  newSandAdditionTime: { min: 25, max: 35, unit: 'sec' },
+  newSandAdditionWeight: { min: 140, max: 160, unit: 'kg' }
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [readings, setReadings] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [statsData, setStatsData] = useState({});
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newReading, setNewReading] = useState({
-    parameter: '',
-    value: '',
-    timestamp: new Date().toISOString().slice(0, 16)
-  });
-
-  const fetchReadings = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API_BASE_URL}/readings`);
-      setReadings(response.data);
-    } catch (err) {
-      setError('Failed to fetch readings');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchReadings();
+    fetchStats();
   }, []);
 
-  const handleAddReading = async (e) => {
-    e.preventDefault();
+  const fetchStats = async () => {
     try {
       setLoading(true);
-      await axios.post(`${API_BASE_URL}/readings`, newReading);
-      fetchReadings();
-      setNewReading({
-        parameter: '',
-        value: '',
-        timestamp: new Date().toISOString().slice(0, 16)
-      });
+      const endDate = new Date(new Date().setDate(new Date().getDate() + 1))
+      .toISOString()
+      .split('T')[0];
+    
+      const startDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const response = await axios.get(`http://localhost:5500/api/foundry/stats?startDate=${startDate}&endDate=${endDate}`);
+      
+      // Process and organize the data
+      const processedData = response.data.reduce((acc, item) => {
+        acc[item.parameter] = {
+          average: item.average,
+          min: item.min,
+          max: item.max,
+          date: new Date(item.date).toLocaleDateString()
+        };
+        return acc;
+      }, {});
+      
+      setStatsData(processedData);
     } catch (err) {
-      setError('Failed to add reading');
+      setError('Failed to fetch statistics');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCardClick = (page) => {
-    navigate(page);
+  const getStatusColor = (value, min, max) => {
+    if (!value || value < min || value > max) return '#d32f2f';
+    const midpoint = (max + min) / 2;
+    const deviation = Math.abs(value - midpoint) / (max - min);
+    return deviation > 0.3 ? '#ed6c02' : '#2e7d32';
+  };
+
+  const getStatusIcon = (value, min, max) => {
+    if (!value || value < min || value > max) return <Warning color="error" />;
+    const midpoint = (max + min) / 2;
+    const deviation = Math.abs(value - midpoint) / (max - min);
+    return deviation > 0.3 ? <Info color="warning" /> : <CheckCircle color="success" />;
+  };
+
+  const calculateProgress = (value, min, max) => {
+    if (!value) return 0;
+    return Math.min(Math.max(((value - min) / (max - min)) * 100, 0), 100);
   };
 
   return (
-    <Box sx={{ p: 4, backgroundColor: '#f0f4f8' }}>
-      <Typography variant="h4" gutterBottom align="center" color="#1565c0" fontWeight={600}>
-        Foundry Dashboard
+    <Box sx={{ p: 3, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+      <Typography variant="h4" gutterBottom align="center" sx={{ color: '#1976d2', fontWeight: 600, mb: 4 }}>
+        Foundry Process Control Dashboard
       </Typography>
 
-      {error && (
-        <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
-          <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>
-        </Snackbar>
-      )}
-
-      <Grid container spacing={4}>
-        {/* First Card - Foundry Sand Testing Parameters */}
+      {/* Navigation Cards */}
+      <Grid container spacing={4} sx={{ mb: 4 }}>
         <Grid item xs={12} md={6}>
           <Card
             sx={{
               cursor: 'pointer',
-              '&:hover': { transform: 'scale(1.05)', boxShadow: 5 },
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              backgroundColor: '#1565c0',
-              border: '1px solid #1565c0',
-              borderRadius: '8px'
+              '&:hover': { transform: 'scale(1.02)', boxShadow: 5 },
+              transition: 'transform 0.3s ease',
+              backgroundColor: '#1976d2'
             }}
-            onClick={() => handleCardClick('/foundry-reading')}
+            onClick={() => navigate('/foundry-reading')}
           >
             <CardContent>
-              <Typography variant="h5" color="#fff" gutterBottom fontWeight={600}>
-                Foundry Sand Testing Parameters
+              <Typography variant="h5" sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Assessment /> Foundry Readings
               </Typography>
-              <Typography variant="body1" color="#e3f2fd">
-                Click here to view the foundry sand testing parameters and add readings.
+              <Typography sx={{ color: '#e3f2fd', mt: 1 }}>
+                View and manage detailed foundry readings
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Second Card - Result */}
         <Grid item xs={12} md={6}>
           <Card
             sx={{
               cursor: 'pointer',
-              '&:hover': { transform: 'scale(1.05)', boxShadow: 5 },
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              backgroundColor: '#e3f2fd',
-              border: '1px solid #90caf9',
-              borderRadius: '8px'
+              '&:hover': { transform: 'scale(1.02)', boxShadow: 5 },
+              transition: 'transform 0.3s ease',
+              backgroundColor: '#2e7d32'
             }}
-            onClick={() => handleCardClick('/foundry-average')}
+            onClick={() => navigate('/foundry-average')}
           >
             <CardContent>
-              <Typography variant="h5" color="#1565c0" gutterBottom fontWeight={600}>
-                Result
+              <Typography variant="h5" sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Timeline /> Analysis Results
               </Typography>
-              <Typography variant="body1" color="#424242">
-                View the latest readings and analysis here.
+              <Typography sx={{ color: '#e8f5e9', mt: 1 }}>
+                View statistical analysis and trends
               </Typography>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
-      {/* Add Reading Form */}
-      <Paper sx={{ mt: 4, p: 4, backgroundColor: '#fff', boxShadow: 5, borderRadius: '8px' }}>
-        <Typography variant="h5" color="#1565c0" gutterBottom fontWeight={600}>
-          Add New Reading
-        </Typography>
-
-        <form onSubmit={handleAddReading}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
-                <InputLabel>Parameter</InputLabel>
-                <Select
-                  value={newReading.parameter}
-                  onChange={(e) => setNewReading((prev) => ({ ...prev, parameter: e.target.value }))}
-                  label="Parameter"
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1565c0'
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#0d47a1'
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#0d47a1'
-                    }
-                  }}
-                >
-                  {parameters.map((param) => (
-                    <MenuItem key={param.id} value={param.id}>
-                      {param.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                required
-                label="Value"
-                type="number"
-                value={newReading.value}
-                onChange={(e) => setNewReading((prev) => ({ ...prev, value: e.target.value }))}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#1565c0'
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#0d47a1'
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#0d47a1'
-                    }
-                  }
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                required
-                label="Timestamp"
-                type="datetime-local"
-                value={newReading.timestamp}
-                onChange={(e) => setNewReading((prev) => ({ ...prev, timestamp: e.target.value }))}
-                InputLabelProps={{ shrink: true }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#1565c0'
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#0d47a1'
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#0d47a1'
-                    }
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid container spacing={3} mt={3} justifyContent="center">
-            <Grid item xs={12} sm={6}>
-              <Button
-                variant="contained"
-                fullWidth
-                type="submit"
-                sx={{
-                  backgroundColor: '#1565c0',
-                  '&:hover': { backgroundColor: '#0d47a1' },
-                  color: '#fff',
-                  borderRadius: '4px',
-                  fontWeight: 600
-                }}
-                disabled={loading || !newReading.parameter || !newReading.value}
-              >
-                {loading ? <CircularProgress size={24} /> : 'Add Reading'}
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
+      {/* Parameters Display */}
+      <Paper sx={{ mb: 3, p: 2 }}>
+        <Tabs
+          value={selectedTab}
+          onChange={(e, newValue) => setSelectedTab(newValue)}
+          centered
+          sx={{ mb: 2 }}
+        >
+          {Object.keys(parameterGroups).map((group, index) => (
+            <Tab
+              key={group}
+              label={parameterGroups[group].title}
+              icon={parameterGroups[group].icon}
+              iconPosition="start"
+            />
+          ))}
+        </Tabs>
       </Paper>
 
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={3}>
+          {Object.entries(parameterGroups)[selectedTab][1].items.map((paramId) => {
+            const paramData = statsData[paramId] || {};
+            const limits = parameterLimits[paramId];
+            
+            return (
+              <Grid item xs={12} md={4} key={paramId}>
+                <Card sx={{ height: '100%', '&:hover': { transform: 'translateY(-4px)', boxShadow: 4 }, transition: 'transform 0.2s' }}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Typography variant="h6" sx={{ color: '#333' }}>
+                        {paramId.replace(/([A-Z])/g, ' $1').trim()}
+                      </Typography>
+                      <Tooltip title={`Range: ${limits.min} - ${limits.max} ${limits.unit}`}>
+                        <IconButton size="small">
+                          {getStatusIcon(paramData.average, limits.min, limits.max)}
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Typography variant="h4" sx={{ fontWeight: 600, color: getStatusColor(paramData.average, limits.min, limits.max) }}>
+                        {paramData.average?.toFixed(1) || 'N/A'}
+                      </Typography>
+                      <Typography variant="body1" sx={{ ml: 1, color: '#666' }}>
+                        {limits.unit}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ mb: 1 }}>
+                      <LinearProgress
+                        variant="determinate"
+                        value={calculateProgress(paramData.average, limits.min, limits.max)}
+                        sx={{
+                          height: 8,
+                          borderRadius: 4,
+                          backgroundColor: '#e0e0e0',
+                          '& .MuiLinearProgress-bar': {
+                            backgroundColor: getStatusColor(paramData.average, limits.min, limits.max),
+                            borderRadius: 4
+                          }
+                        }}
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                      <Chip label={`Min: ${limits.min}`} size="small" sx={{ backgroundColor: '#f5f5f5' }} />
+                      <Chip label={`Max: ${limits.max}`} size="small" sx={{ backgroundColor: '#f5f5f5' }} />
+                    </Box>
+
+                    {paramData.date && (
+                      <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 2, color: '#666' }}>
+                        Last Updated: {paramData.date}
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
     </Box>
   );
 };
