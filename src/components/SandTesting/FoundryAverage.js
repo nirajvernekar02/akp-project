@@ -65,8 +65,8 @@ const FoundryAverages = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(new Date().setDate(new Date().getDate() - 9)).toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0]
+    startDate: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString().split('T')[0],
+    endDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]
   });
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(false);

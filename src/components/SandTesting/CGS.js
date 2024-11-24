@@ -4,7 +4,7 @@ import {
 } from 'recharts';
 import {
   Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle,
-  Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
+  Box, Grid, FormControlLabel, Checkbox
 } from '@mui/material';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,21 +15,23 @@ import { format } from 'date-fns';
 
 const RunnerChart = () => {
   const [data, setData] = useState([]);
-  const upperLimit = 1500;
-  const lowerLimit = 1100;
-  const greenUpperLimit = 1400;
-  const greenLowerLimit = 1200;
-  const yellowUpperLimit = 1450;
-  const yellowLowerLimit = 1150;
+  const [showCpCpk, setShowCpCpk] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [newEntry, setNewEntry] = useState({ date: new Date(), time: '12:00', reading: '' });
+  const [newEntry, setNewEntry] = useState({ date: new Date(), time: '12:00', reading: '', remark: '' });
   const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 7)));
   const [endDate, setEndDate] = useState(new Date());
   const [partName, setPartName] = useState('');
   const [partNumber, setPartNumber] = useState('');
   const [processNo, setProcessNo] = useState('');
   const [processName, setProcessName] = useState('');
-
+  const [limits, setLimits] = useState({
+    upper: 1500,
+    lower: 1100,
+    greenUpper: 1400,
+    greenLower: 1200,
+    yellowUpper: 1450,
+    yellowLower: 1150
+  });
 
   useEffect(() => {
     fetchData();
@@ -41,10 +43,37 @@ const RunnerChart = () => {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
-          type:"CGS"
+          type: "cgs"
         }
       });
-      setData(response.data);
+
+      if (response.data.success) {
+        // Process the nested readings data
+        const processedData = response.data.data.reduce((acc, day) => {
+          const dayReadings = day.readings.map(reading => ({
+            date: day.date,
+            reading: reading.reading,
+            time: reading.time,
+            formattedDate: format(new Date(day.date), 'MM/dd') + ' ' + reading.time,
+            cp: day.cp || 0,
+            cpk: day.cpk || 0
+          }));
+          return [...acc, ...dayReadings];
+        }, []);
+
+        // Update limits if they exist in the response
+        if (response.data.data[0]) {
+          setLimits(prev => ({
+            ...prev,
+            upper: response.data.data[0].upperLimit,
+            lower: response.data.data[0].lowerLimit
+          }));
+        }
+
+        setData(processedData);
+      } else {
+        toast.error('Failed to fetch data: Invalid response format');
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to fetch data. Please try again.');
@@ -56,12 +85,13 @@ const RunnerChart = () => {
       const newData = {
         date: newEntry.date,
         time: newEntry.time,
-        type:"CGS",
-        reading: Number(newEntry.reading)
+        type: "cgs",
+        reading: Number(newEntry.reading),
+        remark: newEntry.remark
       };
       await axios.post('http://localhost:5500/api/runner/runnerData', newData);
       setOpenDialog(false);
-      setNewEntry({ date: new Date(), time: '12:00', reading: '' });
+      setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
       toast.success('New entry added successfully!');
     } catch (error) {
@@ -71,76 +101,35 @@ const RunnerChart = () => {
   };
 
   const getColor = (value) => {
-    if (value <= yellowLowerLimit || value >= yellowUpperLimit) return '#ff0000';
-    if (value > yellowLowerLimit && value < greenLowerLimit) return '#ffff00';
-    if (value > greenUpperLimit && value < yellowUpperLimit) return '#ffff00';
+    if (value <= limits.yellowLower || value >= limits.yellowUpper) return '#ff0000';
+    if (value > limits.yellowLower && value < limits.greenLower) return '#ffff00';
+    if (value > limits.greenUpper && value < limits.yellowUpper) return '#ffff00';
     return '#00ff00';
   };
 
-  const CustomizedXAxisTick = ({ x, y, payload }) => {
-    const dataPoint = data.find(d => d.date === payload.value);
-    if (!dataPoint) return null;
-
-    const date = new Date(dataPoint.date);
-    const formattedDate = format(date, 'dd/MM');
-    const time = dataPoint.time;
-
-    return (
-      <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-45)">
-          {`${formattedDate} ${time}`}
-        </text>
-      </g>
-    );
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length > 0) {
+      const data = payload[0].payload;
+      return (
+        <div className="custom-tooltip" style={{
+          backgroundColor: 'white',
+          padding: '10px',
+          border: '1px solid #ccc'
+        }}>
+          <p>{`Date: ${data.formattedDate}`}</p>
+          <p>{`Reading: ${data.reading}`}</p>
+          {showCpCpk && (
+            <>
+              <p>{`Cp: ${data.cp?.toFixed(2) || 'N/A'}`}</p>
+              <p>{`Cpk: ${data.cpk?.toFixed(2) || 'N/A'}`}</p>
+            </>
+          )}
+        </div>
+      );
+    }
+    return null;
   };
 
-  const chartContent = (
-    <LineChart
-      data={data}
-      margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis 
-        dataKey="date" 
-        height={90} 
-        tick={<CustomizedXAxisTick />}
-        interval={0}
-      />
-      <YAxis domain={[lowerLimit, upperLimit]} />
-      <Tooltip 
-        formatter={(value, name) => [value, 'Reading']}
-        labelFormatter={(label) => {
-          const dataPoint = data.find(d => d.date === label);
-          if (!dataPoint) return '';
-          const date = new Date(dataPoint.date);
-          return `${format(date, 'dd/MM/yyyy')} ${dataPoint.time}`;
-        }}
-      />
-      <Legend />
-      <ReferenceArea y1={lowerLimit} y2={yellowLowerLimit} fill="red" fillOpacity={0.3} />
-      <ReferenceArea y1={yellowLowerLimit} y2={greenLowerLimit} fill="yellow" fillOpacity={0.3} />
-      <ReferenceArea y1={greenLowerLimit} y2={greenUpperLimit} fill="green" fillOpacity={0.3} />
-      <ReferenceArea y1={greenUpperLimit} y2={yellowUpperLimit} fill="yellow" fillOpacity={0.3} />
-      <ReferenceArea y1={yellowUpperLimit} y2={upperLimit} fill="red" fillOpacity={0.3} />
-      <Line
-        type="monotone"
-        dataKey="reading"
-        stroke="#8884d8"
-        strokeWidth={3}
-        name="Reading"
-        dot={({ cx, cy, payload }) => (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={6} 
-            fill={getColor(payload.reading)} 
-            stroke="#8884d8" 
-            strokeWidth={2} 
-          />
-        )}
-      />
-    </LineChart>
-  );
   const PrintLayout = ({ data, partInfo, limits }) => (
     <div className="print-only">
       <div className="print-header">
@@ -178,7 +167,7 @@ const RunnerChart = () => {
           height: 400
         })}
       </div>
-
+  
       <div className="print-legend">
         <div className="legend-item">
           <span className="legend-color green"></span>
@@ -193,7 +182,7 @@ const RunnerChart = () => {
           <span>Stop and Correct</span>
         </div>
       </div>
-
+  
       <div className="print-signatures">
         <div>
           <p>Operator Sign: _________________</p>
@@ -205,18 +194,71 @@ const RunnerChart = () => {
     </div>
   );
 
-  const groupedData = data.reduce((acc, entry) => {
-    const date = new Date(entry.date).toLocaleDateString();
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(entry);
-    return acc;
-  }, {});
+  const chartContent = (
+    <LineChart
+      data={data}
+      margin={{ top: 5, right: 30, left: 20, bottom: 40 }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis 
+        dataKey="formattedDate"
+        height={60}
+        angle={0}
+        interval={0}
+        fontSize={10}
+      />
+      <YAxis domain={[limits.lower, limits.upper]} />
+      <Tooltip content={<CustomTooltip />} />
+      <Legend />
+      <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.3} />
+      <Line
+        type="monotone"
+        dataKey="reading"
+        stroke="#8884d8"
+        strokeWidth={3}
+        name="Reading"
+        dot={({ cx, cy, payload }) => (
+          <circle 
+            cx={cx} 
+            cy={cy} 
+            r={6} 
+            fill={getColor(payload.reading)} 
+            stroke="#8884d8" 
+            strokeWidth={2} 
+          />
+        )}
+      />
+      {showCpCpk && (
+        <>
+          <Line
+            type="monotone"
+            dataKey="cp"
+            stroke="#82ca9d"
+            strokeWidth={2}
+            name="Cp"
+            dot={false}
+          />
+          <Line
+            type="monotone"
+            dataKey="cpk"
+            stroke="#ffc658"
+            strokeWidth={2}
+            name="Cpk"
+            dot={false}
+          />
+        </>
+      )}
+    </LineChart>
+  );
 
   return (
     <Card style={{ maxWidth: '1200px', margin: 'auto', marginTop: '20px', padding: '20px' }}>
       <CardContent>
+        {/* Rest of your JSX remains the same... */}
         <Typography variant="h4" gutterBottom align="center">
           AKP FOUNDRIES - RUN CHART
         </Typography>
@@ -257,45 +299,81 @@ const RunnerChart = () => {
         </Grid>
 
         <Typography variant="subtitle1" gutterBottom>
-          Characteristics: G.G. STRENGTH gm/cm² | Specification: {lowerLimit} TO {upperLimit} gm/cm²
+          Characteristics: G.G. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²
         </Typography>
 
-        <Box display="flex" justifyContent="space-between" marginBottom="1rem" flexWrap="wrap">
-          <DatePicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            customInput={<TextField label="Start Date" />}
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            customInput={<TextField label="End Date" />}
-          />
-          <TextField
-            label="Lower Limit"
-            type="number"
-            value={lowerLimit}
-            // onChange={(e) => setLowerLimit(Number(e.target.value))}
-          />
-          <TextField
-            label="Upper Limit"
-            type="number"
-            value={upperLimit}
-            // onChange={(e) => setUpperLimit(Number(e.target.value))}
-          />
-          <Button variant="contained" onClick={() => setOpenDialog(true)}>
-            Add Entry
-          </Button>
-          <Button variant="contained" onClick={() => window.print()}>
-            Print
-          </Button>
+        <Box display="flex" justifyContent="space-between" marginBottom="1rem" alignItems="center" flexWrap="wrap">
+          <Box display="flex" gap={2} alignItems="center">
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              customInput={<TextField label="Start Date" size="small" />}
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              customInput={<TextField label="End Date" size="small" />}
+            />
+          </Box>
+          
+          <Box display="flex" gap={2} alignItems="center">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showCpCpk}
+                  onChange={(e) => setShowCpCpk(e.target.checked)}
+                />
+              }
+              label="Show Cp/Cpk"
+            />
+
+<PrintLayout 
+  data={data}
+  partInfo={{
+    partName,
+    partNumber,
+    processNo,
+    processName
+  }}
+  limits={{
+    upper: limits.upper,
+    lower: limits.lower,
+    yellowUpper: limits.yellowUpper,
+    yellowLower: limits.yellowLower,
+    greenUpper: limits.greenUpper,
+    greenLower: limits.greenLower
+  }}
+/>          <PrintLayout 
+  data={data}
+  partInfo={{
+    partName,
+    partNumber,
+    processNo,
+    processName
+  }}
+  limits={{
+    upper: limits.upper,
+    lower: limits.lower,
+    yellowUpper: limits.yellowUpper,
+    yellowLower: limits.yellowLower,
+    greenUpper: limits.greenUpper,
+    greenLower: limits.greenLower
+  }}
+/>
+            <Button variant="contained" onClick={() => setOpenDialog(true)}>
+              Add Entry
+            </Button>
+            <Button variant="contained" onClick={() => window.print()}>
+  Print
+</Button>
+          </Box>
         </Box>
 
         <Box style={{ height: '500px', width: '100%' }}>
@@ -303,55 +381,6 @@ const RunnerChart = () => {
             {chartContent}
           </ResponsiveContainer>
         </Box>
-
-        <Box mt={4}>
-          <Typography variant="h6" gutterBottom>Readings Table</Typography>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Time</TableCell>
-                  <TableCell>Reading</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.entries(groupedData).map(([date, entries]) => (
-                  <React.Fragment key={date}>
-                    <TableRow>
-                      <TableCell colSpan={3} style={{ fontWeight: 'bold' }}>{date}</TableCell>
-                    </TableRow>
-                    {entries.map((entry, index) => (
-                      <TableRow key={`${date}-${index}`}>
-                        <TableCell></TableCell>
-                        <TableCell>{entry.time}</TableCell>
-                        <TableCell>{entry.reading}</TableCell>
-                      </TableRow>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-
-        <PrintLayout 
-          data={data}
-          partInfo={{
-            partName,
-            partNumber,
-            processNo,
-            processName
-          }}
-          limits={{
-            upper: upperLimit,
-            lower: lowerLimit,
-            yellowUpper: yellowUpperLimit,
-            yellowLower: yellowLowerLimit,
-            greenUpper: greenUpperLimit,
-            greenLower: greenLowerLimit
-          }}
-        />
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New Entry</DialogTitle>
@@ -383,7 +412,17 @@ const RunnerChart = () => {
               fullWidth
               margin="normal"
             />
+            <TextField
+              label="Remark"
+              value={newEntry.remark}
+              onChange={(e) => setNewEntry(prev => ({ ...prev, remark: e.target.value }))}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={2}
+            />
           </DialogContent>
+
           <DialogActions>
             <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
             <Button onClick={handleAddEntry} color="primary">Add</Button>
