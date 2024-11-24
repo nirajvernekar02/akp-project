@@ -4,17 +4,29 @@ const RunnerData = require('../models/runnerModel');
 const multer = require('multer');
 const path = require('path');
 const moment = require('moment');
+const csv = require('csv-parser');
+const fs = require('fs');
+
+// Type-specific limits constant (matching our model)
+const LIMITS = {
+  moisture: { lower: 3.60, upper: 4.40 },
+  preamibility: { lower: 115, upper: 155 },
+  compactibility: { lower: 38, upper: 46 },
+  cgs: { lower: 1100, upper: 1500 }
+};
 
 // Multer configuration for file upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`);
-    }
-  }),
+  storage,
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     if (ext === '.csv') {
@@ -27,59 +39,119 @@ const upload = multer({
 
 // Utility function to handle errors
 const handleError = (res, error, status = 500) => {
-  res.status(status).json({ message: error.message });
+  console.error('Error:', error);
+  res.status(status).json({ 
+    success: false,
+    message: error.message 
+  });
 };
 
-// GET route to retrieve data
+// GET route to retrieve data with enhanced filtering
 router.get('/runnerData', async (req, res) => {
-  const { startDate, endDate, type } = req.query;
-
   try {
-    const query = {
-      date: {
-        $gte: startDate,
-        $lte: endDate
-      }
-    };
-
-    let data;
+    const { startDate, endDate, type } = req.query;
+    
+    const query = {};
+    
+    // Add date range if provided
+    if (startDate && endDate) {
+      query.date = {
+        $gte: moment(startDate).startOf('day').toDate(),
+        $lte: moment(endDate).endOf('day').toDate()
+      };
+    }
+    
+    // Add type if provided
     if (type) {
-      data = await RunnerData.find(query)
-        .where('readings')
-        .elemMatch({ type })
-        .sort({ date: 1 });
-    } else {
-      data = await RunnerData.find(query).sort({ date: 1 });
+      query.type = type;
     }
 
-    res.json(data);
+    const data = await RunnerData.find(query)
+      .sort({ date: 1, type: 1 })
+      .lean();
+
+    const response = {
+      success: true,
+      data,
+      count: data.length
+    };
+
+    // Add type-specific stats if type is specified
+    if (type && data.length > 0) {
+      const allReadings = data.flatMap(d => d.readings.map(r => r.reading));
+      const stats = {
+        overall: {
+          min: Math.min(...allReadings),
+          max: Math.max(...allReadings),
+          avg: allReadings.reduce((a, b) => a + b, 0) / allReadings.length,
+          count: allReadings.length,
+          limits: LIMITS[type]
+        }
+      };
+      response.stats = stats;
+    }
+
+    res.json(response);
   } catch (error) {
     handleError(res, error);
   }
 });
 
-// POST route to add new runner data
+// POST route to add new reading
 router.post('/runnerData', async (req, res) => {
-  const { date, time, reading, type, remark } = req.body;
-
   try {
-    // Format date to YYYY-MM-DD if not already
-    const formattedDate = moment(date).format('YYYY-MM-DD');
+    const { date, time, reading, type, remark } = req.body;
 
-    let runnerData = await RunnerData.findOne({ date: formattedDate });
-
-    if (!runnerData) {
-      runnerData = new RunnerData({ date: formattedDate });
+    // Validate required fields
+    if (!date || !time || reading === undefined || !type) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields'
+      });
     }
 
-    await runnerData.addReading({ 
-      time, 
-      reading, 
-      type, 
-      remark 
+    // Validate reading type
+    if (!LIMITS[type]) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid reading type'
+      });
+    }
+
+    const formattedDate = moment(date).startOf('day').toDate();
+
+    // Find or create document for the date and type
+    let runnerData = await RunnerData.findOne({
+      date: formattedDate,
+      type: type
     });
 
-    res.status(201).json({ message: 'Reading added successfully', runnerData });
+    if (!runnerData) {
+      runnerData = new RunnerData({
+        date: formattedDate,
+        type: type,
+        upperLimit: LIMITS[type].upper,
+        lowerLimit: LIMITS[type].lower,
+        readings: []
+      });
+    }
+
+    // Add new reading
+    runnerData.readings.push({
+      time,
+      reading: parseFloat(reading),
+      remark
+    });
+
+    // Recalculate metrics
+    runnerData.calculateMetrics();
+    await runnerData.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Reading added successfully',
+      data: runnerData
+    });
   } catch (error) {
     handleError(res, error, 400);
   }
@@ -88,67 +160,181 @@ router.post('/runnerData', async (req, res) => {
 // POST route for CSV import
 router.post('/runnerData/import', upload.single('file'), async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
+    return res.status(400).json({
+      success: false,
+      message: 'No file uploaded'
+    });
   }
 
-  const { date } = req.body;
-  const formattedDate = moment(date).format('YYYY-MM-DD');
+  const { date, type } = req.body;
+
+  if (!date || !type || !LIMITS[type]) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid or missing date or type'
+    });
+  }
 
   try {
-    const importedData = await RunnerData.importFromCSV(
-      req.file.path, 
-      formattedDate
-    );
+    const formattedDate = moment(date).startOf('day').toDate();
+    const results = [];
+
+    // Read CSV file
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(req.file.path)
+        .pipe(csv())
+        .on('data', (data) => results.push(data))
+        .on('end', resolve)
+        .on('error', reject);
+    });
+
+    // Find or create document for the date and type
+    let runnerData = await RunnerData.findOne({
+      date: formattedDate,
+      type: type
+    });
+
+    if (!runnerData) {
+      runnerData = new RunnerData({
+        date: formattedDate,
+        type: type,
+        upperLimit: LIMITS[type].upper,
+        lowerLimit: LIMITS[type].lower,
+        readings: []
+      });
+    }
+
+    // Process CSV data
+    for (const row of results) {
+      if (row.time && row.reading) {
+        runnerData.readings.push({
+          time: row.time,
+          reading: parseFloat(row.reading),
+          remark: row.remark || ''
+        });
+      }
+    }
+
+    // Recalculate metrics and save
+    runnerData.calculateMetrics();
+    await runnerData.save();
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
 
     res.status(201).json({
+      success: true,
       message: 'CSV imported successfully',
-      importedCount: importedData.readings.length,
-      data: importedData
+      importedCount: results.length,
+      data: runnerData
     });
   } catch (error) {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
     handleError(res, error, 400);
   }
 });
 
-// PUT route to update an existing reading
-router.put('/runnerData/:id', async (req, res) => {
-  const { id } = req.params;
-  const { time, reading, type, remark } = req.body;
-
+// PUT route to update limits
+router.put('/runnerData/:id/limits', async (req, res) => {
   try {
-    const runnerData = await RunnerData.findOne({ 'readings._id': id });
+    const { id } = req.params;
+    const { upperLimit, lowerLimit } = req.body;
 
+    const runnerData = await RunnerData.findById(id);
     if (!runnerData) {
-      return res.status(404).json({ message: 'Reading not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Data not found'
+      });
     }
 
-    const readingToUpdate = runnerData.readings.id(id);
+    if (upperLimit !== undefined) runnerData.upperLimit = upperLimit;
+    if (lowerLimit !== undefined) runnerData.lowerLimit = lowerLimit;
+
+    runnerData.calculateMetrics();
+    await runnerData.save();
+
+    res.json({
+      success: true,
+      message: 'Limits updated successfully',
+      data: runnerData
+    });
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+// PUT route to update a specific reading
+router.put('/runnerData/:id/readings/:readingId', async (req, res) => {
+  try {
+    const { id, readingId } = req.params;
+    const { time, reading, remark } = req.body;
+
+    const runnerData = await RunnerData.findById(id);
+    if (!runnerData) {
+      return res.status(404).json({
+        success: false,
+        message: 'Data not found'
+      });
+    }
+
+    const readingToUpdate = runnerData.readings.id(readingId);
+    if (!readingToUpdate) {
+      return res.status(404).json({
+        success: false,
+        message: 'Reading not found'
+      });
+    }
+
     if (time) readingToUpdate.time = time;
-    if (reading !== undefined) readingToUpdate.reading = reading;
-    if (type) readingToUpdate.type = type;
+    if (reading !== undefined) readingToUpdate.reading = parseFloat(reading);
     if (remark !== undefined) readingToUpdate.remark = remark;
 
+    runnerData.calculateMetrics();
     await runnerData.save();
-    res.status(200).json({ message: 'Reading updated successfully', runnerData });
+
+    res.json({
+      success: true,
+      message: 'Reading updated successfully',
+      data: runnerData
+    });
   } catch (error) {
-    handleError(res, error, 400);
+    handleError(res, error);
   }
 });
 
 // DELETE route to remove a specific reading
-router.delete('/runnerData/:id', async (req, res) => {
-  const { id } = req.params;
-
+router.delete('/runnerData/:id/readings/:readingId', async (req, res) => {
   try {
-    const runnerData = await RunnerData.findOne({ 'readings._id': id });
+    const { id, readingId } = req.params;
 
+    const runnerData = await RunnerData.findById(id);
     if (!runnerData) {
-      return res.status(404).json({ message: 'Reading not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Data not found'
+      });
     }
 
-    runnerData.readings.id(id).remove();
+    const readingToDelete = runnerData.readings.id(readingId);
+    if (!readingToDelete) {
+      return res.status(404).json({
+        success: false,
+        message: 'Reading not found'
+      });
+    }
+
+    readingToDelete.remove();
+    runnerData.calculateMetrics();
     await runnerData.save();
-    res.status(200).json({ message: 'Reading deleted successfully', runnerData });
+
+    res.json({
+      success: true,
+      message: 'Reading deleted successfully',
+      data: runnerData
+    });
   } catch (error) {
     handleError(res, error);
   }
