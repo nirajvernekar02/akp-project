@@ -340,4 +340,120 @@ router.delete('/runnerData/:id/readings/:readingId', async (req, res) => {
   }
 });
 
+router.get('/metrics', async (req, res) => {
+    try {
+        const { startDate, endDate, type } = req.query;
+
+        if (!startDate || !endDate || !type) {
+            return res.status(400).json({
+                error: 'Start date, end date, and type are required'
+            });
+        }
+
+        // Convert dates to UTC to ensure consistent querying
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        // Validate dates
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return res.status(400).json({
+                error: 'Invalid date format'
+            });
+        }
+
+        // Get all readings within the date range
+        const readings = await RunnerData.find({
+            date: {
+                $gte: start,
+                $lte: end
+            },
+            type: type
+        }).sort({ date: 1 });
+
+        if (readings.length === 0) {
+            return res.status(404).json({
+                message: 'No readings found for the specified date range and type'
+            });
+        }
+
+        // Combine all readings into a single array
+        const allReadings = readings.reduce((acc, doc) => {
+            return acc.concat(doc.readings.map(r => r.reading));
+        }, []);
+
+        // Get type-specific limits
+        const LIMITS = {
+            moisture: { lower: 3.60, upper: 4.40 },
+            preamibility: { lower: 115, upper: 155 },
+            compactibility: { lower: 38, upper: 46 },
+            cgs: { lower: 1100, upper: 1500 }
+        };
+
+        const typeLimits = LIMITS[type];
+        const upperLimit = typeLimits.upper;
+        const lowerLimit = typeLimits.lower;
+
+        // Calculate metrics
+        const average = allReadings.reduce((a, b) => a + b, 0) / allReadings.length;
+
+        // Standard deviation calculation
+        const squareDiffs = allReadings.map(value => {
+            const diff = value - average;
+            return diff * diff;
+        });
+        const standardDeviation = Math.sqrt(
+            squareDiffs.reduce((a, b) => a + b, 0) / allReadings.length
+        );
+
+        // Calculate other metrics
+        const threeSigma = 3 * standardDeviation;
+        const sixSigma = 6 * standardDeviation;
+        const cp = (upperLimit - lowerLimit) / (6 * standardDeviation);
+        const cpk1 = (average - lowerLimit) / (3 * standardDeviation);
+        const cpk2 = (upperLimit - average) / (3 * standardDeviation);
+        const cpk = Math.min(cpk1, cpk2);
+
+        // Daily breakdown
+        const dailyMetrics = readings.map(reading => ({
+            date: reading.date,
+            metrics: {
+                average: reading.average,
+                standardDeviation: reading.standardDeviation,
+                cp: reading.cp,
+                cpk: reading.cpk
+            }
+        }));
+
+        res.json({
+            summary: {
+                startDate: start,
+                endDate: end,
+                type,
+                numberOfReadings: allReadings.length,
+                numberOfDays: readings.length,
+                average,
+                standardDeviation,
+                threeSigma,
+                sixSigma,
+                cp,
+                cpk1,
+                cpk2,
+                cpk,
+                limits: {
+                    upper: upperLimit,
+                    lower: lowerLimit
+                }
+            },
+            dailyMetrics
+        });
+
+    } catch (error) {
+        console.error('Error calculating metrics:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message
+        });
+    }
+})
+
 module.exports = router;
