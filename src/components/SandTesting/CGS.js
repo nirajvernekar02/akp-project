@@ -355,9 +355,12 @@ const RunnerChart = () => {
         </Box>
 
         {showCpCpk && (
-  <StatisticalParametersChart data={data} />
+  <StatisticalParametersChart 
+    data={data} 
+    startDate={startDate} 
+    endDate={endDate} 
+  />
 )}
-
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New Entry</DialogTitle>
           <DialogContent>

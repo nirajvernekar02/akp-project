@@ -495,8 +495,19 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea
 } from 'recharts';
 import {
-  Card, CardContent, Typography, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle,
-  Box, Grid, FormControlLabel, Checkbox
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Box,
+  Grid,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -506,7 +517,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
 import StatisticalParametersChart from './StasticalChart';
 
-const RunnerChart = () => {
+const MoistureChart = () => {
   const [data, setData] = useState([]);
   const [showCpCpk, setShowCpCpk] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -517,13 +528,15 @@ const RunnerChart = () => {
   const [partNumber, setPartNumber] = useState('');
   const [processNo, setProcessNo] = useState('');
   const [processName, setProcessName] = useState('');
-  const [limits, setLimits] = useState({
-    upper: 1500,
-    lower: 1100,
-    greenUpper: 1400,
-    greenLower: 1200,
-    yellowUpper: 1450,
-    yellowLower: 1150
+  const [limits] = useState({
+    upper: 4.50,
+    lower: 3.50,
+    greenUpper: 4.20,
+    greenLower: 3.80,
+    yellowUpper: 4.40,
+    yellowLower: 3.60,
+    redUpper: 4.50,
+    redLower: 3.50
   });
 
   useEffect(() => {
@@ -536,34 +549,23 @@ const RunnerChart = () => {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
-          type: "cgs"
+          type: "moisture"
         }
       });
 
       if (response.data.success) {
-        // Process the nested readings data
         const processedData = response.data.data.reduce((acc, day) => {
           const dayReadings = day.readings.map(reading => ({
             date: day.date,
             reading: reading.reading,
             time: reading.time,
-            remark: reading.remark, // Add this line
+            remark: reading.remark,
             formattedDate: format(new Date(day.date), 'MM/dd') + ' ' + reading.time,
             cp: day.cp || 0,
             cpk: day.cpk || 0
           }));
           return [...acc, ...dayReadings];
         }, []);
-
-        // Update limits if they exist in the response
-        if (response.data.data[0]) {
-          setLimits(prev => ({
-            ...prev,
-            upper: response.data.data[0].upperLimit,
-            lower: response.data.data[0].lowerLimit
-          }));
-        }
-
         setData(processedData);
       } else {
         toast.error('Failed to fetch data: Invalid response format');
@@ -579,7 +581,7 @@ const RunnerChart = () => {
       const newData = {
         date: newEntry.date,
         time: newEntry.time,
-        type: "cgs",
+        type: "moisture",
         reading: Number(newEntry.reading),
         remark: newEntry.remark
       };
@@ -593,106 +595,33 @@ const RunnerChart = () => {
       toast.error('Failed to add new entry. Please try again.');
     }
   };
+
   const getColor = (value) => {
-    if (value <= limits.yellowLower || value >= limits.yellowUpper) return '#FF0000'; // Bright Red
-    if (value > limits.yellowLower && value < limits.greenLower) return '#FFD700'; // Bright Golden Yellow
-    if (value > limits.greenUpper && value < limits.yellowUpper) return '#FFD700'; // Bright Golden Yellow
-    return '#00FF00'; // Bright Green
+    if (value >= limits.yellowUpper || value <= limits.yellowLower) return '#FF0000'; // Red
+    if ((value > limits.greenUpper && value < limits.yellowUpper) || 
+        (value > limits.yellowLower && value < limits.greenLower)) return '#FFD700'; // Yellow
+    return '#00FF00'; // Green
   };
-  
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length > 0) {
       const data = payload[0].payload;
       return (
-        <div className="custom-tooltip" style={{
-          backgroundColor: 'white',
-          padding: '10px',
-          border: '1px solid #ccc'
-        }}>
-          <p>{`Date: ${data.formattedDate}`}</p>
-          <p>{`Reading: ${data.reading}`}</p>
-          {data.remark && <p>{`Remark: ${data.remark}`}</p>}
+        <Box sx={{ bgcolor: 'background.paper', p: 2, border: '1px solid', borderColor: 'divider' }}>
+          <Typography variant="body2">{`Date: ${data.formattedDate}`}</Typography>
+          <Typography variant="body2">{`Reading: ${data.reading}`}</Typography>
+          {data.remark && <Typography variant="body2">{`Remark: ${data.remark}`}</Typography>}
           {showCpCpk && (
             <>
-              <p>{`Cp: ${data.cp?.toFixed(2) || 'N/A'}`}</p>
-              <p>{`Cpk: ${data.cpk?.toFixed(2) || 'N/A'}`}</p>
+              <Typography variant="body2">{`Cp: ${data.cp?.toFixed(2) || 'N/A'}`}</Typography>
+              <Typography variant="body2">{`Cpk: ${data.cpk?.toFixed(2) || 'N/A'}`}</Typography>
             </>
           )}
-        </div>
+        </Box>
       );
     }
     return null;
   };
-
-  const PrintLayout = ({ data, partInfo, limits, showCpCpk }) => (
-    <div className="print-only">
-      <div className="print-header">
-        <h1>AKP FOUNDRIES - RUN CHART</h1>
-        <div className="print-info-grid">
-          <div>
-            <label>Part Name:</label>
-            <span>{partInfo.partName}</span>
-          </div>
-          <div>
-            <label>Part Number:</label>
-            <span>{partInfo.partNumber}</span>
-          </div>
-          <div>
-            <label>Process No:</label>
-            <span>{partInfo.processNo}</span>
-          </div>
-          <div>
-            <label>Process Name:</label>
-            <span>{partInfo.processName}</span>
-          </div>
-        </div>
-        <div className="print-limits">
-          <p>Characteristics: G.G. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²</p>
-          <div className="print-date-range">
-            <span>From: {startDate.toLocaleDateString()}</span>
-            <span>To: {endDate.toLocaleDateString()}</span>
-          </div>
-        </div>
-      </div>
-      
-      <div className="print-chart">
-        {React.cloneElement(chartContent, {
-          width: 800,
-          height: 400
-        })}
-      </div>
-
-      {showCpCpk && (
-        <div className="print-statistical-chart">
-          <StatisticalParametersChart data={data} />
-        </div>
-      )}
-  
-      <div className="print-legend">
-        <div className="legend-item">
-          <span className="legend-color green"></span>
-          <span>Control Limit</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-color yellow"></span>
-          <span>Warning Limit</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-color red"></span>
-          <span>Stop and Correct</span>
-        </div>
-      </div>
-  
-      <div className="print-signatures">
-        <div>
-          <p>Operator Sign: _________________</p>
-        </div>
-        <div>
-          <p>H.O.D Sign: _________________</p>
-        </div>
-      </div>
-    </div>
-  );
 
   const chartContent = (
     <LineChart
@@ -710,25 +639,25 @@ const RunnerChart = () => {
       <YAxis domain={[limits.lower, limits.upper]} />
       <Tooltip content={<CustomTooltip />} />
       <Legend />
-      <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.8} />
-      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.5} />
-      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.5} />
-      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.5} />
-      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.8} />
+      <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.3} />
+      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.3} />
       <Line
         type="monotone"
         dataKey="reading"
-        stroke="#8884d8"
-        strokeWidth={3}
-        name="Reading"
+        stroke="#1976d2"
+        strokeWidth={2}
+        name="Moisture Reading"
         dot={({ cx, cy, payload }) => (
           <circle 
             cx={cx} 
             cy={cy} 
-            r={6} 
+            r={5} 
             fill={getColor(payload.reading)} 
-            stroke="#8884d8" 
-            strokeWidth={2} 
+            stroke="#1976d2" 
+            strokeWidth={1} 
           />
         )}
       />
@@ -736,14 +665,13 @@ const RunnerChart = () => {
   );
 
   return (
-    <Card style={{ maxWidth: '1200px', margin: 'auto', marginTop: '20px', padding: '20px' }}>
+    <Card sx={{ maxWidth: '1200px', mx: 'auto', mt: 3, p: 3 }}>
       <CardContent>
-        {/* Rest of your JSX remains the same... */}
-        <Typography variant="h4" gutterBottom align="center">
-          AKP FOUNDRIES - RUN CHART
+        <Typography variant="h4" align="center" gutterBottom>
+          Moisture Measurement Chart
         </Typography>
         
-        <Grid container spacing={2} style={{ marginBottom: '20px' }}>
+        <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
@@ -779,11 +707,11 @@ const RunnerChart = () => {
         </Grid>
 
         <Typography variant="subtitle1" gutterBottom>
-          Characteristics: G.G. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²
+          Characteristics: Moisture % | Specification: {limits.lower}% TO {limits.upper}%
         </Typography>
 
-        <Box display="flex" justifyContent="space-between" marginBottom="1rem" alignItems="center" flexWrap="wrap">
-          <Box display="flex" gap={2} alignItems="center">
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -803,7 +731,7 @@ const RunnerChart = () => {
             />
           </Box>
           
-          <Box display="flex" gap={2} alignItems="center">
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -813,84 +741,61 @@ const RunnerChart = () => {
               }
               label="Show Cp/Cpk"
             />
-
-<PrintLayout 
-  data={data}
-  partInfo={{
-    partName,
-    partNumber,
-    processNo,
-    processName
-  }}
-  limits={{
-    upper: limits.upper,
-    lower: limits.lower,
-    yellowUpper: limits.yellowUpper,
-    yellowLower: limits.yellowLower,
-    greenUpper: limits.greenUpper,
-    greenLower: limits.greenLower
-  }}
-/>        
             <Button variant="contained" onClick={() => setOpenDialog(true)}>
               Add Entry
             </Button>
             <Button variant="contained" onClick={() => window.print()}>
-  Print
-</Button>
+              Print
+            </Button>
           </Box>
         </Box>
 
-        <Box style={{ height: '500px', width: '100%' }}>
+        <Box sx={{ height: 500, width: '100%' }}>
           <ResponsiveContainer>
             {chartContent}
           </ResponsiveContainer>
         </Box>
 
-        {showCpCpk && (
-  <StatisticalParametersChart data={data} />
-)}
+        {showCpCpk && <StatisticalParametersChart data={data} />}
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-          <DialogTitle>Add New Entry</DialogTitle>
+          <DialogTitle>Add New Moisture Reading</DialogTitle>
           <DialogContent>
-            <DatePicker
-              selected={newEntry.date}
-              onChange={(date) => setNewEntry(prev => ({ ...prev, date }))}
-              customInput={<TextField label="Date" fullWidth margin="normal" />}
-            />
-            <TextField
-              label="Time"
-              type="time"
-              value={newEntry.time}
-              onChange={(e) => setNewEntry(prev => ({ ...prev, time: e.target.value }))}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-            />
-            <TextField
-              label="Reading"
-              type="number"
-              value={newEntry.reading}
-              onChange={(e) => setNewEntry(prev => ({ ...prev, reading: e.target.value }))}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Remark"
-              value={newEntry.remark}
-              onChange={(e) => setNewEntry(prev => ({ ...prev, remark: e.target.value }))}
-              fullWidth
-              margin="normal"
-              multiline
-              rows={2}
-            />
+            <Box sx={{ pt: 2 }}>
+              <DatePicker
+                selected={newEntry.date}
+                onChange={(date) => setNewEntry(prev => ({ ...prev, date }))}
+                customInput={<TextField label="Date" fullWidth margin="normal" />}
+              />
+              <TextField
+                label="Time"
+                type="time"
+                value={newEntry.time}
+                onChange={(e) => setNewEntry(prev => ({ ...prev, time: e.target.value }))}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ step: 300 }}
+              />
+              <TextField
+                label="Reading"
+                type="number"
+                value={newEntry.reading}
+                onChange={(e) => setNewEntry(prev => ({ ...prev, reading: e.target.value }))}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Remark"
+                value={newEntry.remark}
+                onChange={(e) => setNewEntry(prev => ({ ...prev, remark: e.target.value }))}
+                fullWidth
+                margin="normal"
+                multiline
+                rows={2}
+              />
+            </Box>
           </DialogContent>
-
           <DialogActions>
             <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
             <Button onClick={handleAddEntry} color="primary">Add</Button>
@@ -997,5 +902,5 @@ const RunnerChart = () => {
   );
 };
 
-export default RunnerChart;
+export default MoistureChart;
 
