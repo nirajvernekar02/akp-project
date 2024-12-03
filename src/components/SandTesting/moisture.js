@@ -597,10 +597,23 @@ const MoistureChart = () => {
   };
 
   const getColor = (value) => {
-    if (value >= limits.yellowUpper || value <= limits.yellowLower) return '#FF0000'; // Red
-    if ((value > limits.greenUpper && value < limits.yellowUpper) || 
-        (value > limits.yellowLower && value < limits.greenLower)) return '#FFD700'; // Yellow
-    return '#00FF00'; // Green
+    if (value < limits.yellowLower1 || value > limits.yellowUpper2) {
+      return '#FF0000'; // Red
+    }
+    
+    // Green zone: between 125 and 145
+    if (value >= limits.greenLower && value <= limits.greenUpper) {
+      return '#00FF00'; // Green
+    }
+    
+    // Yellow zone: between 115-125 or 145-155
+    if ((value >= limits.yellowLower1 && value <= limits.yellowUpper1) || 
+        (value >= limits.yellowLower2 && value <= limits.yellowUpper2)) {
+      return '#FFD700'; // Yellow
+    }
+    
+    // Default case if something goes wrong
+    return '#000000'; // Black (default)
   };
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -639,11 +652,11 @@ const MoistureChart = () => {
       <YAxis domain={[limits.lower, limits.upper]} />
       <Tooltip content={<CustomTooltip />} />
       <Legend />
-      <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.3} />
-      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.3} />
+       <ReferenceArea y1={limits.lower} y2={limits.yellowLower} fill="red" fillOpacity={0.8} />
+      <ReferenceArea y1={limits.yellowLower} y2={limits.greenLower} fill="yellow" fillOpacity={0.5} />
+      <ReferenceArea y1={limits.greenLower} y2={limits.greenUpper} fill="green" fillOpacity={0.5} />
+      <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.5} />
+      <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.8} />
       <Line
         type="monotone"
         dataKey="reading"
@@ -662,6 +675,76 @@ const MoistureChart = () => {
         )}
       />
     </LineChart>
+  );
+
+  const PrintLayout = ({ data, partInfo, limits, showCpCpk }) => (
+    <div className="print-only">
+      <div className="print-header">
+        <h1>AKP FOUNDRIES - RUN CHART</h1>
+        <div className="print-info-grid">
+          <div>
+            <label>Part Name:</label>
+            <span>{partInfo.partName}</span>
+          </div>
+          <div>
+            <label>Part Number:</label>
+            <span>{partInfo.partNumber}</span>
+          </div>
+          <div>
+            <label>Process No:</label>
+            <span>{partInfo.processNo}</span>
+          </div>
+          <div>
+            <label>Process Name:</label>
+            <span>{partInfo.processName}</span>
+          </div>
+        </div>
+        <div className="print-limits">
+          <p>  Characteristics: Permeability | Specification: {(limits.lower +5 )} TO {(limits.upper-5)} </p>
+          <div className="print-date-range">
+            <span>From: {startDate.toLocaleDateString()}</span>
+            <span>To: {endDate.toLocaleDateString()}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="print-chart">
+        {React.cloneElement(chartContent, {
+          width: 1000,
+          height: 500
+        })}
+      </div>
+
+      {showCpCpk && (
+        <div className="print-statistical-chart">
+          <StatisticalParametersChart data={data} />
+        </div>
+      )}
+  
+      <div className="print-legend">
+        <div className="legend-item">
+          <span className="legend-color green"></span>
+          <span>Control Limit</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color yellow"></span>
+          <span>Warning Limit</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color red"></span>
+          <span>Stop and Correct</span>
+        </div>
+      </div>
+  
+      <div className="print-signatures">
+        <div>
+          <p>Operator Sign: _________________</p>
+        </div>
+        <div>
+          <p>H.O.D Sign: _________________</p>
+        </div>
+      </div>
+    </div>
   );
 
   return (
@@ -750,13 +833,40 @@ const MoistureChart = () => {
           </Box>
         </Box>
 
+        
+<PrintLayout 
+  data={data}
+  partInfo={{
+    partName,
+    partNumber,
+    processNo,
+    processName
+  }}
+  limits={{
+    upper: limits.upper,
+    lower: limits.lower,
+    yellowUpper: limits.yellowUpper,
+    yellowLower: limits.yellowLower,
+    greenUpper: limits.greenUpper,
+    greenLower: limits.greenLower
+  }}
+/>        
+
         <Box sx={{ height: 500, width: '100%' }}>
           <ResponsiveContainer>
             {chartContent}
           </ResponsiveContainer>
         </Box>
 
-        {showCpCpk && <StatisticalParametersChart data={data} />}
+        {showCpCpk && (
+  <StatisticalParametersChart 
+    data={data} 
+    startDate={startDate} 
+    endDate={endDate} 
+    type="moisture" // Pass the type dynamically here
+  />
+)}
+
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Add New Moisture Reading</DialogTitle>

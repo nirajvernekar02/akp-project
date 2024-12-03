@@ -13,14 +13,20 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { loginSuccess } from '../../redux/authSlice';
 
 const FoundrySandTestingLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [credentials, setCredentials] = useState({
-    username: '',
+    identifier: '', // Updated to allow username or email
     password: '',
   });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,16 +37,27 @@ const FoundrySandTestingLogin = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
+  
     try {
       const response = await axios.post('http://localhost:5500/api/user/login', credentials);
-      // Handle successful login
+      const { user, token } = response.data;
+  
+      // Store user data in localStorage
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+  
+      // Dispatch login action
+      dispatch(loginSuccess({ user, token }));
+  
+      // Redirect to dashboard or home
+      navigate('/sand-dashboard');
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred during login');
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <Container component="main" maxWidth="xs">
@@ -77,8 +94,8 @@ const FoundrySandTestingLogin = () => {
             margin="normal"
             required
             fullWidth
-            label="Username"
-            name="username"
+            label="Username or Email"
+            name="identifier"
             autoComplete="username"
             autoFocus
             onChange={handleChange}

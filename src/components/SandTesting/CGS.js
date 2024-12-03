@@ -359,6 +359,7 @@ const RunnerChart = () => {
     data={data} 
     startDate={startDate} 
     endDate={endDate} 
+    type= "cgs"
   />
 )}
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>

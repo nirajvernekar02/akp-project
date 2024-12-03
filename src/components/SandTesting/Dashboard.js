@@ -10,11 +10,11 @@ import {
   Box,
   Container,
   IconButton,
-  CircularProgress,
   Avatar,
   useTheme,
   Fade,
   Tooltip,
+  CircularProgress,
   Divider
 } from '@mui/material';
 import {
@@ -23,7 +23,9 @@ import {
   Menu as MenuIcon,
   LocationOn as LocationIcon,
   Schedule as ScheduleIcon,
-  Person as PersonIcon
+  Person as PersonIcon,
+  Code as CodeIcon,
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 
 const DashboardCard = ({ title, icon: Icon, progress, secondaryMetric, secondaryValue, color, onClick }) => {
@@ -169,6 +171,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
+  // Parse user data from localStorage
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -176,9 +184,13 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const user = {
-    name: "Admin",
-    designation: "Quality Manager"
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    // Redirect to login page
+    navigate('/login');
   };
 
   return (
@@ -250,6 +262,17 @@ const Dashboard = () => {
               </Box>
             </Tooltip>
 
+            <Tooltip title="Developer" arrow>
+              <IconButton 
+                color="inherit" 
+                onClick={() => navigate('/developer')}
+                sx={{ display: { xs: 'none', md: 'flex' } }}
+              >
+                <CodeIcon color="action" sx={{ fontSize: 20 }} />
+                <Typography variant="body2" sx={{ ml: 1 }}>Developer</Typography>
+              </IconButton>
+            </Tooltip>
+
             <Tooltip title="Current Time" arrow>
               <Box sx={{ 
                 display: 'flex', 
@@ -281,12 +304,17 @@ const Dashboard = () => {
               </Avatar>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  {user.name}
+                  {user ? user.username : 'Admin'}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {user.designation}
+                  {user ? `${user.department} | ${user.role}` : 'Quality Manager'}
                 </Typography>
               </Box>
+              <Tooltip title="Logout">
+                <IconButton onClick={handleLogout}>
+                  <LogoutIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
         </Toolbar>
@@ -312,7 +340,7 @@ const Dashboard = () => {
               icon={ScienceIcon}
               progress={75}
               secondaryMetric="Current Shift"
-              secondaryValue="Shift 1"
+              secondaryValue={user ? user.shift : 'Shift 1'}
               color={theme.palette.primary.main}
               onClick={() => navigate('/sand-testing')}
             />

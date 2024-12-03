@@ -10,14 +10,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-} from '@mui/material';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
 
-const StatisticalParametersChart = ({ startDate, endDate, data }) => {
+const StatisticalParametersChart = ({ startDate, endDate, data, type }) => {
   const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
@@ -27,7 +22,7 @@ const StatisticalParametersChart = ({ startDate, endDate, data }) => {
           params: {
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),
-            type: 'cgs',
+            type, // Dynamically send the type prop here
           },
         });
 
@@ -35,12 +30,12 @@ const StatisticalParametersChart = ({ startDate, endDate, data }) => {
           setMetrics(response.data.summary);
         }
       } catch (error) {
-        console.error('Error fetching metrics:', error);
+        console.error(`Error fetching metrics for type ${type}:`, error);
       }
     };
 
     fetchMetrics();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, type]); // Add type as a dependency
 
   const processedData = data.reduce((acc, day) => {
     if (day.cp !== null && day.cpk !== null) {
@@ -146,109 +141,6 @@ const StatisticalParametersChart = ({ startDate, endDate, data }) => {
             </Grid>
           </Grid>
         )}
-
-        {/* Chart Section */}
-        {/* <Typography
-          variant="h6"
-          style={{
-            marginBottom: '20px',
-            fontWeight: 600,
-            color: '#1a237e',
-          }}
-        >
-          Statistical Parameters Trend
-        </Typography>
-        <div style={{ height: '500px', width: '100%' }}>
-          <ResponsiveContainer>
-            <LineChart
-              data={processedData}
-              margin={{ top: 10, right: 30, left: 20, bottom: 70 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis
-                dataKey="date"
-                angle={-45}
-                textAnchor="end"
-                height={70}
-                interval={0}
-                fontSize={12}
-                tick={{ fill: '#666' }}
-                tickMargin={25}
-                stroke="#ccc"
-              />
-              <YAxis
-                domain={[minValue, maxValue]}
-                tickFormatter={(value) => value.toFixed(2)}
-                tick={{ fill: '#666' }}
-                stroke="#ccc"
-                fontSize={12}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                verticalAlign="top"
-                height={36}
-                wrapperStyle={{
-                  paddingTop: '10px',
-                  fontSize: '12px',
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="cp"
-                stroke="#3f51b5"
-                name="Cp"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="cpk"
-                stroke="#009688"
-                name="Cpk"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey={(d) => d.threeSigma / 1000}
-                stroke="#ff9800"
-                name="3σ (thousands)"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey={(d) => d.sixSigma / 1000}
-                stroke="#f44336"
-                name="6σ (thousands)"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey={(d) => d.standardDeviation / 100}
-                stroke="#2196f3"
-                name="Std Dev (hundreds)"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey={(d) => d.average / 1000}
-                stroke="#4caf50"
-                name="Average (thousands)"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div> */}
       </CardContent>
     </Card>
   );

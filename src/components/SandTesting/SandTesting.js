@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   Card,
   CardContent,
@@ -22,6 +23,7 @@ import {
   Alert,
   Snackbar,
   Container,
+  CircularProgress
 } from '@mui/material';
 import {
   Science as ScienceIcon,
@@ -31,7 +33,10 @@ import {
   Compress as CompressIcon,
   Air as AirIcon,
   Close as CloseIcon,
+  CompareArrows as CompareArrowsIcon, // Corrected this line
 } from '@mui/icons-material';
+
+
 
 const DashboardTile = ({ title, description, Icon, color, onClick }) => {
   const [elevated, setElevated] = useState(false);
@@ -107,7 +112,14 @@ const DashboardTile = ({ title, description, Icon, color, onClick }) => {
   );
 };
 
-const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubmit }) => {
+const AddReadingModal = ({ 
+  open, 
+  handleClose, 
+  formData, 
+  handleChange, 
+  handleSubmit, 
+  isLoading 
+}) => {
   const theme = useTheme();
 
   return (
@@ -159,6 +171,7 @@ const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubm
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   fullWidth
+                  required
                 />
               </Grid>
               
@@ -171,6 +184,7 @@ const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubm
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   fullWidth
+                  required
                 />
               </Grid>
               
@@ -183,11 +197,12 @@ const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubm
                   onChange={handleChange}
                   fullWidth
                   placeholder="Enter measurement value"
+                  required
                 />
               </Grid>
               
               <Grid item xs={12}>
-                <FormControl fullWidth>
+                <FormControl fullWidth required>
                   <InputLabel>Measurement Type</InputLabel>
                   <Select
                     name="type"
@@ -195,10 +210,173 @@ const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubm
                     onChange={handleChange}
                     label="Measurement Type"
                   >
-                    <MenuItem value="GCS">Green Compressive Strength (GCS)</MenuItem>
-                    <MenuItem value="Moisture">Moisture Content</MenuItem>
-                    <MenuItem value="Compactibility">Compactibility</MenuItem>
-                    <MenuItem value="Permeability">Permeability</MenuItem>
+                    <MenuItem value="cgs">Green Compressive Strength (GCS)</MenuItem>
+                    <MenuItem value="moisture">Moisture Content</MenuItem>
+                    <MenuItem value="compactibility">Compactibility</MenuItem>
+                    <MenuItem value="preamibility">Permeability</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  label="Remarks (Optional)"
+                  name="remark"
+                  value={formData.remark}
+                  onChange={handleChange}
+                  fullWidth
+                  multiline
+                  rows={2}
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={handleClose}
+                fullWidth
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={isLoading}
+                sx={{
+                  height: 48,
+                  fontWeight: 600,
+                }}
+              >
+                {isLoading ? 'Saving...' : 'Save Reading'}
+              </Button>
+            </Box>
+          </form>
+        </Paper>
+      </Fade>
+    </Modal>
+  );
+};
+
+const AddCSVImportModal = ({ 
+  open, 
+  handleClose, 
+  handleFileUpload,
+  isLoading 
+}) => {
+  const theme = useTheme();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedType, setSelectedType] = useState('');
+  const [fileError, setFileError] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    
+    // Validate file type
+    if (file && file.type !== 'text/csv') {
+      setFileError('Please upload a valid CSV file');
+      setSelectedFile(null);
+      return;
+    }
+
+    setSelectedFile(file);
+    setFileError('');
+  };
+
+  const submitImport = (e) => {
+    e.preventDefault();
+    
+    // Validate form submission
+    if (!selectedFile) {
+      setFileError('Please select a CSV file');
+      return;
+    }
+
+    if (!selectedType) {
+      setFileError('Please select a measurement type');
+      return;
+    }
+
+    // Proceed with file upload
+    handleFileUpload(selectedFile, selectedType);
+  };
+
+  return (
+    <Modal 
+      open={open} 
+      onClose={handleClose}
+      closeAfterTransition
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Fade in={open}>
+        <Paper
+          sx={{
+            width: '100%',
+            maxWidth: 480,
+            borderRadius: '20px',
+            boxShadow: theme.shadows[24],
+            p: 4,
+            mx: 3,
+            position: 'relative',
+          }}
+        >
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          
+          <Typography variant="h5" component="h2" fontWeight={700} mb={3}>
+            Import CSV Data
+          </Typography>
+          
+          <form onSubmit={submitImport}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  type="file"
+                  label="CSV File"
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{ accept: '.csv' }}
+                  onChange={handleFileChange}
+                  fullWidth
+                  required
+                />
+                {selectedFile && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Selected File: {selectedFile.name}
+                  </Typography>
+                )}
+                {fileError && (
+                  <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                    {fileError}
+                  </Typography>
+                )}
+              </Grid>
+              
+              <Grid item xs={12}>
+                <FormControl fullWidth required>
+                  <InputLabel>Measurement Type</InputLabel>
+                  <Select
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    label="Measurement Type"
+                  >
+                    <MenuItem value="cgs">Green Compressive Strength (GCS)</MenuItem>
+                    <MenuItem value="moisture">Moisture Content</MenuItem>
+                    <MenuItem value="compactibility">Compactibility</MenuItem>
+                    <MenuItem value="preamibility">Permeability</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -209,6 +387,7 @@ const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubm
                 variant="outlined"
                 onClick={handleClose}
                 fullWidth
+                disabled={isLoading}
               >
                 Cancel
               </Button>
@@ -216,12 +395,13 @@ const AddReadingModal = ({ open, handleClose, formData, handleChange, handleSubm
                 type="submit"
                 variant="contained"
                 fullWidth
+                disabled={isLoading || !selectedFile || !selectedType}
                 sx={{
                   height: 48,
                   fontWeight: 600,
                 }}
               >
-                Save Reading
+                {isLoading ? 'Importing...' : 'Import CSV'}
               </Button>
             </Box>
           </form>
@@ -235,31 +415,124 @@ const SandTesting = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [openCSVModal, setOpenCSVModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [readings, setReadings] = useState([]);
   const [formData, setFormData] = useState({
     date: '',
     time: '',
     reading: '',
     type: '',
+    remark: '',
   });
+
+  // Fetch readings on component mount
+  useEffect(() => {
+    const fetchReadings = async () => {
+      try {
+        setDataLoading(true);
+        const response = await axios.get('http://localhost:5500/api/runner/runnerData');
+        
+        if (response.data && response.data.success) {
+          setReadings(response.data.data);
+        } else {
+          throw new Error('Failed to fetch readings');
+        }
+      } catch (error) {
+        console.error('Error fetching readings:', error);
+        setSnackbarMessage(
+          error.response?.data?.message || 'Failed to load readings'
+        );
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchReadings();
+  }, []);
 
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => {
     setOpenModal(false);
-    setFormData({ date: '', time: '', reading: '', type: '' });
+    setFormData({ date: '', time: '', reading: '', type: '', remark: '' });
   };
+
+  const handleOpenCSV = () => setOpenCSVModal(true);
+  const handleCloseCSV = () => setOpenCSVModal(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    handleClose();
-    setOpenSnackbar(true);
+    setIsLoading(true);
+  
+    try {
+      const response = await axios.post('http://localhost:5500/api/runner/runnerData', formData);
+      
+      if (response.status === 200 && response.data.success) {
+        // Optimistically update local state
+        setReadings(prev => [...prev, response.data.data]);
+        
+        setSnackbarMessage('Reading added successfully!');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+        handleClose();
+      } else {
+        throw new Error('Failed to add reading');
+      }
+    } catch (error) {
+      setSnackbarMessage(
+        error.response?.data?.message || 'Failed to add reading. Please try again.'
+      );
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const handleFileUpload = async (file, type) => {
+    setIsLoading(true);
+  
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+  
+    try {
+      const response = await axios.post('http://localhost:5500/api/runner/runnerData/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      // Fetch updated readings after import
+      const fetchResponse = await axios.get('http://localhost:5500/api/runner/runnerData');
+      
+      if (fetchResponse.data && fetchResponse.data.success) {
+        setReadings(fetchResponse.data.data);
+      }
+      
+      setSnackbarMessage(`CSV imported successfully (${response.data.importedCount} readings)`);
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+      handleCloseCSV();
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'Failed to import CSV. Please try again.';
+      setSnackbarMessage(errorMsg);
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const tiles = [
     {
@@ -289,7 +562,16 @@ const SandTesting = () => {
       Icon: AirIcon,
       color: theme.palette.warning.main,
       path: '/permeability'
+    },
+    {
+      title: "Comparison",
+      description: "Analyze and compare gas escape capabilities during the casting process.",
+      Icon: CompareArrowsIcon, // Updated to a more relevant icon for comparison
+      color: theme.palette.info.main, // Adjusted to a calmer blue tone for a better UI aesthetic
+      path: '/comparison',
+
     }
+    
   ];
 
   return (
@@ -314,21 +596,37 @@ const SandTesting = () => {
             Sand Testing Dashboard
           </Typography>
           
-          <Tooltip title="Add New Reading" arrow>
-            <Button
-              variant="contained"
-              onClick={handleOpen}
-              startIcon={<AddIcon />}
-              sx={{
-                borderRadius: '12px',
-                px: 3,
-                py: 1.5,
-                boxShadow: theme.shadows[4],
-              }}
-            >
-              New Reading
-            </Button>
-          </Tooltip>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Tooltip title="Add New Reading" arrow>
+              <Button
+                variant="contained"
+                onClick={handleOpen}
+                startIcon={<AddIcon />}
+                sx={{
+                  borderRadius: '12px',
+                  px: 3,
+                  py: 1.5,
+                  boxShadow: theme.shadows[4],
+                }}
+              >
+                New Reading
+              </Button>
+            </Tooltip>
+            <Tooltip title="Import CSV" arrow>
+              <Button
+                variant="outlined"
+                onClick={handleOpenCSV}
+                startIcon={<ScienceIcon />}
+                sx={{
+                  borderRadius: '12px',
+                  px: 3,
+                  py: 1.5,
+                }}
+              >
+                Import CSV
+              </Button>
+            </Tooltip>
+          </Box>
         </Box>
 
         <Grid container spacing={3}>
@@ -348,6 +646,14 @@ const SandTesting = () => {
           formData={formData}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
+          isLoading={isLoading}
+        />
+
+        <AddCSVImportModal
+          open={openCSVModal}
+          handleClose={handleCloseCSV}
+          handleFileUpload={handleFileUpload}
+          isLoading={isLoading}
         />
 
         <Snackbar
