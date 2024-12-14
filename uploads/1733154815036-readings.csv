@@ -1,0 +1,10 @@
+time,reading,remark
+09:00,3.80,Within range
+13:00,4.20,Near upper limit
+20:00,4.00,Normal
+09:00,3.60,Slightly below average
+13:00,3.90,Within range
+20:00,4.10,Normal
+09:00,4.50,Upper limit
+13:00,3.50,Lower limit
+20:00,4.00,Normal

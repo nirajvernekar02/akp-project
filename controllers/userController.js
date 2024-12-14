@@ -22,7 +22,7 @@ const upload = multer({
     const filetypes = /jpeg|jpg|png|gif/; // Allow specific file types
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     }
@@ -32,41 +32,42 @@ const upload = multer({
 
 // Create a new user
 exports.createUser = [
-    upload.single('profilePicture'), 
-    async (req, res) => {
-      const { username, password, email, role, department, shift, isAdmin } = req.body;
-  
-      try {
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-  
-        // Get profile picture path
-        const profilePicture = req.file ? req.file.path : null; // Store the file path if uploaded
-  
-        const newUser = new User({ 
-          username, 
-          password: hashedPassword, 
-          email, 
-          role, 
-          department, 
-          shift, 
-          isAdmin, 
-          profilePicture 
-        });
-        await newUser.save();
-        res.status(201).json({ message: 'User created successfully', user: newUser });
-      } catch (error) {
-        res.status(400).json({ error: error.message });
-      }
-    }
-  ];
+  upload.single('profilePicture'),
+  async (req, res) => {
+    const { username, password, email, role, department, shift, isAdmin } = req.body;
 
-// User login
+    try {
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Get profile picture path
+      const profilePicture = req.file ? req.file.path : null; // Store the file path if uploaded
+
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        email,
+        role,
+        department,
+        shift,
+        isAdmin,
+        profilePicture,
+      });
+      await newUser.save();
+      res.status(201).json({ message: 'User created successfully', user: newUser });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+];
+
+// User login (support email and username)
 exports.loginUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { identifier, password } = req.body; // Use "identifier" to handle either email or username
 
   try {
-    const user = await User.findOne({ username });
+    // Find user by email or username
+    const user = await User.findOne({ $or: [{ username: identifier }, { email: identifier }] });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     // Compare the password with the hashed password
@@ -81,42 +82,42 @@ exports.loginUser = async (req, res) => {
 
 // Update a user
 exports.updateUser = [
-    upload.single('profilePicture'), 
-    async (req, res) => {
-      const { username, password, email, role, department, shift, isAdmin } = req.body;
-  
-      // Get profile picture path
-      const profilePicture = req.file ? req.file.path : null; // Store the file path if uploaded
-  
-      try {
-        // Hash the new password if provided
-        const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
-  
-        const updateData = {
-          username,
-          ...(hashedPassword && { password: hashedPassword }), // Update password only if it's provided
-          email,
-          role,
-          department,
-          shift,
-          isAdmin,
-          profilePicture,
-          updatedAt: Date.now(),
-        };
-  
-        // Find user by ID and update
-        const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
-  
-        if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-        }
-        res.status(200).json({ message: 'User updated successfully', user });
-      } catch (error) {
-        res.status(400).json({ error: error.message });
+  upload.single('profilePicture'),
+  async (req, res) => {
+    const { username, password, email, role, department, shift, isAdmin } = req.body;
+
+    // Get profile picture path
+    const profilePicture = req.file ? req.file.path : null; // Store the file path if uploaded
+
+    try {
+      // Hash the new password if provided
+      const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
+      const updateData = {
+        username,
+        ...(hashedPassword && { password: hashedPassword }), // Update password only if it's provided
+        email,
+        role,
+        department,
+        shift,
+        isAdmin,
+        ...(profilePicture && { profilePicture }),
+        updatedAt: Date.now(),
+      };
+
+      // Find user by ID and update
+      const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
       }
+      res.status(200).json({ message: 'User updated successfully', user });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
-  ];
-  
+  },
+];
+
 // Get all users
 exports.getAllUsers = async (req, res) => {
   try {

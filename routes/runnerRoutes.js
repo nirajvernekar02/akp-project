@@ -97,6 +97,49 @@ router.get('/runnerData', async (req, res) => {
   }
 });
 
+router.get('/runnerDataMoisture', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const query = {};
+
+    // Add date range if provided
+    if (startDate && endDate) {
+      query.date = {
+        $gte: moment(startDate).startOf('day').toDate(),
+        $lte: moment(endDate).endOf('day').toDate()
+      };
+    }
+
+    // Fetch data for both moisture and compactibility types
+    const data = await RunnerData.find({ ...query, type: { $in: ['moisture', 'compactibility'] } })
+      .sort({ date: 1, type: 1 })
+      .lean();
+
+    // Multiply moisture readings by 10
+    data.forEach(d => {
+      if (d.type === 'moisture' && d.readings) {
+        d.readings = d.readings.map(r => ({
+          ...r,
+          reading: r.reading * 10 // Multiply each moisture reading by 10
+        }));
+      }
+    });
+
+    const response = {
+      success: true,
+      data,
+      count: data.length
+    };
+
+    res.json(response);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+
+// POST route to add new reading
 // POST route to add new reading
 router.post('/runnerData', async (req, res) => {
   try {
@@ -106,7 +149,7 @@ router.post('/runnerData', async (req, res) => {
     if (!date || !time || reading === undefined || !type) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields'
+        message: 'Missing required fields',
       });
     }
 
@@ -114,34 +157,32 @@ router.post('/runnerData', async (req, res) => {
     if (!LIMITS[type]) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid reading type'
+        message: 'Invalid reading type',
       });
     }
 
     const formattedDate = moment(date).startOf('day').toDate();
 
     // Find or create document for the date and type
-    let runnerData = await RunnerData.findOne({
-      date: formattedDate,
-      type: type
-    });
-
-    if (!runnerData) {
-      runnerData = new RunnerData({
-        date: formattedDate,
-        type: type,
-        upperLimit: LIMITS[type].upper,
-        lowerLimit: LIMITS[type].lower,
-        readings: []
-      });
-    }
-
-    // Add new reading
-    runnerData.readings.push({
-      time,
-      reading: parseFloat(reading),
-      remark
-    });
+    let runnerData = await RunnerData.findOneAndUpdate(
+      { date: formattedDate, type: type }, // Query: match date and type
+      {
+        $setOnInsert: {
+          date: formattedDate,
+          type: type,
+          upperLimit: LIMITS[type].upper,
+          lowerLimit: LIMITS[type].lower,
+        },
+        $push: {
+          readings: {
+            time,
+            reading: parseFloat(reading),
+            remark,
+          },
+        },
+      },
+      { new: true, upsert: true } // Options: create document if not found
+    );
 
     // Recalculate metrics
     runnerData.calculateMetrics();
@@ -150,13 +191,24 @@ router.post('/runnerData', async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Reading added successfully',
-      data: runnerData
+      data: runnerData,
     });
   } catch (error) {
-    handleError(res, error, 400);
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'A document for this type and date already exists.',
+      });
+    }
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 });
 
+// POST route for CSV import
 // POST route for CSV import
 router.post('/runnerData/import', upload.single('file'), async (req, res) => {
   if (!req.file) {
@@ -166,73 +218,109 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
     });
   }
 
-  const { date, type } = req.body;
+  const { type } = req.body;
 
-  if (!date || !type || !LIMITS[type]) {
+  if (!type || !LIMITS[type]) {
+    fs.unlinkSync(req.file.path); // Cleanup
     return res.status(400).json({
       success: false,
-      message: 'Invalid or missing date or type'
+      message: 'Invalid or missing type'
     });
   }
 
   try {
-    const formattedDate = moment(date).startOf('day').toDate();
     const results = [];
 
-    // Read CSV file
+    // Read and parse CSV file
     await new Promise((resolve, reject) => {
       fs.createReadStream(req.file.path)
         .pipe(csv())
-        .on('data', (data) => results.push(data))
+        .on('data', (data) => {
+          if (data.date && data.time && data.reading) {
+            results.push(data);
+          }
+        })
         .on('end', resolve)
         .on('error', reject);
     });
 
-    // Find or create document for the date and type
-    let runnerData = await RunnerData.findOne({
-      date: formattedDate,
-      type: type
-    });
-
-    if (!runnerData) {
-      runnerData = new RunnerData({
-        date: formattedDate,
-        type: type,
-        upperLimit: LIMITS[type].upper,
-        lowerLimit: LIMITS[type].lower,
-        readings: []
+    if (results.length === 0) {
+      fs.unlinkSync(req.file.path); // Cleanup
+      return res.status(400).json({
+        success: false,
+        message: 'CSV file is empty or contains invalid data'
       });
     }
 
-    // Process CSV data
-    for (const row of results) {
-      if (row.time && row.reading) {
-        runnerData.readings.push({
-          time: row.time,
-          reading: parseFloat(row.reading),
-          remark: row.remark || ''
+    // Group readings by date
+    const groupedReadings = results.reduce((acc, row) => {
+      const formattedDate = moment(row.date, 'YYYY-MM-DD').startOf('day').toDate();
+      const time = row.time;
+      const reading = parseFloat(row.reading);
+      const remark = row.remark || '';
+
+      if (isNaN(reading)) {
+        return acc; // Skip invalid readings
+      }
+
+      // Create or update the group for this date
+      if (!acc[formattedDate.toISOString()]) {
+        acc[formattedDate.toISOString()] = [];
+      }
+      acc[formattedDate.toISOString()].push({ time, reading, remark });
+
+      return acc;
+    }, {});
+
+    // Process grouped readings
+    const importedDocs = [];
+    for (const [dateString, readings] of Object.entries(groupedReadings)) {
+      const formattedDate = new Date(dateString);
+
+      // Find or create a single document for the date and type
+      let combinedReading = await RunnerData.findOne({
+        date: formattedDate,
+        type: type
+      });
+
+      if (!combinedReading) {
+        combinedReading = new RunnerData({
+          date: formattedDate,
+          type: type,
+          upperLimit: LIMITS[type].upper,
+          lowerLimit: LIMITS[type].lower,
+          readings: []
         });
       }
+
+      // Add all readings for this date
+      combinedReading.readings.push(...readings);
+      importedDocs.push(combinedReading);
     }
 
-    // Recalculate metrics and save
-    runnerData.calculateMetrics();
-    await runnerData.save();
+    // Save data and calculate metrics
+    for (const doc of importedDocs) {
+      doc.calculateMetrics();
+      await doc.save();
+    }
 
-    // Clean up uploaded file
-    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(req.file.path); // Cleanup after success
 
     res.status(201).json({
       success: true,
       message: 'CSV imported successfully',
       importedCount: results.length,
-      data: runnerData
+      documentsCreated: importedDocs.length
     });
   } catch (error) {
     if (req.file) {
-      fs.unlinkSync(req.file.path);
+      fs.unlinkSync(req.file.path); // Ensure cleanup
     }
-    handleError(res, error, 400);
+    res.status(500).json({
+      success: false,
+      message: 'Error importing CSV',
+      error: error.message
+    });
   }
 });
 

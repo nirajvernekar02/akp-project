@@ -47,11 +47,14 @@ const combinedReadingSchema = new mongoose.Schema({
 
 // Type-specific limits
 const LIMITS = {
-  moisture: { lower: 3.60, upper: 4.40 },
-  preamibility: { lower: 115, upper: 155 },
-  compactibility: { lower: 38, upper: 46 },
+  moisture: { lower: 3.50, upper: 4.50 },
+  preamibility: { lower: 105, upper: 165 },
+  compactibility: { lower: 36, upper: 48 },
   cgs: { lower: 1100, upper: 1500 }
 };
+
+combinedReadingSchema.index({ date: 1, type: 1 }, { unique: true });
+
 
 combinedReadingSchema.methods.calculateMetrics = function() {
   if (this.readings.length === 0) return;

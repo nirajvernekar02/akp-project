@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
   },
   shift: {
     type: String,
-    enum: ['day', 'night', 'evening'], // Adjust shifts as per your needs
+    // enum: ['day', 'night', 'evening'], // Adjust shifts as per your needs
   },
   isAdmin: {
     type: Boolean,
