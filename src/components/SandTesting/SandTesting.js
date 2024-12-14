@@ -435,7 +435,7 @@ const SandTesting = () => {
     const fetchReadings = async () => {
       try {
         setDataLoading(true);
-        const response = await axios.get('http://localhost:5500/api/runner/runnerData');
+        const response = await axios.get('https://akp.niraj.site/api/runner/runnerData');
         
         if (response.data && response.data.success) {
           setReadings(response.data.data);
@@ -476,7 +476,7 @@ const SandTesting = () => {
     setIsLoading(true);
   
     try {
-      const response = await axios.post('http://localhost:5500/api/runner/runnerData', formData);
+      const response = await axios.post('https://akp.niraj.site/api/runner/runnerData', formData);
       
       if (response.status === 200 && response.data.success) {
         // Optimistically update local state
@@ -508,12 +508,12 @@ const SandTesting = () => {
     formData.append('type', type);
   
     try {
-      const response = await axios.post('http://localhost:5500/api/runner/runnerData/import', formData, {
+      const response = await axios.post('https://akp.niraj.site/api/runner/runnerData/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       // Fetch updated readings after import
-      const fetchResponse = await axios.get('http://localhost:5500/api/runner/runnerData');
+      const fetchResponse = await axios.get('https://akp.niraj.site/api/runner/runnerData');
       
       if (fetchResponse.data && fetchResponse.data.success) {
         setReadings(fetchResponse.data.data);
