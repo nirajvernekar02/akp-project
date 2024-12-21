@@ -254,20 +254,30 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
 
     // Group readings by date
     const groupedReadings = results.reduce((acc, row) => {
-      const formattedDate = moment(row.date, 'YYYY-MM-DD').startOf('day').toDate();
+      // Parse date in dd-mm-yyyy format
+      const formattedDate = moment(row.date, 'DD-MM-YYYY');
+      
+      // Validate if the date is valid
+      if (!formattedDate.isValid()) {
+        console.warn(`Invalid date format found: ${row.date}. Expected format: dd-mm-yyyy`);
+        return acc; // Skip invalid dates
+      }
+
+      const dateKey = formattedDate.startOf('day').toDate().toISOString();
       const time = row.time;
       const reading = parseFloat(row.reading);
       const remark = row.remark || '';
 
       if (isNaN(reading)) {
+        console.warn(`Invalid reading value found: ${row.reading}`);
         return acc; // Skip invalid readings
       }
 
       // Create or update the group for this date
-      if (!acc[formattedDate.toISOString()]) {
-        acc[formattedDate.toISOString()] = [];
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
       }
-      acc[formattedDate.toISOString()].push({ time, reading, remark });
+      acc[dateKey].push({ time, reading, remark });
 
       return acc;
     }, {});
@@ -323,7 +333,6 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
     });
   }
 });
-
 // PUT route to update limits
 router.put('/runnerData/:id/limits', async (req, res) => {
   try {
