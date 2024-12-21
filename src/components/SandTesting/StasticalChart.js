@@ -18,7 +18,7 @@ const StatisticalParametersChart = ({ startDate, endDate, data, type }) => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await axios.get('https://akp.niraj.site/api/runner/metrics', {
+        const response = await axios.get('http://localhost:5500/api/runner/metrics', {
           params: {
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),

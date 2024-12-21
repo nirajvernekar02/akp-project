@@ -38,7 +38,7 @@
 //   ExpandLess as ExpandLessIcon
 // } from '@mui/icons-material';
 
-// const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+// const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 // const parameters = [
 //   { id: 'totalClay', label: 'Total Clay %' },
@@ -406,8 +406,6 @@
 // export default FoundryReadings;
 
 
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
@@ -437,7 +435,8 @@ import {
   Grid,
   Snackbar,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Checkbox
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -448,7 +447,7 @@ import {
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
 
-const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },
@@ -489,6 +488,64 @@ const formatIndianDate = (date) => {
     year: 'numeric'
   });
 };
+
+// New Export Dialog Component
+const ExportDialog = ({ open, onClose, onExport, parameters }) => {
+  const [selectedParams, setSelectedParams] = useState([]);
+
+  const handleToggleParameter = (paramId) => {
+    if (selectedParams.includes(paramId)) {
+      setSelectedParams(selectedParams.filter(id => id !== paramId));
+    } else {
+      setSelectedParams([...selectedParams, paramId]);
+    }
+  };
+
+  const handleExport = () => {
+    onExport(selectedParams);
+    onClose();
+    setSelectedParams([]); // Reset selection after export
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          Select Parameters to Export
+          <IconButton onClick={onClose} size="small">
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {parameters.map(param => (
+            <FormControl key={param.id}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Checkbox
+                  checked={selectedParams.includes(param.id)}
+                  onChange={() => handleToggleParameter(param.id)}
+                />
+                <Typography>{param.label}</Typography>
+              </Box>
+            </FormControl>
+          ))}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          variant="contained"
+          onClick={handleExport}
+          disabled={selectedParams.length === 0}
+        >
+          Export Selected
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const AddReadingDialog = ({ open, onClose, onAdd, loading }) => {
   const [newReading, setNewReading] = useState({
     parameter: '',
@@ -561,11 +618,13 @@ const AddReadingDialog = ({ open, onClose, onAdd, loading }) => {
     </Dialog>
   );
 };
+
 const FoundryReadings = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [readings, setReadings] = useState([]);
   const [stats, setStats] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -638,9 +697,14 @@ const FoundryReadings = () => {
     }
   };
 
-  const handleExportToExcel = () => {
+  const handleExportToExcel = (selectedParams) => {
+    // Filter readings based on selected parameters
+    const filteredReadings = readings.filter(reading => 
+      selectedParams.includes(reading.parameter)
+    );
+
     // Prepare data for export
-    const exportData = readings.map(reading => {
+    const exportData = filteredReadings.map(reading => {
       const parameter = parameters.find(p => p.id === reading.parameter);
       return {
         'Parameter': parameter?.label || reading.parameter,
@@ -733,7 +797,7 @@ const FoundryReadings = () => {
                 <Button
                   variant="outlined"
                   startIcon={<DownloadIcon />}
-                  onClick={handleExportToExcel}
+                  onClick={() => setIsExportDialogOpen(true)}
                   fullWidth
                 >
                   Export Excel
@@ -770,8 +834,7 @@ const FoundryReadings = () => {
                                 sx={{
                                   display: 'flex',
                                   justifyContent: 'space-between',
-                                  mt: 1,
-                                  p: 1,
+                                  mt: 1,p: 1,
                                   bgcolor: 'background.default',
                                   borderRadius: 1
                                 }}
@@ -845,6 +908,13 @@ const FoundryReadings = () => {
         onClose={() => setIsModalOpen(false)}
         onAdd={handleAddReading}
         loading={loading}
+      />
+
+      <ExportDialog
+        open={isExportDialogOpen}
+        onClose={() => setIsExportDialogOpen(false)}
+        onExport={handleExportToExcel}
+        parameters={parameters}
       />
     </Box>
   );

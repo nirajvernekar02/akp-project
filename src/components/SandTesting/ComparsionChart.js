@@ -24,7 +24,7 @@ const ComparisonChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://akp.niraj.site/api/runner/runnerDataMoisture', {
+      const response = await axios.get('http://localhost:5500/api/runner/runnerDataMoisture', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),

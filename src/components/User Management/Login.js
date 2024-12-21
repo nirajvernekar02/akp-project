@@ -39,7 +39,7 @@ const FoundrySandTestingLogin = () => {
     setError('');
   
     try {
-      const response = await axios.post('https://akp.niraj.site/api/user/login', credentials);
+      const response = await axios.post('http://localhost:5500/api/user/login', credentials);
       const { user, token } = response.data;
   
       // Store user data in localStorage

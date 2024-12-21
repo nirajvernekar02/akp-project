@@ -78,7 +78,7 @@ export default function CSVUpload() {
     formData.append('date', date.toISOString());
 
     try {
-      await axios.post('https://akp.niraj.site/api/reading/upload', formData, {
+      await axios.post('http://localhost:5500/api/reading/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

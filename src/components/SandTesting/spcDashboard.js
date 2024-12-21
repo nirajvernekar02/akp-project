@@ -92,7 +92,7 @@ const Dashboard = () => {
       .split('T')[0];
     
       const startDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const response = await axios.get(`https://akp.niraj.site/api/foundry/stats?startDate=${startDate}&endDate=${endDate}`);
+      const response = await axios.get(`http://localhost:5500/api/foundry/stats?startDate=${startDate}&endDate=${endDate}`);
       
       // Process and organize the data
       const processedData = response.data.reduce((acc, item) => {
