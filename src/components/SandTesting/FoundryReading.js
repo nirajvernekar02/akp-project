@@ -38,7 +38,7 @@
 //   ExpandLess as ExpandLessIcon
 // } from '@mui/icons-material';
 
-// const API_BASE_URL = 'http://localhost:5500/api/foundry';
+// const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
 
 // const parameters = [
 //   { id: 'totalClay', label: 'Total Clay %' },
@@ -447,7 +447,7 @@ import {
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
 
-const API_BASE_URL = 'http://localhost:5500/api/foundry';
+const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
 
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },
@@ -550,7 +550,7 @@ const AddReadingDialog = ({ open, onClose, onAdd, loading }) => {
   const [newReading, setNewReading] = useState({
     parameter: '',
     value: '',
-    timestamp: new Date().toISOString().slice(0, 16)
+    timestamp: new Date().toISOString().slice(0, 16) // Format: YYYY-MM-DDTHH:mm
   });
 
   const handleSubmit = (e) => {
@@ -629,25 +629,43 @@ const FoundryReadings = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [expandedParameters, setExpandedParameters] = useState([]);
+  const getLocalDateString = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper function to get start and end of day in local timezone
+  const getDayBoundaries = (dateString) => {
+    const localDate = new Date(dateString);
+    const startDate = new Date(localDate);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const endDate = new Date(localDate);
+    endDate.setHours(23, 59, 59, 999);
+
+    return {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+  };
 
   const fetchData = async (date) => {
     try {
       setLoading(true);
       
-      const startDate = new Date(date);
-      startDate.setHours(0, 0, 0, 0);
+      // Use the local date string for the API request
+      const formattedDate = getLocalDateString(date);
       
-      const endDate = new Date(date);
-      endDate.setHours(23, 59, 59, 999);
-
-      const readingsResponse = await axios.get(`${API_BASE_URL}/readings/${date}`);
+      const readingsResponse = await axios.get(`${API_BASE_URL}/readings/${formattedDate}`);
       setReadings(readingsResponse.data);
       
+      const { startDate, endDate } = getDayBoundaries(date);
+      
       const statsResponse = await axios.get(`${API_BASE_URL}/stats`, {
-        params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
-        }
+        params: { startDate, endDate }
       });
       setStats(statsResponse.data);
     } catch (err) {
@@ -658,17 +676,35 @@ const FoundryReadings = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData(selectedDate);
+ 
+
+ useEffect(() => {
+    if (selectedDate) {
+      fetchData(selectedDate);
+    }
   }, [selectedDate]);
 
   const handleAddReading = async (newReading) => {
     try {
       setLoading(true);
-      await axios.post(`${API_BASE_URL}/readings`, newReading);
+      
+      // Create a date object in local timezone
+      const localDate = new Date(newReading.timestamp);
+      
+      // Format the reading data with the correct timezone
+      const readingData = {
+        ...newReading,
+        timestamp: localDate.toISOString()
+      };
+      
+      await axios.post(`${API_BASE_URL}/readings`, readingData);
       setSuccess('Reading added successfully');
       setIsModalOpen(false);
-      fetchData(selectedDate);
+      
+      // Use the local date for fetching and updating selected date
+      const readingDate = getLocalDateString(localDate);
+      await fetchData(readingDate);
+      setSelectedDate(readingDate);
     } catch (err) {
       console.error('Error adding reading:', err);
       setError('Failed to add reading');

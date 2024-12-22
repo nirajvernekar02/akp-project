@@ -68,7 +68,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5500/api/user/users', formDataToSend, {
+      const response = await axios.post('https://akp.niraj.site/api/user/users', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

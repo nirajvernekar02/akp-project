@@ -42,7 +42,7 @@ const RunnerChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
+      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -93,7 +93,7 @@ const RunnerChart = () => {
         reading: Number(newEntry.reading),
         remark: newEntry.remark
       };
-      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
+      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -137,71 +137,87 @@ const RunnerChart = () => {
 
   const PrintLayout = ({ data, partInfo, limits, showCpCpk }) => (
     <div className="print-only">
-      <div className="print-header">
-        <h1>AKP FOUNDRIES - RUN CHART</h1>
-        <div className="print-info-grid">
-          <div>
-            <label>Part Name:</label>
-            <span>{partInfo.partName}</span>
+      <div className="print-page">
+        <div className="print-header">
+          <h1>AKP FOUNDRIES - RUN CHART</h1>
+          <div className="print-info-grid">
+            <div>
+              <label>Part Name:</label>
+              <span>{partInfo.partName}</span>
+            </div>
+            <div>
+              <label>Part Number:</label>
+              <span>{partInfo.partNumber}</span>
+            </div>
+            <div>
+              <label>Process No:</label>
+              <span>{partInfo.processNo}</span>
+            </div>
+            <div>
+              <label>Process Name:</label>
+              <span>{partInfo.processName}</span>
+            </div>
           </div>
-          <div>
-            <label>Part Number:</label>
-            <span>{partInfo.partNumber}</span>
-          </div>
-          <div>
-            <label>Process No:</label>
-            <span>{partInfo.processNo}</span>
-          </div>
-          <div>
-            <label>Process Name:</label>
-            <span>{partInfo.processName}</span>
+          <div className="print-limits">
+            <p> Characteristics: Compactibility % | Specification:{(limits.lower)} TO {(limits.upper)} %</p>
+            <div className="print-date-range">
+              <span>From: {startDate.toLocaleDateString()}</span>
+              <span>To: {endDate.toLocaleDateString()}</span>
+            </div>
           </div>
         </div>
-        <div className="print-limits">
-        Characteristics: Compactibility % | Specification:{(limits.lower+1)} TO {(limits.upper-1)} %
-          <div className="print-date-range">
-            <span>From: {startDate.toLocaleDateString()}</span>
-            <span>To: {endDate.toLocaleDateString()}</span>
+        
+        <div className="print-chart">
+          {React.cloneElement(chartContent, {
+            width: 1000,
+            height: 500
+          })}
+        </div>
+
+        <div className="print-legend">
+          <div className="legend-item">
+            <span className="legend-color green"></span>
+            <span>Control Limit</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color yellow"></span>
+            <span>Warning Limit</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-color red"></span>
+            <span>Stop and Correct</span>
           </div>
         </div>
-      </div>
-      
-      <div className="print-chart">
-        {React.cloneElement(chartContent, {
-          width: 800,
-          height: 400
-        })}
+    
+        <div className="print-signatures">
+          <div>
+            <p>Operator Sign: _________________</p>
+          </div>
+          <div>
+            <p>H.O.D Sign: _________________</p>
+          </div>
+        </div>
       </div>
 
       {showCpCpk && (
-        <div className="print-statistical-chart">
-          <StatisticalParametersChart data={data} />
+        <div className="print-page statistical-page">
+          <div className="print-header">
+            <h2>Statistical Analysis Report</h2>
+            <div className="print-date-range">
+              <span>From: {startDate.toLocaleDateString()}</span>
+              <span>To: {endDate.toLocaleDateString()}</span>
+            </div>
+          </div>
+          <div className="print-statistical-chart">
+            <StatisticalParametersChart 
+              data={data} 
+              startDate={startDate} 
+              endDate={endDate} 
+              type="compactibility"
+            />
+          </div>
         </div>
       )}
-  
-      <div className="print-legend">
-        <div className="legend-item">
-          <span className="legend-color green"></span>
-          <span>Control Limit</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-color yellow"></span>
-          <span>Warning Limit</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-color red"></span>
-          <span>Stop and Correct</span>
-        </div>
-      </div>
-  
-      <div className="print-signatures">
-        <div>
-          <p>Operator Sign: _________________</p>
-        </div>
-        <div>
-          <p>H.O.D Sign: _________________</p>
-        </div>
-      </div>
     </div>
   );
 
@@ -331,17 +347,14 @@ const RunnerChart = () => {
     partName,
     partNumber,
     processNo,
-    processName
+    processName,
+    startDate,
+    endDate
   }}
-  limits={{
-    upper: limits.upper,
-    lower: limits.lower,
-    yellowUpper: limits.yellowUpper,
-    yellowLower: limits.yellowLower,
-    greenUpper: limits.greenUpper,
-    greenLower: limits.greenLower
-  }}
-/>        
+  limits={limits}
+  showCpCpk={showCpCpk}
+  chartContent={chartContent}
+/>      
             <Button variant="contained" onClick={() => setOpenDialog(true)}>
               Add Entry
             </Button>
@@ -414,98 +427,116 @@ const RunnerChart = () => {
 
         <ToastContainer position="bottom-right" />
 
-      <style>{`
-  @media screen {
-    .print-only {
-      display: none;
-    }
-  }
-  
-  @media print {
-    body * {
-      visibility: hidden;
-    }
-    .print-only, .print-only * {
-      visibility: visible;
-    }
-    .print-only {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-    }
-    @page {
-      size: landscape;
-      margin: 0.5cm;
-    }
-    
-    .print-header {
-      margin-bottom: 20px;
-    }
-    
-    .print-header h1 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    
-    .print-info-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    
-    .print-info-grid div {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .print-info-grid label {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    
-    .print-limits {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    
-    .print-chart {
-      height: 400px;
-      margin-bottom: 20px;
-    }
-    
-    .print-legend {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    
-    .legend-color {
-      width: 20px;
-      height: 20px;
-      display: inline-block;
-    }
-    
-    .legend-color.green { background-color: #006400; }
-    .legend-color.yellow { background-color: #b8860b; }
-    .legend-color.red { background-color: #8b0000; }
-    
-    .print-signatures {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 40px;
-    }
-  }
-`}</style>
+        <style>{`
+        @media screen {
+          .print-only {
+            display: none;
+          }
+        }
+        
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .print-only, .print-only * {
+            visibility: visible;
+          }
+          .print-only {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+          
+          .print-page {
+            page-break-after: always;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+          }
+          
+          .statistical-page {
+            page-break-before: always;
+            padding-top: 40px;
+          }
+          
+          @page {
+            size: landscape;
+            margin: 0.5cm;
+          }
+          
+          .print-header {
+            margin-bottom: 20px;
+          }
+          
+          .print-header h1, .print-header h2 {
+            text-align: center;
+            margin-bottom: 15px;
+          }
+          
+          .print-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+          }
+          
+          .print-info-grid div {
+            display: flex;
+            flex-direction: column;
+          }
+          
+          .print-info-grid label {
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+          
+          .print-limits {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+          }
+          
+          .print-chart {
+            height: 400px;
+            margin-bottom: 20px;
+          }
+          
+          .print-statistical-chart {
+            height: 600px;
+            margin: 40px 0;
+          }
+          
+          .print-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+          }
+          
+          .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+          }
+          
+          .legend-color {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+          }
+          
+          .legend-color.green { background-color: #006400; }
+          .legend-color.yellow { background-color: #b8860b; }
+          .legend-color.red { background-color: #8b0000; }
+          
+          .print-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+          }
+        }
+      `}</style>
 </CardContent>
     </Card>
  
