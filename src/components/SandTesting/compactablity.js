@@ -42,7 +42,7 @@ const RunnerChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
+      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -85,15 +85,25 @@ const RunnerChart = () => {
   };
 
   const handleAddEntry = async () => {
+    const reading = Number(newEntry.reading);
+  
+    // Validate the reading against the defined limits
+    if (reading < limits.lowerlimit || reading > limits.upperlimit) {
+      toast.error(
+        `Reading must be within the specified limits: ${limits.lower} - ${limits.upper}.`
+      );
+      return;
+    }
+  
     try {
       const newData = {
         date: newEntry.date,
         time: newEntry.time,
         type: "compactibility",
-        reading: Number(newEntry.reading),
-        remark: newEntry.remark
+        reading,
+        remark: newEntry.remark,
       };
-      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
+      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -103,6 +113,7 @@ const RunnerChart = () => {
       toast.error('Failed to add new entry. Please try again.');
     }
   };
+  
 
   const getColor = (value) => {
     if (value <= limits.yellowLower || value >= limits.yellowUpper) return '#FF0000'; // Bright Red

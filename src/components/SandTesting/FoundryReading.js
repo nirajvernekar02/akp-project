@@ -38,7 +38,7 @@
 //   ExpandLess as ExpandLessIcon
 // } from '@mui/icons-material';
 
-// const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+// const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 // const parameters = [
 //   { id: 'totalClay', label: 'Total Clay %' },
@@ -447,7 +447,7 @@ import {
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
 
-const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },

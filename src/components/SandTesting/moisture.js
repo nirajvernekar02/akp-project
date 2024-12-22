@@ -38,7 +38,7 @@
 
 //   const fetchData = async () => {
 //     try {
-//       const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
+//       const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
 //         params: {
 //           startDate: startDate.toISOString(),
 //           endDate: endDate.toISOString(),
@@ -60,7 +60,7 @@
 //         type: "moisture",
 //         reading: Number(newEntry.reading)
 //       };
-//       await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
+//       await axios.post('http://localhost:5500/api/runner/runnerData', newData);
 //       setOpenDialog(false);
 //       setNewEntry({ date: new Date(), time: '12:00', reading: '' });
 //       fetchData();
@@ -545,7 +545,7 @@ const MoistureChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
+      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -577,15 +577,25 @@ const MoistureChart = () => {
   };
 
   const handleAddEntry = async () => {
+    const reading = Number(newEntry.reading);
+  
+    // Validate the reading against the defined limits
+    if (reading < limits.lower || reading > limits.upper) {
+      toast.error(
+        `Reading must be within the specified limits: ${limits.lower} - ${limits.upper}.`
+      );
+      return;
+    }
+  
     try {
       const newData = {
         date: newEntry.date,
         time: newEntry.time,
         type: "moisture",
-        reading: Number(newEntry.reading),
-        remark: newEntry.remark
+        reading,
+        remark: newEntry.remark,
       };
-      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
+      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -595,6 +605,7 @@ const MoistureChart = () => {
       toast.error('Failed to add new entry. Please try again.');
     }
   };
+  
 
   const getColor = (value) => {
     if (value < limits.yellowLower1 || value > limits.yellowUpper2) {
