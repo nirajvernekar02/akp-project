@@ -16,12 +16,14 @@ import Login from './components/User Management/Login';
 import ProtectedRoute from '../src/redux/ProtectedRoute';
 import SandTesting from './components/SandTesting/SandTesting';
 import DeveloperPage from './components/User Management/DeveloperPage';
+import FishboneDiagramExample from './components/fishbone';
 function App() {
   return (
 
       <Routes>
         {/* Public Route */}
         <Route path="/" element={<Login />} />
+        <Route path="/fish" element={<FishboneDiagramExample />} />
 
         {/* Protected Routes */}
         <Route
