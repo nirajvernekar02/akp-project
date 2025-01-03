@@ -17,6 +17,7 @@ import ProtectedRoute from '../src/redux/ProtectedRoute';
 import SandTesting from './components/SandTesting/SandTesting';
 import DeveloperPage from './components/User Management/DeveloperPage';
 import FishboneDiagramExample from './components/fishbone';
+import RunnerData from './components/SandTesting/RunnerData';
 function App() {
   return (
 
@@ -31,6 +32,15 @@ function App() {
           element={
             <ProtectedRoute>
               <FoundryReadings />
+            </ProtectedRoute>
+          }
+        />
+
+<Route
+          path="/view-readings"
+          element={
+            <ProtectedRoute>
+              <RunnerData />
             </ProtectedRoute>
           }
         />

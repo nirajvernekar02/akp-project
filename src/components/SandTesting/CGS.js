@@ -13,6 +13,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
 import StatisticalParametersChart from './StasticalChart';
+import BackButton from './BackButton';
 
 const RunnerChart = () => {
   const [data, setData] = useState([]);
@@ -40,7 +41,7 @@ const RunnerChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
+      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -101,7 +102,7 @@ const RunnerChart = () => {
         reading,
         remark: newEntry.remark,
       };
-      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
+      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -168,7 +169,7 @@ const RunnerChart = () => {
             </div>
           </div>
           <div className="print-limits">
-            <p>Characteristics: G.G. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²</p>
+            <p>Characteristics: G.C. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²</p>
             <div className="print-date-range">
               <span>From: {startDate.toLocaleDateString()}</span>
               <span>To: {endDate.toLocaleDateString()}</span>
@@ -268,27 +269,28 @@ const RunnerChart = () => {
       <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.5} />
       <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.8} />
       <Line
-        type="monotone"
-        dataKey="reading"
-        stroke="#8884d8"
-        strokeWidth={3}
-        name="Reading"
-        dot={({ cx, cy, payload }) => (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={6} 
-            fill={getColor(payload.reading)} 
-            stroke="#8884d8" 
-            strokeWidth={2} 
-          />
-        )}
-      />
+  type="linear"  // Changed from "monotone" to "linear"
+  dataKey="reading"
+  stroke="#8884d8"
+  strokeWidth={3}
+  name="Reading"
+  dot={({ cx, cy, payload }) => (
+    <circle 
+      cx={cx} 
+      cy={cy} 
+      r={6} 
+      fill={getColor(payload.reading)} 
+      stroke="#8884d8" 
+      strokeWidth={2} 
+    />
+  )}
+/>
     </LineChart>
   );
 
   return (
     <Card style={{ maxWidth: '1200px', margin: 'auto', marginTop: '20px', padding: '20px' }}>
+      <BackButton/>
       <CardContent>
         {/* Rest of your JSX remains the same... */}
         <Typography variant="h4" gutterBottom align="center">

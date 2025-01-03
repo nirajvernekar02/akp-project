@@ -33,10 +33,10 @@ import {
   Compress as CompressIcon,
   Air as AirIcon,
   Close as CloseIcon,
-  CompareArrows as CompareArrowsIcon, // Corrected this line
+  CompareArrows as CompareArrowsIcon,
 } from '@mui/icons-material';
-
-
+import BackButton from './BackButton';
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const DashboardTile = ({ title, description, Icon, color, onClick }) => {
   const [elevated, setElevated] = useState(false);
@@ -435,7 +435,7 @@ const SandTesting = () => {
     const fetchReadings = async () => {
       try {
         setDataLoading(true);
-        const response = await axios.get('https://akp.niraj.site/api/runner/runnerData');
+        const response = await axios.get('http://localhost:5500/api/runner/runnerData');
         
         if (response.data && response.data.success) {
           setReadings(response.data.data);
@@ -476,7 +476,7 @@ const SandTesting = () => {
     setIsLoading(true);
   
     try {
-      const response = await axios.post('https://akp.niraj.site/api/runner/runnerData', formData);
+      const response = await axios.post('http://localhost:5500/api/runner/runnerData', formData);
       
       if (response.status === 200 && response.data.success) {
         // Optimistically update local state
@@ -508,12 +508,12 @@ const SandTesting = () => {
     formData.append('type', type);
   
     try {
-      const response = await axios.post('https://akp.niraj.site/api/runner/runnerData/import', formData, {
+      const response = await axios.post('http://localhost:5500/api/runner/runnerData/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       // Fetch updated readings after import
-      const fetchResponse = await axios.get('https://akp.niraj.site/api/runner/runnerData');
+      const fetchResponse = await axios.get('http://localhost:5500/api/runner/runnerData');
       
       if (fetchResponse.data && fetchResponse.data.success) {
         setReadings(fetchResponse.data.data);
@@ -533,6 +533,10 @@ const SandTesting = () => {
     }
   };
 
+
+  const handleNavigate = () => {
+    navigate("/view-readings"); // Replace with your actual route
+  };
 
   const tiles = [
     {
@@ -576,13 +580,16 @@ const SandTesting = () => {
 
   return (
     <Container maxWidth="xl">
-      <Box sx={{ flexGrow: 1, py: 4, mt: 8 }}>
+      
+      <BackButton/>
+      <Box sx={{ flexGrow: 1, py: 4, mt: 4 }}>
         <Box sx={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
           mb: 4 
         }}>
+       
           <Typography 
             variant="h3" 
             sx={{ 
@@ -612,6 +619,25 @@ const SandTesting = () => {
                 New Reading
               </Button>
             </Tooltip>
+    <Tooltip title="View Readings" arrow>
+      <Button
+        variant="contained"
+        onClick={handleNavigate}
+        startIcon={<VisibilityIcon />}
+        sx={{
+          borderRadius: "12px",
+          px: 3,
+          py: 1.5,
+          boxShadow: (theme) => theme.shadows[4],
+          backgroundColor: "primary.main",
+          "&:hover": {
+            backgroundColor: "primary.dark",
+          },
+        }}
+      >
+        View Readings
+      </Button>
+    </Tooltip>
             <Tooltip title="Import CSV" arrow>
               <Button
                 variant="outlined"

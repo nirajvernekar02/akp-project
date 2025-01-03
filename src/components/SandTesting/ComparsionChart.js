@@ -11,6 +11,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
+import BackButton from './BackButton';
 
 const ComparisonChart = () => {
   const [data, setData] = useState([]);
@@ -24,7 +25,7 @@ const ComparisonChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://akp.niraj.site/api/runner/runnerDataMoisture', {
+      const response = await axios.get('http://localhost:5500/api/runner/runnerDataMoisture', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -112,6 +113,7 @@ const ComparisonChart = () => {
   );
 
   return (
+
     <Card 
       style={{ 
         maxWidth: '1200px', 
@@ -121,7 +123,9 @@ const ComparisonChart = () => {
         boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
       }}
     >
+   
       <CardContent>
+      <BackButton/>
         <Typography variant="h4" gutterBottom align="center" style={{ marginBottom: '30px', color: '#2c3e50' }}>
           AKP FOUNDRIES - PERFORMANCE COMPARISON
         </Typography>

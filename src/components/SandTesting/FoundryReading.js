@@ -38,7 +38,7 @@
 //   ExpandLess as ExpandLessIcon
 // } from '@mui/icons-material';
 
-// const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+// const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 // const parameters = [
 //   { id: 'totalClay', label: 'Total Clay %' },
@@ -446,8 +446,9 @@ import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon
 } from '@mui/icons-material';
+import BackButton from './BackButton';
 
-const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },
@@ -559,7 +560,9 @@ const AddReadingDialog = ({ open, onClose, onAdd, loading }) => {
   };
 
   return (
+   
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+
       <form onSubmit={handleSubmit}>
         <DialogTitle>
           <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -774,6 +777,7 @@ const FoundryReadings = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+             <BackButton/>
       <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
         Foundry Sand Testing Parameters
       </Typography>

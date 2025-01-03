@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import BackButton from './BackButton';
 // Parameter groups with their configurations
 const parameterGroups = {
   clay: {
@@ -92,7 +92,7 @@ const Dashboard = () => {
       .split('T')[0];
     
       const startDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const response = await axios.get(`https://akp.niraj.site/api/foundry/stats?startDate=${startDate}&endDate=${endDate}`);
+      const response = await axios.get(`http://localhost:5500/api/foundry/stats?startDate=${startDate}&endDate=${endDate}`);
       
       // Process and organize the data
       const processedData = response.data.reduce((acc, item) => {
@@ -135,6 +135,7 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+      <BackButton/>
       <Typography variant="h4" gutterBottom align="center" sx={{ color: '#1976d2', fontWeight: 600, mb: 4 }}>
         Foundry Process Control Dashboard
       </Typography>

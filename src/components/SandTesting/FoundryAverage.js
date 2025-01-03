@@ -28,8 +28,9 @@ import {
   Refresh as RefreshIcon,
   FileDownload as FileDownloadIcon
 } from '@mui/icons-material';
+import BackButton from './BackButton';
 
-const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },
@@ -141,6 +142,7 @@ const FoundryAverages = () => {
 
   return (
     <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+      <BackButton/>
       <Snackbar
         open={!!error}
         autoHideDuration={6000}

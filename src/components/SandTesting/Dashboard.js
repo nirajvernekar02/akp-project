@@ -190,7 +190,7 @@ const Dashboard = () => {
     localStorage.removeItem('token');
     
     // Redirect to login page
-    navigate('/login');
+    navigate('/');
   };
 
   return (

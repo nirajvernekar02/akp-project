@@ -38,7 +38,7 @@
 
 //   const fetchData = async () => {
 //     try {
-//       const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
+//       const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
 //         params: {
 //           startDate: startDate.toISOString(),
 //           endDate: endDate.toISOString(),
@@ -60,7 +60,7 @@
 //         type: "moisture",
 //         reading: Number(newEntry.reading)
 //       };
-//       await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
+//       await axios.post('http://localhost:5500/api/runner/runnerData', newData);
 //       setOpenDialog(false);
 //       setNewEntry({ date: new Date(), time: '12:00', reading: '' });
 //       fetchData();
@@ -516,7 +516,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
 import StatisticalParametersChart from './StasticalChart';
-
+import BackButton from './BackButton';
 const MoistureChart = () => {
   const [data, setData] = useState([]);
   const [showCpCpk, setShowCpCpk] = useState(false);
@@ -545,7 +545,7 @@ const MoistureChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
+      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -595,7 +595,7 @@ const MoistureChart = () => {
         reading,
         remark: newEntry.remark,
       };
-      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
+      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -669,22 +669,22 @@ const MoistureChart = () => {
       <ReferenceArea y1={limits.greenUpper} y2={limits.yellowUpper} fill="yellow" fillOpacity={0.5} />
       <ReferenceArea y1={limits.yellowUpper} y2={limits.upper} fill="red" fillOpacity={0.8} />
       <Line
-        type="monotone"
-        dataKey="reading"
-        stroke="#1976d2"
-        strokeWidth={2}
-        name="Moisture Reading"
-        dot={({ cx, cy, payload }) => (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={5} 
-            fill={getColor(payload.reading)} 
-            stroke="#1976d2" 
-            strokeWidth={1} 
-          />
-        )}
-      />
+  type="linear"  // Changed from "monotone" to "linear"
+  dataKey="reading"
+  stroke="#8884d8"
+  strokeWidth={3}
+  name="Reading"
+  dot={({ cx, cy, payload }) => (
+    <circle 
+      cx={cx} 
+      cy={cy} 
+      r={6} 
+      fill={getColor(payload.reading)} 
+      stroke="#8884d8" 
+      strokeWidth={2} 
+    />
+  )}
+/>
     </LineChart>
   );
 
@@ -776,6 +776,7 @@ const MoistureChart = () => {
 
   return (
     <Card sx={{ maxWidth: '1200px', mx: 'auto', mt: 3, p: 3 }}>
+      <BackButton/>
       <CardContent>
         <Typography variant="h4" align="center" gutterBottom>
           Moisture Measurement Chart
