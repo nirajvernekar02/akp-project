@@ -1,0 +1,33 @@
+<service>
+	<id>akpbackendservice.exe</id>
+	<name>AKP Backend Service</name>
+	<description>AKP Project Backend Server (Expires Jan 1, 2026)</description>
+	<executable>C:\Program Files\nodejs\node.exe</executable>
+	<argument>--harmony</argument>
+	<argument>D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>D:\AKP Project\Backend\index.js</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>AKP Backend Service wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>1</argument>
+	<argument>--maxrestarts</argument>
+	<argument>3</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>undefined</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<env name="NODE_ENV" value="production"/>
+	<env name="EXPIRY_DATE" value="2026-01-01"/>
+	<serviceaccount>
+		<domain>LAPTOP-K7F8CQ6J</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>D:\AKP Project\Backend</workingdirectory>
+</service>

@@ -2,6 +2,14 @@ const RunnerData = require('../models/runnerModel'); // Adjust the path as neces
 const csvParser = require('csv-parser'); // Import the CSV parser
 const stream = require('stream');
 
+// Define the limits for validation
+const LIMITS = {
+  moisture: { lower: 3.50, upper: 4.50 },
+  preamibility: { lower: 105, upper: 165 },
+  compactibility: { lower: 36, upper: 48 },
+  cgs: { lower: 1100, upper: 1500 }
+};
+
 const importReadings = async (req, res) => {
   try {
     const results = [];
@@ -11,6 +19,12 @@ const importReadings = async (req, res) => {
       return res.status(400).json({ message: 'Type is required' });
     }
 
+    if (!LIMITS[type]) {
+      return res.status(400).json({ message: 'Invalid type provided' });
+    }
+
+    const { lower, upper } = LIMITS[type];
+
     const csvStream = new stream.Readable();
     csvStream.push(req.file.buffer); // Use the uploaded CSV file buffer
     csvStream.push(null); // No more data
@@ -19,18 +33,30 @@ const importReadings = async (req, res) => {
     csvStream
       .pipe(csvParser())
       .on('data', (row) => {
-        // Validate and format the row
         const { date, time, reading } = row;
+
+        // Validate and format the row
         if (date && time && reading) {
+          const numericReading = parseFloat(reading);
+          if (numericReading < lower || numericReading > upper) {
+            // Skip the row if the reading is out of bounds
+            console.warn(`Reading out of bounds for ${type}: ${numericReading}`);
+            return;
+          }
+
           results.push({
             date: new Date(date), // Convert date string to Date object
             time,
             type,
-            reading: parseFloat(reading), // Convert reading to a number
+            reading: numericReading, // Convert reading to a number
           });
         }
       })
       .on('end', async () => {
+        if (results.length === 0) {
+          return res.status(400).json({ message: 'No valid readings to import' });
+        }
+
         // Save all results to the database
         try {
           await RunnerData.insertMany(results);

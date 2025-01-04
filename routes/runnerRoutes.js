@@ -46,6 +46,73 @@ const handleError = (res, error, status = 500) => {
   });
 };
 
+// GET route to retrieve data with enhanced filtering and sorting
+router.get('/runner', async (req, res) => {
+  try {
+    const { date, startDate, endDate, type } = req.query;
+
+    const query = {};
+
+    // Filter by a specific date
+    if (date) {
+      query.date = {
+        $gte: moment(date).startOf('day').toDate(),
+        $lte: moment(date).endOf('day').toDate(),
+      };
+    }
+
+    // Filter by date range
+    if (startDate && endDate) {
+      query.date = {
+        $gte: moment(startDate).startOf('day').toDate(),
+        $lte: moment(endDate).endOf('day').toDate(),
+      };
+    }
+
+    // Filter by type if provided
+    if (type) {
+      query.type = type;
+    }
+
+    // Fetch data from the database
+    const data = await RunnerData.find(query)
+      .sort({ date: -1 }) // Sort by date (new to old)
+      .lean();
+
+    // Prepare the response
+    const response = {
+      success: true,
+      data,
+      count: data.length,
+    };
+
+    // Add type-specific stats if a type is specified and data is available
+    if (type && data.length > 0) {
+      const allReadings = data.flatMap((d) => d.readings.map((r) => r.reading));
+      const stats = {
+        overall: {
+          min: Math.min(...allReadings),
+          max: Math.max(...allReadings),
+          avg: allReadings.reduce((a, b) => a + b, 0) / allReadings.length,
+          count: allReadings.length,
+          limits: LIMITS[type] || null, // Replace with appropriate limits for the type
+        },
+      };
+      response.stats = stats;
+    }
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching runner data:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching runner data',
+      error: error.message,
+    });
+  }
+});
+
+
 // GET route to retrieve data with enhanced filtering
 router.get('/runnerData', async (req, res) => {
   try {
@@ -411,31 +478,33 @@ router.delete('/runnerData/:id/readings/:readingId', async (req, res) => {
     if (!runnerData) {
       return res.status(404).json({
         success: false,
-        message: 'Data not found'
+        message: 'Data not found',
       });
     }
-
+    console.log("Runner Data",runnerData)
     const readingToDelete = runnerData.readings.id(readingId);
     if (!readingToDelete) {
       return res.status(404).json({
         success: false,
-        message: 'Reading not found'
+        message: 'Reading not found',
       });
     }
-
-    readingToDelete.remove();
-    runnerData.calculateMetrics();
+    console.log("Reading to delete",readingToDelete)
+    readingToDelete.deleteOne(); // This should now work if schema is correct
+    runnerData.calculateMetrics(); // Ensure this method is properly defined if used
     await runnerData.save();
 
     res.json({
       success: true,
       message: 'Reading deleted successfully',
-      data: runnerData
+      data: runnerData,
     });
   } catch (error) {
-    handleError(res, error);
+    console.error('Error deleting reading:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 
 router.get('/metrics', async (req, res) => {
     try {

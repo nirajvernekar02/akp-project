@@ -1,0 +1,7 @@
+AKP app listening on port 5500
+Connected to MongoDB successfully
+Query Range: {
+  startOfDay: '2024-12-31T00:00:00.000Z',
+  endOfDay: '2024-12-31T23:59:59.999Z'
+}
+Readings found: 0

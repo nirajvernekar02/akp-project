@@ -1,0 +1,16 @@
+2025-01-02 11:08:25 - Stopping akpbackendservice.exe
+2025-01-02 11:08:25 - ProcessKill 17416
+2025-01-02 11:08:25 - Found child process: 27176 Name: conhost.exe
+2025-01-02 11:08:25 - Found child process: 6768 Name: node.exe
+2025-01-02 11:08:25 - Stopping process 27176
+2025-01-02 11:08:25 - Send SIGINT 27176
+2025-01-02 11:08:25 - SIGINT to 27176 failed - Killing as fallback
+2025-01-02 11:08:25 - Stopping process 6768
+2025-01-02 11:08:25 - Send SIGINT 6768
+2025-01-02 11:08:25 - SIGINT to 6768 failed - Killing as fallback
+2025-01-02 11:08:25 - Stopping process 17416
+2025-01-02 11:08:25 - Send SIGINT 17416
+2025-01-02 11:08:25 - SIGINT to 17416 failed - Killing as fallback
+2025-01-02 11:08:25 - Finished akpbackendservice.exe
+2025-01-02 11:09:51 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-02 11:09:51 - Started 23604
