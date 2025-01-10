@@ -1,7 +1,53 @@
 AKP app listening on port 5500
 Connected to MongoDB successfully
 Query Range: {
-  startOfDay: '2024-12-31T00:00:00.000Z',
-  endOfDay: '2024-12-31T23:59:59.999Z'
+  startOfDay: '2025-01-08T00:00:00.000Z',
+  endOfDay: '2025-01-08T23:59:59.999Z'
 }
 Readings found: 0
+Query Range: {
+  startOfDay: '2025-01-08T00:00:00.000Z',
+  endOfDay: '2025-01-08T23:59:59.999Z'
+}
+Readings found: 1
+Query Range: {
+  startOfDay: '2025-01-08T00:00:00.000Z',
+  endOfDay: '2025-01-08T23:59:59.999Z'
+}
+Readings found: 2
+Runner Data {
+  _id: new ObjectId('6767c1399baa081177ae3d61'),
+  date: 2024-12-11T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 1200,
+      time: '09:00',
+      remark: 'Normal',
+      _id: new ObjectId('6767c1399baa081177ae3d62')
+    },
+    {
+      reading: 4,
+      time: '09:00',
+      remark: 'Normal',
+      _id: new ObjectId('677fd30959a6a78b51868b07')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 602,
+  standardDeviation: 598,
+  threeSigma: 1794,
+  sixSigma: 3588,
+  cp: 0.00022296544035674477,
+  cpk1: 0.3335562987736901,
+  cpk2: -0.3331103678929766,
+  cpk: -0.3331103678929766,
+  __v: 1
+}
+Reading to delete {
+  reading: 1200,
+  time: '09:00',
+  remark: 'Normal',
+  _id: new ObjectId('6767c1399baa081177ae3d62')
+}

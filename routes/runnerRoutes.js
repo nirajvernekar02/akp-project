@@ -208,6 +208,7 @@ router.get('/runnerDataMoisture', async (req, res) => {
 
 // POST route to add new reading
 // POST route to add new reading
+// POST route for manual entry
 router.post('/runnerData', async (req, res) => {
   try {
     const { date, time, reading, type, remark } = req.body;
@@ -228,54 +229,87 @@ router.post('/runnerData', async (req, res) => {
       });
     }
 
+    // Format date for storage (stays one day behind as before)
     const formattedDate = moment(date).startOf('day').toDate();
 
-    // Find or create document for the date and type
-    let runnerData = await RunnerData.findOneAndUpdate(
-      { date: formattedDate, type: type }, // Query: match date and type
-      {
-        $setOnInsert: {
-          date: formattedDate,
-          type: type,
-          upperLimit: LIMITS[type].upper,
-          lowerLimit: LIMITS[type].lower,
-        },
-        $push: {
-          readings: {
-            time,
-            reading: parseFloat(reading),
-            remark,
-          },
-        },
-      },
-      { new: true, upsert: true } // Options: create document if not found
-    );
+    // For duplicate checking, use the next day's date
+    const checkDate = moment(date).add(1, 'days').startOf('day').toDate();
 
-    // Recalculate metrics
-    runnerData.calculateMetrics();
-    await runnerData.save();
+    // First check if document exists for the next day (for duplicate checking)
+    let duplicateDoc = await RunnerData.findOne({
+      date: checkDate,
+      type: type
+    });
+
+    if (duplicateDoc) {
+      // Check for duplicate time
+      const hasDuplicateTime = duplicateDoc.readings.some(existing => 
+        existing.time === time
+      );
+
+      if (hasDuplicateTime) {
+        return res.status(200).json({
+          success: false,
+          message: `Reading for time ${time} already exists on ${moment(date).format('DD-MM-YYYY')}`,
+        });
+      }
+    }
+
+    // If no duplicates found, proceed with finding or creating document for storage
+    let existingDoc = await RunnerData.findOne({
+      date: formattedDate,
+      type: type
+    });
+
+    if (existingDoc) {
+      existingDoc.readings.push({
+        time,
+        reading: parseFloat(reading),
+        remark,
+      });
+
+      existingDoc.calculateMetrics();
+      await existingDoc.save();
+
+      return res.status(201).json({
+        success: true,
+        message: 'Reading added successfully',
+        data: existingDoc,
+      });
+    }
+
+    // Create new document if none exists
+    const newRunnerData = new RunnerData({
+      date: formattedDate,
+      type: type,
+      upperLimit: LIMITS[type].upper,
+      lowerLimit: LIMITS[type].lower,
+      readings: [{
+        time,
+        reading: parseFloat(reading),
+        remark,
+      }]
+    });
+
+    newRunnerData.calculateMetrics();
+    await newRunnerData.save();
 
     res.status(201).json({
       success: true,
       message: 'Reading added successfully',
-      data: runnerData,
+      data: newRunnerData,
     });
+
   } catch (error) {
-    if (error.code === 11000) {
-      return res.status(400).json({
-        success: false,
-        message: 'A document for this type and date already exists.',
-      });
-    }
     console.error(error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
+      error: error.message
     });
   }
 });
 
-// POST route for CSV import
 // POST route for CSV import
 router.post('/runnerData/import', upload.single('file'), async (req, res) => {
   if (!req.file) {
@@ -288,7 +322,7 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
   const { type } = req.body;
 
   if (!type || !LIMITS[type]) {
-    fs.unlinkSync(req.file.path); // Cleanup
+    fs.unlinkSync(req.file.path);
     return res.status(400).json({
       success: false,
       message: 'Invalid or missing type'
@@ -297,8 +331,9 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
 
   try {
     const results = [];
+    const duplicates = [];
+    const skipped = [];
 
-    // Read and parse CSV file
     await new Promise((resolve, reject) => {
       fs.createReadStream(req.file.path)
         .pipe(csv())
@@ -312,7 +347,7 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
     });
 
     if (results.length === 0) {
-      fs.unlinkSync(req.file.path); // Cleanup
+      fs.unlinkSync(req.file.path);
       return res.status(400).json({
         success: false,
         message: 'CSV file is empty or contains invalid data'
@@ -322,76 +357,94 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
     // Group readings by date
     const groupedReadings = results.reduce((acc, row) => {
       // Parse date in dd-mm-yyyy format
-      const formattedDate = moment(row.date, 'DD-MM-YYYY');
+      const parsedDate = moment(row.date, 'DD-MM-YYYY');
       
-      // Validate if the date is valid
-      if (!formattedDate.isValid()) {
-        console.warn(`Invalid date format found: ${row.date}. Expected format: dd-mm-yyyy`);
-        return acc; // Skip invalid dates
+      if (!parsedDate.isValid()) {
+        skipped.push(`Invalid date format: ${row.date}`);
+        return acc;
       }
 
-      const dateKey = formattedDate.startOf('day').toDate().toISOString();
+      // Use the date as is - the timezone conversion will handle the day shift
+      const dateKey = parsedDate.format('YYYY-MM-DD');
+      
       const time = row.time;
       const reading = parseFloat(row.reading);
       const remark = row.remark || '';
 
       if (isNaN(reading)) {
-        console.warn(`Invalid reading value found: ${row.reading}`);
-        return acc; // Skip invalid readings
+        skipped.push(`Invalid reading value: ${row.reading} for date ${row.date}`);
+        return acc;
       }
 
-      // Create or update the group for this date
       if (!acc[dateKey]) {
         acc[dateKey] = [];
       }
-      acc[dateKey].push({ time, reading, remark });
-
+      acc[dateKey].push({ time, reading, remark, originalDate: row.date });
       return acc;
     }, {});
 
     // Process grouped readings
     const importedDocs = [];
     for (const [dateString, readings] of Object.entries(groupedReadings)) {
-      const formattedDate = new Date(dateString);
+      // Get the stored date (which will be a day before due to timezone)
+      const storedDate = moment(dateString).toDate();
 
-      // Find or create a single document for the date and type
-      let combinedReading = await RunnerData.findOne({
-        date: formattedDate,
+      // Find existing document
+      let existingDoc = await RunnerData.findOne({
+        date: storedDate,
         type: type
       });
 
-      if (!combinedReading) {
-        combinedReading = new RunnerData({
-          date: formattedDate,
+      if (existingDoc) {
+        // Filter out duplicates by comparing times
+        const newReadings = readings.filter(newReading => {
+          const isDuplicate = existingDoc.readings.some(existing => 
+            existing.time === newReading.time
+          );
+          
+          if (isDuplicate) {
+            duplicates.push(`Reading for date ${newReading.originalDate} at time ${newReading.time} already exists`);
+            return false;
+          }
+          return true;
+        });
+
+        if (newReadings.length > 0) {
+          // Add only non-duplicate readings
+          existingDoc.readings.push(...newReadings);
+          existingDoc.calculateMetrics();
+          await existingDoc.save();
+          importedDocs.push(existingDoc);
+        }
+      } else {
+        // Create new document
+        const newDoc = new RunnerData({
+          date: storedDate,
           type: type,
           upperLimit: LIMITS[type].upper,
           lowerLimit: LIMITS[type].lower,
-          readings: []
+          readings: readings
         });
+        newDoc.calculateMetrics();
+        await newDoc.save();
+        importedDocs.push(newDoc);
       }
-
-      // Add all readings for this date
-      combinedReading.readings.push(...readings);
-      importedDocs.push(combinedReading);
     }
 
-    // Save data and calculate metrics
-    for (const doc of importedDocs) {
-      doc.calculateMetrics();
-      await doc.save();
-    }
-
-    fs.unlinkSync(req.file.path); // Cleanup after success
+    fs.unlinkSync(req.file.path);
 
     res.status(201).json({
       success: true,
       message: 'CSV imported successfully',
-      importedCount: results.length,
-      documentsCreated: importedDocs.length
+      importedCount: results.length - duplicates.length - skipped.length,
+      documentsCreated: importedDocs.length,
+      duplicates: duplicates,
+      skipped: skipped
     });
+
   } catch (error) {
     if (req.file) {
-      fs.unlinkSync(req.file.path); // Ensure cleanup
+      fs.unlinkSync(req.file.path);
     }
     res.status(500).json({
       success: false,
@@ -400,6 +453,7 @@ router.post('/runnerData/import', upload.single('file'), async (req, res) => {
     });
   }
 });
+
 // PUT route to update limits
 router.put('/runnerData/:id/limits', async (req, res) => {
   try {
