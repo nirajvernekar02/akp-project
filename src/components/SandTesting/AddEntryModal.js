@@ -54,7 +54,7 @@ const AddReadingModal = ({ open, onClose, date, onSave, existingData }) => {
         lowerLimit: lowerLimit ? parseFloat(lowerLimit) : undefined,
       };
 
-      await axios.post('http://localhost:5500/api/reading/add-reading', data);
+      await axios.post('https://akp.niraj.site/api/reading/add-reading', data);
       toast.success('Readings added successfully');
       onSave();
       onClose();

@@ -41,7 +41,7 @@ const RunnerChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
+      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -102,7 +102,7 @@ const RunnerChart = () => {
         reading,
         remark: newEntry.remark,
       };
-      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
+      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -172,14 +172,14 @@ const RunnerChart = () => {
             <p>Characteristics: G.C. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²</p>
             <div className="print-date-range">
               <span>From: {startDate.toLocaleDateString()}</span>
-              <span>To: {endDate.toLocaleDateString()}</span>
+              <span> To: {endDate.toLocaleDateString()}</span>
             </div>
           </div>
         </div>
         
         <div className="print-chart">
           {React.cloneElement(chartContent, {
-            width: 800,
+            width: 1200,
             height: 400
           })}
         </div>
@@ -333,7 +333,7 @@ const RunnerChart = () => {
         </Grid>
 
         <Typography variant="subtitle1" gutterBottom>
-          Characteristics: G.G. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²
+          Characteristics: G.C. STRENGTH gm/cm² | Specification: {limits.lower} TO {limits.upper} gm/cm²
         </Typography>
 
         <Box display="flex" justifyContent="space-between" marginBottom="1rem" alignItems="center" flexWrap="wrap">

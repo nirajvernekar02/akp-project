@@ -53,8 +53,8 @@
     "build-tauri": "npm run build && tauri build"
   },
   "devDependencies": {
-    "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/cli": "^2.0.0",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/cli": "^2.2.2",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7"

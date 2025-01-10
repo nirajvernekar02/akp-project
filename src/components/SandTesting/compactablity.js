@@ -43,7 +43,7 @@ const RunnerChart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5500/api/runner/runnerData', {
+      const response = await axios.get('https://akp.niraj.site/api/runner/runnerData', {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -104,7 +104,7 @@ const RunnerChart = () => {
         reading,
         remark: newEntry.remark,
       };
-      await axios.post('http://localhost:5500/api/runner/runnerData', newData);
+      await axios.post('https://akp.niraj.site/api/runner/runnerData', newData);
       setOpenDialog(false);
       setNewEntry({ date: new Date(), time: '12:00', reading: '', remark: '' });
       fetchData();
@@ -181,7 +181,7 @@ const RunnerChart = () => {
         
         <div className="print-chart">
           {React.cloneElement(chartContent, {
-            width: 1000,
+            width: 1200,
             height: 500
           })}
         </div>

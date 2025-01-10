@@ -43,7 +43,7 @@ const ReadingsTable = () => {
 
   const fetchReadings = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:5500/api/reading/by-date/${selectedDate}`);
+      const response = await axios.get(`https://akp.niraj.site/api/reading/by-date/${selectedDate}`);
       setReadingsData(response.data.data);
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -61,7 +61,7 @@ const ReadingsTable = () => {
   const handleDelete = async (readingId) => {
     if (window.confirm('Are you sure you want to delete this reading?')) {
       try {
-        await axios.delete(`http://localhost:5500/api/reading/delete/${readingId} `);
+        await axios.delete(`https://akp.niraj.site/api/reading/delete/${readingId} `);
         toast.success('Reading deleted successfully');
         fetchReadings();
       } catch (error) {
@@ -116,7 +116,7 @@ const ReadingsTable = () => {
         lowerLimit: lowerLimit ? parseFloat(lowerLimit) : undefined,
       };
 
-      await axios.post('http://localhost:5500/api/reading/add-reading', data);
+      await axios.post('https://akp.niraj.site/api/reading/add-reading', data);
       toast.success('Readings added successfully');
       setAddModalOpen(false);
       fetchReadings();
