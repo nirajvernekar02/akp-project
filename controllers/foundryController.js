@@ -1,148 +1,114 @@
-const { FoundryParameterReading, FoundryDailyStat } = require('../models/foundryReading');
+// controllers/combinedReadingController.js
+const CombinedReading = require('../models/runnerModel');
 const csv = require('csv-parse');
 
-class FoundryParameterController {
-  static async calculateDailyStats(dateStr) {
-    const startOfDay = new Date(dateStr);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(dateStr);
-    endOfDay.setHours(23, 59, 59, 999);
-  
-    const readings = await FoundryParameterReading.find({
-      timestamp: { $gte: startOfDay.toISOString(), $lte: endOfDay.toISOString() }
-    });
-  
-    // Group readings by parameter
-    const parameterGroups = {};
-    readings.forEach(reading => {
-      if (!parameterGroups[reading.parameter]) {
-        parameterGroups[reading.parameter] = [];
-      }
-      parameterGroups[reading.parameter].push(reading.value);
-    });
-  
-    // Calculate statistics for each parameter
-    const stats = [];
-    for (const [parameter, values] of Object.entries(parameterGroups)) {
-      const numericValues = values.map(v => parseFloat(v)); // Convert string values to numbers
-      stats.push({
-        date: dateStr,  // Store the date as string
-        parameter,
-        average: numericValues.reduce((a, b) => a + b, 0) / numericValues.length,
-        min: Math.min(...numericValues),
-        max: Math.max(...numericValues),
-        count: numericValues.length,
-        lastUpdated: new Date()
-      });
-    }
-  
-    // Update daily statistics in database
-    const promises = stats.map(stat => 
-      FoundryDailyStat.findOneAndUpdate(
-        { date: stat.date, parameter: stat.parameter },
-        stat,
-        { upsert: true, new: true }
-      )
-    );
-  
-    await Promise.all(promises);
-    return stats;
-  }
-  
-
+class CombinedReadingController {
   static async addReading(req, res) {
     try {
-      const { value, timestamp, parameter } = req.body;
+      const { value, timestamp, type, remark } = req.body;
       
       // Validate required fields
-      if (!value || !timestamp || !parameter) {
+      if (!value || !timestamp || !type) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
-  
-      const reading = new FoundryParameterReading({
-        value,
-        timestamp: new Date(timestamp).toISOString(), // Store as string (ISO 8601 format)
-        parameter,
+
+      const date = new Date(timestamp);
+      date.setHours(0, 0, 0, 0);
+
+      // Find or create combined reading for the date and type
+      let combinedReading = await CombinedReading.findOne({ date, type });
+      
+      if (!combinedReading) {
+        combinedReading = new CombinedReading({
+          date,
+          type,
+          readings: []
+        });
+      }
+
+      // Add new reading
+      combinedReading.readings.push({
+        reading: parseFloat(value),
+        time: new Date(timestamp).toLocaleTimeString(),
+        remark,
+        createdBy: req.user?._id
       });
+
+      // Calculate metrics
+      combinedReading.calculateMetrics();
       
-      await reading.save();
-      await FoundryParameterController.calculateDailyStats(new Date(timestamp).toISOString()); // Fixed: Use string date format
+      await combinedReading.save();
       
-      res.status(201).json(reading);
+      res.status(201).json(combinedReading);
     } catch (error) {
+      console.error('Error in addReading:', error);
       res.status(400).json({ error: error.message });
     }
   }
-  
+
   static async getReadings(req, res) {
     try {
-      // Parse the date from the URL parameter
-      const date = new Date(req.params.date);
+      const { date, type } = req.params;
       
-      // Ensure the date is valid
-      if (isNaN(date)) {
+      // Validate date
+      const queryDate = new Date(date);
+      if (isNaN(queryDate)) {
         return res.status(400).json({ error: 'Invalid date format' });
       }
-  
-      // Create start of day (00:00:00.000) and end of day (23:59:59.999) in UTC
-      const startOfDay = new Date(date);
-      startOfDay.setUTCHours(0, 0, 0, 0);
-      
-      const endOfDay = new Date(date);
-      endOfDay.setUTCHours(23, 59, 59, 999);
-      
-      // Log the query range for debugging
-      console.log('Query Range:', {
-        startOfDay: startOfDay.toISOString(),
-        endOfDay: endOfDay.toISOString()
-      });
-  
-      // Query for readings within the date range
-      const readings = await FoundryParameterReading.find({
-        timestamp: {
-          $gte: startOfDay.toISOString(),
-          $lte: endOfDay.toISOString()
-        }
-      })
-        .sort('timestamp')
-        .populate('createdBy', 'name');
-  
-      // Log the count of readings found
-      console.log('Readings found:', readings.length);
-  
-      // Return the results
-      res.json(readings);
+
+      queryDate.setHours(0, 0, 0, 0);
+
+      // Find readings
+      const reading = await CombinedReading.findOne({ 
+        date: queryDate,
+        type
+      }).populate('readings.createdBy', 'name');
+
+      if (!reading) {
+        return res.status(404).json({ error: 'No readings found for the specified date and type' });
+      }
+
+      res.json(reading);
     } catch (error) {
       console.error('Error in getReadings:', error);
       res.status(500).json({ error: error.message });
     }
   }
 
-  
   static async getDailyStats(req, res) {
     try {
-      const { startDate, endDate } = req.query;
+      const { startDate, endDate, type } = req.query;
   
       if (!startDate || !endDate) {
         return res.status(400).json({ error: 'Start date and end date are required' });
       }
   
-      // Query using string comparison, assuming date is stored as a string (YYYY-MM-DD)
-      const stats = await FoundryDailyStat.find({
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+
+      const query = {
         date: {
-          $gte: startDate,   // Start date as string
-          $lte: endDate      // End date as string
+          $gte: start,
+          $lte: end
         }
-      }).sort('date'); // Sorting by date string
+      };
+
+      if (type) {
+        query.type = type;
+      }
   
-      res.json(stats);
+      const readings = await CombinedReading.find(query)
+        .sort('date')
+        .populate('readings.createdBy', 'name');
+  
+      res.json(readings);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
-  
-  
-  
+
   static async importCSV(req, res) {
     try {
       if (!req.file || !req.file.buffer) {
@@ -150,8 +116,7 @@ class FoundryParameterController {
       }
 
       const fileContent = req.file.buffer.toString();
-      const records = [];
-      const processedDates = new Set();
+      const records = new Map(); // Use Map to group readings by date and type
 
       const parser = csv({
         columns: true,
@@ -163,13 +128,24 @@ class FoundryParameterController {
         parser.on('readable', function() {
           let record;
           while ((record = parser.read())) {
-            records.push({
-              parameter: record.parameter,
-              value: parseFloat(record.value),
-              timestamp: new Date(record.timestamp),
+            const timestamp = new Date(record.timestamp);
+            const date = new Date(timestamp.setHours(0, 0, 0, 0));
+            const key = `${date.toISOString()}-${record.type}`;
+            
+            if (!records.has(key)) {
+              records.set(key, {
+                date,
+                type: record.type,
+                readings: []
+              });
+            }
+            
+            records.get(key).readings.push({
+              reading: parseFloat(record.value),
+              time: new Date(record.timestamp).toLocaleTimeString(),
+              remark: record.remark,
               createdBy: req.user?._id
             });
-            processedDates.add(record.timestamp.split('T')[0]);
           }
         });
 
@@ -179,18 +155,27 @@ class FoundryParameterController {
 
         parser.on('end', async () => {
           try {
-            // Save all readings
-            await FoundryParameterReading.insertMany(records);
+            const savePromises = Array.from(records.values()).map(async (record) => {
+              let combinedReading = await CombinedReading.findOne({
+                date: record.date,
+                type: record.type
+              });
 
-            // Calculate daily stats for all affected dates
-            const statsPromises = Array.from(processedDates).map(dateStr => 
-              FoundryParameterController.calculateDailyStats(new Date(dateStr))
-            );
-            await Promise.all(statsPromises);
+              if (!combinedReading) {
+                combinedReading = new CombinedReading(record);
+              } else {
+                combinedReading.readings.push(...record.readings);
+              }
+
+              combinedReading.calculateMetrics();
+              return combinedReading.save();
+            });
+
+            await Promise.all(savePromises);
 
             res.status(201).json({
-              message: `Successfully imported ${records.length} readings`,
-              processedDates: Array.from(processedDates)
+              message: `Successfully imported readings for ${records.size} date-type combinations`,
+              processedCombinations: Array.from(records.keys())
             });
             resolve();
           } catch (error) {
@@ -205,6 +190,32 @@ class FoundryParameterController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async updateLimits(req, res) {
+    try {
+      const { type, upperLimit, lowerLimit } = req.body;
+
+      if (!type || (!upperLimit && !lowerLimit)) {
+        return res.status(400).json({ error: 'Type and at least one limit are required' });
+      }
+
+      // Update all readings of this type with new limits
+      const readings = await CombinedReading.find({ type });
+      
+      const updatePromises = readings.map(reading => {
+        if (upperLimit) reading.upperLimit = upperLimit;
+        if (lowerLimit) reading.lowerLimit = lowerLimit;
+        reading.calculateMetrics();
+        return reading.save();
+      });
+
+      await Promise.all(updatePromises);
+
+      res.json({ message: `Successfully updated limits for ${type}` });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
-module.exports = FoundryParameterController;
+module.exports = CombinedReadingController;

@@ -535,17 +535,28 @@ router.delete('/runnerData/:id/readings/:readingId', async (req, res) => {
         message: 'Data not found',
       });
     }
-    console.log("Runner Data",runnerData)
-    const readingToDelete = runnerData.readings.id(readingId);
-    if (!readingToDelete) {
+
+    // Find the index of the reading to delete
+    const readingIndex = runnerData.readings.findIndex(
+      reading => reading._id.toString() === readingId
+    );
+
+    if (readingIndex === -1) {
       return res.status(404).json({
         success: false,
         message: 'Reading not found',
       });
     }
-    console.log("Reading to delete",readingToDelete)
-    readingToDelete.deleteOne(); // This should now work if schema is correct
-    runnerData.calculateMetrics(); // Ensure this method is properly defined if used
+
+    // Remove the reading
+    runnerData.readings.splice(readingIndex, 1);
+
+    // Recalculate metrics if needed
+    if (typeof runnerData.calculateMetrics === 'function') {
+      runnerData.calculateMetrics();
+    }
+
+    // Save the updated document
     await runnerData.save();
 
     res.json({
@@ -555,10 +566,13 @@ router.delete('/runnerData/:id/readings/:readingId', async (req, res) => {
     });
   } catch (error) {
     console.error('Error deleting reading:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error',
+      error: error.message 
+    });
   }
 });
-
 
 router.get('/metrics', async (req, res) => {
     try {

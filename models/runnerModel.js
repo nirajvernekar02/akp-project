@@ -1,38 +1,42 @@
-// const mongoose = require('mongoose');
-
-// const RunnerDataSchema = new mongoose.Schema({
-//   date: {
-//     type: Date,
-//     required: true
-//   },
-//   time: {
-//     type: String,
-//     required: true
-//   },
-//   reading: {
-//     type: Number,
-//     required: true
-//   },
-//   createdAt: {
-//     type: Date,
-//     default: Date.now
-//   }
-// });
-
-// const RunnerData = mongoose.model('RunnerData', RunnerDataSchema);
-// module.exports = RunnerData;
-
+// models/combinedReading.js
 const mongoose = require('mongoose');
 
 const readingSchema = new mongoose.Schema({
   reading: { type: Number, required: true },
   time: { type: String, required: true },
-  remark:{type:String}
+  remark: { type: String },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 });
 
 const combinedReadingSchema = new mongoose.Schema({
   date: { type: Date, required: true },
-  type: { type: String, required: true, enum: ['moisture', 'preamibility', 'compactibility', 'cgs'] },
+  type: { 
+    type: String, 
+    required: true, 
+    enum: [
+      'moisture',
+      'preamibility',
+      'compactibility',
+      'cgs',
+      'totalClay',
+      'activeClay',
+      'deadClay',
+      'volatileMatter',
+      'lossOnIgnition',
+      'wetTensileStrength',
+      'bentoniteAddition',
+      'coalDustAddition',
+      'sandTemperature',
+      'newSandAdditionTime',
+      'newSandAdditionWeight',
+      'dailyDustCollected1',
+      'dailyDustCollected2',
+      'totalDustCollected'
+    ]
+  },
   readings: [readingSchema],
   upperLimit: { type: Number },
   lowerLimit: { type: Number },
@@ -44,6 +48,8 @@ const combinedReadingSchema = new mongoose.Schema({
   cpk1: { type: Number, default: 0 },
   cpk2: { type: Number, default: 0 },
   cpk: { type: Number, default: 0 }
+}, {
+  timestamps: true
 });
 
 // Type-specific limits
@@ -56,12 +62,11 @@ const LIMITS = {
 
 combinedReadingSchema.index({ date: 1, type: 1 }, { unique: true });
 
-
 combinedReadingSchema.methods.calculateMetrics = function() {
   if (this.readings.length === 0) return;
 
   // Get type-specific limits if not explicitly set
-  if (!this.upperLimit || !this.lowerLimit) {
+  if (LIMITS[this.type] && (!this.upperLimit || !this.lowerLimit)) {
     const typeLimits = LIMITS[this.type];
     this.upperLimit = this.upperLimit || typeLimits.upper;
     this.lowerLimit = this.lowerLimit || typeLimits.lower;
@@ -82,13 +87,16 @@ combinedReadingSchema.methods.calculateMetrics = function() {
   this.threeSigma = 3 * this.standardDeviation;
   this.sixSigma = 6 * this.standardDeviation;
 
-  // Calculate Process Capability (Cp)
-  this.cp = (this.upperLimit - this.lowerLimit) / (6 * this.standardDeviation);
+  // Calculate Process Capability metrics only if limits are available
+  if (this.upperLimit && this.lowerLimit) {
+    // Calculate Process Capability (Cp)
+    this.cp = (this.upperLimit - this.lowerLimit) / (6 * this.standardDeviation);
 
-  // Calculate Process Capability Index (Cpk)
-  this.cpk1 = (this.average - this.lowerLimit) / (3 * this.standardDeviation);
-  this.cpk2 = (this.upperLimit - this.average) / (3 * this.standardDeviation);
-  this.cpk = Math.min(this.cpk1, this.cpk2);
+    // Calculate Process Capability Index (Cpk)
+    this.cpk1 = (this.average - this.lowerLimit) / (3 * this.standardDeviation);
+    this.cpk2 = (this.upperLimit - this.average) / (3 * this.standardDeviation);
+    this.cpk = Math.min(this.cpk1, this.cpk2);
+  }
 };
 
 const CombinedReading = mongoose.model('CombinedReading', combinedReadingSchema);

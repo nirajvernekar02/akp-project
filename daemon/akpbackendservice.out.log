@@ -1,53 +1,2054 @@
 AKP app listening on port 5500
 Connected to MongoDB successfully
-Query Range: {
-  startOfDay: '2025-01-08T00:00:00.000Z',
-  endOfDay: '2025-01-08T23:59:59.999Z'
-}
-Readings found: 0
-Query Range: {
-  startOfDay: '2025-01-08T00:00:00.000Z',
-  endOfDay: '2025-01-08T23:59:59.999Z'
-}
-Readings found: 1
-Query Range: {
-  startOfDay: '2025-01-08T00:00:00.000Z',
-  endOfDay: '2025-01-08T23:59:59.999Z'
-}
-Readings found: 2
+AKP app listening on port 5500
+Connected to MongoDB successfully
+AKP app listening on port 5500
+Connected to MongoDB successfully
 Runner Data {
-  _id: new ObjectId('6767c1399baa081177ae3d61'),
-  date: 2024-12-11T18:30:00.000Z,
+  _id: new ObjectId('67810048c5eff9455f2d6b43'),
+  date: 2025-01-11T18:30:00.000Z,
   type: 'moisture',
   readings: [
     {
-      reading: 1200,
-      time: '09:00',
-      remark: 'Normal',
-      _id: new ObjectId('6767c1399baa081177ae3d62')
-    },
-    {
-      reading: 4,
-      time: '09:00',
-      remark: 'Normal',
-      _id: new ObjectId('677fd30959a6a78b51868b07')
+      reading: 4.2,
+      time: '16:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce91')
     }
   ],
   upperLimit: 4.4,
   lowerLimit: 3.6,
-  average: 602,
-  standardDeviation: 598,
-  threeSigma: 1794,
-  sixSigma: 3588,
-  cp: 0.00022296544035674477,
-  cpk1: 0.3335562987736901,
-  cpk2: -0.3331103678929766,
-  cpk: -0.3331103678929766,
-  __v: 1
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.939Z
 }
 Reading to delete {
-  reading: 1200,
+  reading: 4.2,
+  time: '16:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce91')
+}
+Runner Data {
+  _id: new ObjectId('67810048c5eff9455f2d6b3f'),
+  date: 2025-01-10T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.32,
+      time: '15:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce8e')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.32,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.935Z
+}
+Reading to delete {
+  reading: 4.32,
+  time: '15:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce8e')
+}
+Runner Data {
+  _id: new ObjectId('67810048c5eff9455f2d6b3b'),
+  date: 2025-01-09T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.98,
+      time: '14:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce8b')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.98,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.930Z
+}
+Reading to delete {
+  reading: 3.98,
+  time: '14:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce8b')
+}
+Runner Data {
+  _id: new ObjectId('6780ffd5c5eff9455f2d6afc'),
+  date: 2025-01-08T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.72,
+      time: '13:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce88')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.72,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.925Z
+}
+Reading to delete {
+  reading: 3.72,
+  time: '13:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce88')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6abd'),
+  date: 2025-01-07T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.88,
+      time: '14:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce85')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.88,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.921Z
+}
+Reading to delete {
+  reading: 3.88,
+  time: '14:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce85')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6ab9'),
+  date: 2025-01-06T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.12,
+      time: '13:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce82')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.12,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.916Z
+}
+Reading to delete {
+  reading: 4.12,
+  time: '13:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce82')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6ab5'),
+  date: 2025-01-05T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '12:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce7f')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.909Z
+}
+Reading to delete {
+  reading: 4,
+  time: '12:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce7f')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6ab1'),
+  date: 2025-01-04T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '09:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce7c')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.905Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '09:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce7c')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aad'),
+  date: 2025-01-03T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '08:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce79')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.902Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '08:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce79')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aa9'),
+  date: 2025-01-02T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '07:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce76')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.896Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '07:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce76')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aa5'),
+  date: 2025-01-01T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '06:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce73')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.890Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '06:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce73')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aa1'),
+  date: 2024-12-31T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '05:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce70')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.885Z
+}
+Reading to delete {
+  reading: 4,
+  time: '05:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce70')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a9d'),
+  date: 2024-12-30T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '04:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce6d')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.880Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '04:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce6d')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a99'),
+  date: 2024-12-29T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '03:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce6a')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.874Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '03:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce6a')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a95'),
+  date: 2024-12-28T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '02:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce67')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.870Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '02:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce67')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a91'),
+  date: 2024-12-27T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '01:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce64')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.865Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '01:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce64')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a8d'),
+  date: 2024-12-26T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '00:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce61')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.860Z
+}
+Reading to delete {
+  reading: 4,
+  time: '00:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce61')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a89'),
+  date: 2024-12-25T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '23:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce5e')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.854Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '23:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce5e')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a85'),
+  date: 2024-12-24T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '22:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce5b')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.848Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '22:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce5b')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a81'),
+  date: 2024-12-23T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '21:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce58')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.842Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '21:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce58')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a7d'),
+  date: 2024-12-22T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '20:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce55')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.838Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '20:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce55')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a79'),
+  date: 2024-12-21T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '19:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce52')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.833Z
+}
+Reading to delete {
+  reading: 4,
+  time: '19:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce52')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a75'),
+  date: 2024-12-20T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '18:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce4f')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.827Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '18:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce4f')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a71'),
+  date: 2024-12-19T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '17:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce4c')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.821Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '17:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce4c')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a6d'),
+  date: 2024-12-18T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '16:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce49')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.816Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '16:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce49')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a69'),
+  date: 2024-12-17T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '15:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce46')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.812Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '15:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce46')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a65'),
+  date: 2024-12-16T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '14:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce43')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.806Z
+}
+Reading to delete {
+  reading: 4,
+  time: '14:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce43')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a61'),
+  date: 2024-12-15T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '13:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce40')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.802Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '13:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce40')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a5d'),
+  date: 2024-12-14T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '12:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce3d')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.797Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '12:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce3d')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a59'),
+  date: 2024-12-13T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '11:00',
+      remark: '',
+      _id: new ObjectId('6788a3a994fc6a8923fdce3a')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.792Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '11:00',
+  remark: '',
+  _id: new ObjectId('6788a3a994fc6a8923fdce3a')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a55'),
+  date: 2024-12-12T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '10:00',
+      remark: 'High',
+      _id: new ObjectId('6788a3a994fc6a8923fdce37')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.787Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '10:00',
+  remark: 'High',
+  _id: new ObjectId('6788a3a994fc6a8923fdce37')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a51'),
+  date: 2024-12-11T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '09:00',
+      remark: 'Normal',
+      _id: new ObjectId('6788a3a994fc6a8923fdce34')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 2,
+  updatedAt: 2025-01-16T06:14:01.779Z
+}
+Reading to delete {
+  reading: 4,
   time: '09:00',
   remark: 'Normal',
-  _id: new ObjectId('6767c1399baa081177ae3d62')
+  _id: new ObjectId('6788a3a994fc6a8923fdce34')
+}
+Runner Data {
+  _id: new ObjectId('678b1f100c58fe80609e428f'),
+  date: 2025-01-17T18:30:00.000Z,
+  type: 'preamibility',
+  readings: [
+    {
+      reading: 140,
+      time: '12:00',
+      remark: '',
+      _id: new ObjectId('678b1f100c58fe80609e4290')
+    }
+  ],
+  upperLimit: 155,
+  lowerLimit: 115,
+  average: 140,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  createdAt: 2025-01-18T03:25:04.041Z,
+  updatedAt: 2025-01-18T03:25:04.041Z,
+  __v: 0
+}
+Reading to delete {
+  reading: 140,
+  time: '12:00',
+  remark: '',
+  _id: new ObjectId('678b1f100c58fe80609e4290')
+}
+Runner Data {
+  _id: new ObjectId('678b20280c58fe80609e42d6'),
+  date: 2025-01-16T18:30:00.000Z,
+  type: 'preamibility',
+  readings: [
+    {
+      reading: 125,
+      time: '12:00',
+      remark: '',
+      _id: new ObjectId('678b20280c58fe80609e42d7')
+    }
+  ],
+  upperLimit: 155,
+  lowerLimit: 115,
+  average: 125,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  createdAt: 2025-01-18T03:29:44.121Z,
+  updatedAt: 2025-01-18T03:29:44.121Z,
+  __v: 0
+}
+Reading to delete {
+  reading: 125,
+  time: '12:00',
+  remark: '',
+  _id: new ObjectId('678b20280c58fe80609e42d7')
+}
+Runner Data {
+  _id: new ObjectId('67810048c5eff9455f2d6b43'),
+  date: 2025-01-11T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '16:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4244')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.513Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '16:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4244')
+}
+Runner Data {
+  _id: new ObjectId('67810048c5eff9455f2d6b3f'),
+  date: 2025-01-10T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.32,
+      time: '15:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4241')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.32,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.509Z
+}
+Reading to delete {
+  reading: 4.32,
+  time: '15:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4241')
+}
+Runner Data {
+  _id: new ObjectId('67810048c5eff9455f2d6b3b'),
+  date: 2025-01-09T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.98,
+      time: '14:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e423e')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.98,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.507Z
+}
+Reading to delete {
+  reading: 3.98,
+  time: '14:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e423e')
+}
+Runner Data {
+  _id: new ObjectId('6780ffd5c5eff9455f2d6afc'),
+  date: 2025-01-08T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.72,
+      time: '13:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e423b')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.72,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.503Z
+}
+Reading to delete {
+  reading: 3.72,
+  time: '13:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e423b')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6abd'),
+  date: 2025-01-07T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.88,
+      time: '14:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4238')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.88,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.500Z
+}
+Reading to delete {
+  reading: 3.88,
+  time: '14:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4238')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6ab9'),
+  date: 2025-01-06T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.12,
+      time: '13:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4235')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.12,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.497Z
+}
+Reading to delete {
+  reading: 4.12,
+  time: '13:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4235')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6ab5'),
+  date: 2025-01-05T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '12:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4232')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.493Z
+}
+Reading to delete {
+  reading: 4,
+  time: '12:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4232')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6ab1'),
+  date: 2025-01-04T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '09:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e422f')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.487Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '09:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e422f')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aad'),
+  date: 2025-01-03T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '08:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e422c')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.483Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '08:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e422c')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aa9'),
+  date: 2025-01-02T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '07:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4229')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.480Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '07:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4229')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aa5'),
+  date: 2025-01-01T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '06:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4226')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.477Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '06:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4226')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6aa1'),
+  date: 2024-12-31T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '05:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4223')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.473Z
+}
+Reading to delete {
+  reading: 4,
+  time: '05:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4223')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a9d'),
+  date: 2024-12-30T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '04:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4220')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.470Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '04:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4220')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a99'),
+  date: 2024-12-29T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '03:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e421d')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.466Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '03:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e421d')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a95'),
+  date: 2024-12-28T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '02:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e421a')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.463Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '02:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e421a')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a91'),
+  date: 2024-12-27T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '01:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4217')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.460Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '01:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4217')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a8d'),
+  date: 2024-12-26T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '00:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4214')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.457Z
+}
+Reading to delete {
+  reading: 4,
+  time: '00:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4214')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a89'),
+  date: 2024-12-25T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '23:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4211')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.453Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '23:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4211')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a85'),
+  date: 2024-12-24T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '22:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e420e')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.450Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '22:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e420e')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a81'),
+  date: 2024-12-23T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '21:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e420b')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.447Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '21:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e420b')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a7d'),
+  date: 2024-12-22T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '20:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4208')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.443Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '20:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4208')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a79'),
+  date: 2024-12-21T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '19:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4205')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.440Z
+}
+Reading to delete {
+  reading: 4,
+  time: '19:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4205')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a75'),
+  date: 2024-12-20T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '18:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e4202')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.437Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '18:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e4202')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a71'),
+  date: 2024-12-19T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '17:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41ff')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.434Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '17:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41ff')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a6d'),
+  date: 2024-12-18T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '16:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41fc')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.431Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '16:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41fc')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a69'),
+  date: 2024-12-17T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '15:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41f9')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.429Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '15:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41f9')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a65'),
+  date: 2024-12-16T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '14:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41f6')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.426Z
+}
+Reading to delete {
+  reading: 4,
+  time: '14:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41f6')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a61'),
+  date: 2024-12-15T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.35,
+      time: '13:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41f3')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.35,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.423Z
+}
+Reading to delete {
+  reading: 4.35,
+  time: '13:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41f3')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a5d'),
+  date: 2024-12-14T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.77,
+      time: '12:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41f0')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.77,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.420Z
+}
+Reading to delete {
+  reading: 3.77,
+  time: '12:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41f0')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a59'),
+  date: 2024-12-13T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 3.85,
+      time: '11:00',
+      remark: '',
+      _id: new ObjectId('678b1e930c58fe80609e41ed')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 3.85,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.417Z
+}
+Reading to delete {
+  reading: 3.85,
+  time: '11:00',
+  remark: '',
+  _id: new ObjectId('678b1e930c58fe80609e41ed')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a55'),
+  date: 2024-12-12T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4.2,
+      time: '10:00',
+      remark: 'High',
+      _id: new ObjectId('678b1e930c58fe80609e41ea')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4.2,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.414Z
+}
+Reading to delete {
+  reading: 4.2,
+  time: '10:00',
+  remark: 'High',
+  _id: new ObjectId('678b1e930c58fe80609e41ea')
+}
+Runner Data {
+  _id: new ObjectId('6780ff9dc5eff9455f2d6a51'),
+  date: 2024-12-11T18:30:00.000Z,
+  type: 'moisture',
+  readings: [
+    {
+      reading: 4,
+      time: '09:00',
+      remark: 'Normal',
+      _id: new ObjectId('678b1e930c58fe80609e41e7')
+    }
+  ],
+  upperLimit: 4.4,
+  lowerLimit: 3.6,
+  average: 4,
+  standardDeviation: 0,
+  threeSigma: 0,
+  sixSigma: 0,
+  cp: Infinity,
+  cpk1: Infinity,
+  cpk2: Infinity,
+  cpk: Infinity,
+  __v: 4,
+  updatedAt: 2025-01-18T03:22:59.410Z
+}
+Reading to delete {
+  reading: 4,
+  time: '09:00',
+  remark: 'Normal',
+  _id: new ObjectId('678b1e930c58fe80609e41e7')
 }

@@ -1,16 +1,48 @@
-2025-01-08 15:08:52 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
-2025-01-08 15:08:52 - Started 3656
-2025-01-10 13:51:04 - Stopping akpbackendservice.exe
-2025-01-10 13:51:04 - ProcessKill 3656
-2025-01-10 13:51:04 - Found child process: 12864 Name: conhost.exe
-2025-01-10 13:51:04 - Found child process: 1780 Name: node.exe
-2025-01-10 13:51:04 - Stopping process 12864
-2025-01-10 13:51:04 - Send SIGINT 12864
-2025-01-10 13:51:04 - SIGINT to 12864 failed - Killing as fallback
-2025-01-10 13:51:04 - Stopping process 1780
-2025-01-10 13:51:04 - Send SIGINT 1780
-2025-01-10 13:51:04 - SIGINT to 1780 failed - Killing as fallback
-2025-01-10 13:51:04 - Stopping process 3656
-2025-01-10 13:51:05 - Send SIGINT 3656
-2025-01-10 13:51:05 - SIGINT to 3656 failed - Killing as fallback
-2025-01-10 13:51:05 - Finished akpbackendservice.exe
+2025-01-15 09:47:12 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-15 09:47:12 - Started 35892
+2025-01-16 10:53:48 - Stopping akpbackendservice.exe
+2025-01-16 10:53:48 - ProcessKill 35892
+2025-01-16 10:53:48 - Found child process: 6700 Name: conhost.exe
+2025-01-16 10:53:48 - Found child process: 16396 Name: node.exe
+2025-01-16 10:53:48 - Stopping process 6700
+2025-01-16 10:53:48 - Send SIGINT 6700
+2025-01-16 10:53:48 - SIGINT to 6700 failed - Killing as fallback
+2025-01-16 10:53:48 - Stopping process 16396
+2025-01-16 10:53:48 - Send SIGINT 16396
+2025-01-16 10:53:48 - SIGINT to 16396 failed - Killing as fallback
+2025-01-16 10:53:48 - Stopping process 35892
+2025-01-16 10:53:48 - Send SIGINT 35892
+2025-01-16 10:53:48 - SIGINT to 35892 failed - Killing as fallback
+2025-01-16 10:53:48 - Finished akpbackendservice.exe
+2025-01-16 12:10:31 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-16 12:10:31 - Started 7548
+2025-01-16 12:11:15 - Stopping akpbackendservice.exe
+2025-01-16 12:11:15 - ProcessKill 7548
+2025-01-16 12:11:15 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-01-16 12:11:41 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-16 12:11:41 - Started 8076
+2025-01-18 09:13:24 - Stopping akpbackendservice.exe
+2025-01-18 09:13:24 - ProcessKill 8076
+2025-01-18 09:13:24 - Found child process: 8116 Name: conhost.exe
+2025-01-18 09:13:24 - Found child process: 9084 Name: node.exe
+2025-01-18 09:13:24 - Stopping process 8116
+2025-01-18 09:13:25 - Send SIGINT 8116
+2025-01-18 09:13:25 - SIGINT to 8116 failed - Killing as fallback
+2025-01-18 09:13:25 - Stopping process 9084
+2025-01-18 09:13:25 - Send SIGINT 9084
+2025-01-18 09:13:25 - SIGINT to 9084 failed - Killing as fallback
+2025-01-18 09:13:25 - Stopping process 8076
+2025-01-18 09:13:25 - Send SIGINT 8076
+2025-01-18 09:13:25 - SIGINT to 8076 failed - Killing as fallback
+2025-01-18 09:13:25 - Finished akpbackendservice.exe
