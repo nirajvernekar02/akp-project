@@ -18,19 +18,17 @@ import {
   Snackbar,
   Alert,
   Grid,
-  IconButton,
   Tooltip,
   useTheme,
   useMediaQuery
 } from '@mui/material';
 import {
-  DateRange as DateRangeIcon,
   Refresh as RefreshIcon,
   FileDownload as FileDownloadIcon
 } from '@mui/icons-material';
 import BackButton from './BackButton';
 
-const API_BASE_URL = 'https://akp.niraj.site/api/foundry';
+const API_BASE_URL = 'http://localhost:5500/api/foundry';
 
 const parameters = [
   { id: 'totalClay', label: 'Total Clay %' },
@@ -41,7 +39,7 @@ const parameters = [
   { id: 'greenCompressiveStrength', label: 'Green Compressive Strength gm/cm²' },
   { id: 'compactibility', label: 'Compactibility %' },
   { id: 'moisture', label: 'Moisture %' },
-  { id: 'permeabilityNumber', label: 'Permeability Number' },
+  { id: 'preamibility', label: 'Permeability Number' },
   { id: 'wetTensileStrength', label: 'Wet Tensile Strength gm/cm²' },
   { id: 'bentoniteAddition', label: 'Bentonite Addition Kg/%' },
   { id: 'coalDustAddition', label: 'Coal Dust Addition Kg' },
@@ -53,8 +51,11 @@ const parameters = [
   { id: 'totalDustCollected', label: 'Total Dust Collected kg' }
 ];
 
-const formatDateForExcel = (dateString) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
+// Helper function to add one day to a date and format it
+const formatDisplayDate = (dateString) => {
+  const date = new Date(dateString);
+  date.setDate(date.getDate() + 1); // Add one day
+  return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -73,6 +74,32 @@ const FoundryAverages = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const processData = (data) => {
+    const groupedData = {};
+    
+    data.forEach(item => {
+      const dateStr = new Date(item.date).toISOString().split('T')[0];
+      
+      if (!groupedData[dateStr]) {
+        groupedData[dateStr] = {};
+      }
+      
+      groupedData[dateStr][item.type] = {
+        average: item.average,
+        readings: item.readings,
+        upperLimit: item.upperLimit,
+        lowerLimit: item.lowerLimit
+      };
+    });
+
+    return Object.entries(groupedData)
+      .map(([date, values]) => ({
+        date,
+        ...values
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
   const fetchStats = async () => {
     try {
       setLoading(true);
@@ -83,17 +110,8 @@ const FoundryAverages = () => {
         }
       });
 
-      // Process and organize the data by date
-      const organizedData = {};
-      response.data.forEach(stat => {
-        const dateStr = new Date(stat.date).toISOString().split('T')[0];
-        if (!organizedData[dateStr]) {
-          organizedData[dateStr] = {};
-        }
-        organizedData[dateStr][stat.parameter] = stat;
-      });
-
-      setStats(Object.entries(organizedData).sort((a, b) => a[0].localeCompare(b[0])));
+      const processedData = processData(response.data);
+      setStats(processedData);
     } catch (err) {
       setError('Failed to fetch statistics');
     } finally {
@@ -113,36 +131,43 @@ const FoundryAverages = () => {
   };
 
   const exportToExcel = () => {
-    // Create Excel-friendly data structure
-    const excelData = stats.map(([date, dayStats]) => {
+    const excelData = stats.map(day => {
       const row = {
-        'Date': formatDateForExcel(date),
+        'Date': formatDisplayDate(day.date), // Use the adjusted date for export
       };
+      
       parameters.forEach(param => {
-        const stat = dayStats[param.id];
-        row[param.label] = stat ? Number(stat.average.toFixed(2)) : 'N/A';
+        const paramData = day[param.id];
+        if (paramData) {
+          row[param.label] = paramData.average.toFixed(2);
+          row[`${param.label} Readings`] = paramData.readings
+            .map(r => `${r.reading.toFixed(2)} (${r.time}${r.remark ? `, ${r.remark}` : ''})`)
+            .join('; ');
+        } else {
+          row[param.label] = 'N/A';
+          row[`${param.label} Readings`] = 'N/A';
+        }
       });
+      
       return row;
     });
-
-    // Convert to CSV
-    const headers = ['Date', ...parameters.map(p => p.label)];
+  
+    const headers = ['Date', ...parameters.flatMap(p => [p.label, `${p.label} Readings`])];
     const csvContent = [
       headers.join(','),
       ...excelData.map(row => headers.map(header => row[header]).join(','))
     ].join('\n');
-
-    // Create and trigger download
+  
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `Foundry_Report_${formatDateForExcel(dateRange.startDate)}_to_${formatDateForExcel(dateRange.endDate)}.csv`;
+    link.download = `Foundry_Report_${formatDisplayDate(dateRange.startDate)}_to_${formatDisplayDate(dateRange.endDate)}.csv`;
     link.click();
   };
 
   return (
     <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
-      <BackButton/>
+      <BackButton />
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
@@ -224,8 +249,8 @@ const FoundryAverages = () => {
               <Table stickyHeader size="small" sx={{ minWidth: 650 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell 
-                      sx={{ 
+                    <TableCell
+                      sx={{
                         backgroundColor: theme.palette.primary.main,
                         color: theme.palette.primary.contrastText,
                         fontWeight: 'bold',
@@ -237,10 +262,10 @@ const FoundryAverages = () => {
                       Date
                     </TableCell>
                     {parameters.map(param => (
-                      <TableCell 
+                      <TableCell
                         key={param.id}
                         align="right"
-                        sx={{ 
+                        sx={{
                           backgroundColor: theme.palette.primary.main,
                           color: theme.palette.primary.contrastText,
                           fontWeight: 'bold',
@@ -253,30 +278,38 @@ const FoundryAverages = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {stats.map(([date, dayStats]) => (
-                    <TableRow key={date} hover>
-                      <TableCell 
-                        sx={{ 
+                  {stats.map((day) => (
+                    <TableRow key={day.date} hover>
+                      <TableCell
+                        sx={{
                           position: 'sticky',
                           left: 0,
                           backgroundColor: 'background.paper',
                           fontWeight: 'medium'
                         }}
                       >
-                        {formatDateForExcel(date)}
+                        {formatDisplayDate(day.date)} {/* This will show date as one day ahead */}
                       </TableCell>
                       {parameters.map(param => {
-                        const stat = dayStats[param.id];
+                        const paramData = day[param.id];
                         return (
-                          <TableCell 
-                            key={param.id} 
+                          <TableCell
+                            key={param.id}
                             align="right"
                             sx={{
-                              backgroundColor: stat ? 'transparent' : 'action.hover',
-                              color: stat ? 'text.primary' : 'text.secondary'
+                              backgroundColor: paramData ? 'transparent' : 'action.hover',
+                              color: paramData ? 'text.primary' : 'text.secondary'
                             }}
                           >
-                            {stat ? stat.average.toFixed(2) : 'N/A'}
+                            {paramData ? (
+                              <Tooltip title={
+                                paramData.readings.map(r => 
+                                  `${r.time}: ${r.reading.toFixed(2)}${r.remark ? ` (${r.remark})` : ''}`
+                                ).join('\n')
+                              }>
+                                <span>{paramData.average.toFixed(2)}</span>
+                              </Tooltip>
+                            ) : 'N/A'}
                           </TableCell>
                         );
                       })}

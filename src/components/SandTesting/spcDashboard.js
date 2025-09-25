@@ -5,30 +5,30 @@ import {
   CardContent,
   Grid,
   Typography,
-  Chip,
-  LinearProgress,
   IconButton,
-  Tooltip,
   Paper,
   Tab,
   Tabs,
-  CircularProgress
+  CircularProgress,
+  Fade,
+  useTheme,
+  Divider,
+  Tooltip
 } from '@mui/material';
 import {
   Science,
   Speed,
   ThermostatAuto,
   Scale,
-  Warning,
-  CheckCircle,
-  Info,
   Assessment,
-  Timeline
+  Timeline,
+  Analytics,
+  ErrorOutline
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BackButton from './BackButton';
-// Parameter groups with their configurations
+
 const parameterGroups = {
   clay: {
     icon: <Science />,
@@ -39,41 +39,25 @@ const parameterGroups = {
   strength: {
     icon: <Speed />,
     title: "Strength Parameters",
-    color: "#2e7d32",
-    items: ['greenCompressiveStrength', 'wetTensileStrength', 'compactibility']
+    color: "#4caf50",
+    items: ['cgs', 'wetTensileStrength', 'compactibility']
   },
   composition: {
     icon: <Scale />,
     title: "Composition Parameters",
     color: "#9c27b0",
-    items: ['volatileMatter', 'lossOnIgnition', 'moisture']
+    items: ['volatileMatter', 'lossOnIgnition', 'moisture', 'preamibility']
   },
-  temperature: {
+  process: {
     icon: <ThermostatAuto />,
     title: "Process Parameters",
-    color: "#ed6c02",
-    items: ['sandTemperature', 'newSandAdditionTime', 'newSandAdditionWeight']
+    color: "#ff9800",
+    items: ['sandTemperature', 'bentoniteAddition', 'coalDustAddition', 'newSandAdditionTime', 'newSandAdditionWeight']
   }
 };
 
-// Parameter limits configuration
-const parameterLimits = {
-  totalClay: { min: 7, max: 10, unit: '%' },
-  activeClay: { min: 3.5, max: 5, unit: '%' },
-  deadClay: { min: 3.5, max: 5, unit: '%' },
-  volatileMatter: { min: 25, max: 30, unit: '%' },
-  lossOnIgnition: { min: 4, max: 6, unit: '%' },
-  greenCompressiveStrength: { min: 1200, max: 1800, unit: 'gm/cm²' },
-  compactibility: { min: 40, max: 50, unit: '%' },
-  moisture: { min: 3, max: 4.5, unit: '%' },
-  permeabilityNumber: { min: 120, max: 180, unit: '' },
-  wetTensileStrength: { min: 200, max: 300, unit: 'gm/cm²' },
-  sandTemperature: { min: 38, max: 45, unit: '°C' },
-  newSandAdditionTime: { min: 25, max: 35, unit: 'sec' },
-  newSandAdditionWeight: { min: 140, max: 160, unit: 'kg' }
-};
-
 const Dashboard = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
   const [statsData, setStatsData] = useState({});
@@ -87,19 +71,24 @@ const Dashboard = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const endDate = new Date(new Date().setDate(new Date().getDate() + 1))
-      .toISOString()
-      .split('T')[0];
-    
-      const startDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const response = await axios.get(`https://akp.niraj.site/api/foundry/stats?startDate=${startDate}&endDate=${endDate}`);
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const endDate = tomorrow.toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+
+      const response = await axios.get(
+        `http://localhost:5500/api/foundry/stats?startDate=${today}&endDate=${endDate}`
+      );
       
-      // Process and organize the data
       const processedData = response.data.reduce((acc, item) => {
-        acc[item.parameter] = {
+        acc[item.type] = {
           average: item.average,
-          min: item.min,
-          max: item.max,
+          upperLimit: item.upperLimit,
+          lowerLimit: item.lowerLimit,
+          standardDeviation: item.standardDeviation,
+          cp: item.cp,
+          cpk: item.cpk,
+          readings: item.readings,
           date: new Date(item.date).toLocaleDateString()
         };
         return acc;
@@ -114,162 +103,204 @@ const Dashboard = () => {
     }
   };
 
-  const getStatusColor = (value, min, max) => {
-    if (!value || value < min || value > max) return '#d32f2f';
-    const midpoint = (max + min) / 2;
-    const deviation = Math.abs(value - midpoint) / (max - min);
-    return deviation > 0.3 ? '#ed6c02' : '#2e7d32';
+  const getStatusColor = (value, upperLimit, lowerLimit) => {
+    if (!value || !upperLimit || !lowerLimit) return theme.palette.grey[400];
+    if (value < lowerLimit || value > upperLimit) return theme.palette.error.main;
+    return theme.palette.success.main;
   };
 
-  const getStatusIcon = (value, min, max) => {
-    if (!value || value < min || value > max) return <Warning color="error" />;
-    const midpoint = (max + min) / 2;
-    const deviation = Math.abs(value - midpoint) / (max - min);
-    return deviation > 0.3 ? <Info color="warning" /> : <CheckCircle color="success" />;
-  };
+  const NavigationCard = ({ title, icon, color, onClick }) => (
+    <Card
+      sx={{
+        cursor: 'pointer',
+        background: `linear-gradient(135deg, ${color}, ${color}dd)`,
+        transition: 'transform 0.2s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: 4
+        }
+      }}
+      onClick={onClick}
+    >
+      <CardContent>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'white' }}>
+          {icon}
+          <Typography variant="h6">{title}</Typography>
+        </Box>
+        <Typography sx={{ color: 'rgba(255,255,255,0.8)', mt: 1 }}>
+          {title === 'Foundry Readings' ? 'View and manage detailed readings' : 'Explore trends and analytics'}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
 
-  const calculateProgress = (value, min, max) => {
-    if (!value) return 0;
-    return Math.min(Math.max(((value - min) / (max - min)) * 100, 0), 100);
+  const MetricCard = ({ paramId, data, groupColor }) => {
+    const paramName = paramId.replace(/([A-Z])/g, ' $1').trim();
+    const hasData = data && data.average !== undefined;
+
+    return (
+      <Card 
+        sx={{
+          height: '100%',
+          minHeight: '200px',
+          transition: 'transform 0.2s ease',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: 3
+          },
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative'
+        }}
+      >
+        <Box 
+          sx={{ 
+            height: '4px',
+            backgroundColor: groupColor,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0
+          }} 
+        />
+        <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" color="text.primary" sx={{ fontWeight: 500 }}>
+              {paramName}
+            </Typography>
+            <IconButton size="small">
+              <Analytics sx={{ color: groupColor }} />
+            </IconButton>
+          </Box>
+
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 2 }}>
+              <Typography 
+                variant="h3" 
+                sx={{ 
+                  fontWeight: 700,
+                  color: hasData ? getStatusColor(data.average, data.upperLimit, data.lowerLimit) : theme.palette.grey[400]
+                }}
+              >
+                {hasData ? data.average.toFixed(1) : 'N/A'}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                avg
+              </Typography>
+            </Box>
+
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">Std Dev</Typography>
+                <Typography variant="body1" fontWeight={500}>
+                  {hasData && data.standardDeviation ? data.standardDeviation.toFixed(2) : 'N/A'}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">Cpk</Typography>
+                <Typography variant="body1" fontWeight={500}>
+                  {hasData && data.cpk ? data.cpk.toFixed(2) : 'N/A'}
+                </Typography>
+              </Grid>
+            </Grid>
+
+            {hasData && (data.upperLimit || data.lowerLimit) && (
+              <Typography variant="caption" color="text.secondary">
+                Limits: {data.lowerLimit || 'N/A'} - {data.upperLimit || 'N/A'}
+              </Typography>
+            )}
+          </Box>
+
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 2 }}>
+            Last Updated: {hasData ? data.date : 'No data available'}
+          </Typography>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
-    <Box sx={{ p: 3, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
-      <BackButton/>
-      <Typography variant="h4" gutterBottom align="center" sx={{ color: '#1976d2', fontWeight: 600, mb: 4 }}>
+    <Box sx={{ p: 3, backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
+      <BackButton />
+      
+      <Typography 
+        variant="h4" 
+        align="center" 
+        sx={{ 
+          color: theme.palette.primary.main,
+          fontWeight: 700,
+          mb: 4
+        }}
+      >
         Foundry Process Control Dashboard
       </Typography>
 
-      {/* Navigation Cards */}
-      <Grid container spacing={4} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={6}>
-          <Card
-            sx={{
-              cursor: 'pointer',
-              '&:hover': { transform: 'scale(1.02)', boxShadow: 5 },
-              transition: 'transform 0.3s ease',
-              backgroundColor: '#1976d2'
-            }}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6}>
+          <NavigationCard
+            title="Foundry Readings"
+            icon={<Assessment />}
+            color={theme.palette.primary.main}
             onClick={() => navigate('/foundry-reading')}
-          >
-            <CardContent>
-              <Typography variant="h5" sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Assessment /> Foundry Readings
-              </Typography>
-              <Typography sx={{ color: '#e3f2fd', mt: 1 }}>
-                View and manage detailed foundry readings
-              </Typography>
-            </CardContent>
-          </Card>
+          />
         </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Card
-            sx={{
-              cursor: 'pointer',
-              '&:hover': { transform: 'scale(1.02)', boxShadow: 5 },
-              transition: 'transform 0.3s ease',
-              backgroundColor: '#2e7d32'
-            }}
+        <Grid item xs={12} sm={6}>
+          <NavigationCard
+            title="Analysis Results"
+            icon={<Timeline />}
+            color={theme.palette.success.main}
             onClick={() => navigate('/foundry-average')}
-          >
-            <CardContent>
-              <Typography variant="h5" sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Timeline /> Analysis Results
-              </Typography>
-              <Typography sx={{ color: '#e8f5e9', mt: 1 }}>
-                View statistical analysis and trends
-              </Typography>
-            </CardContent>
-          </Card>
+          />
         </Grid>
       </Grid>
 
-      {/* Parameters Display */}
-      <Paper sx={{ mb: 3, p: 2 }}>
+      <Paper elevation={2} sx={{ mb: 4, borderRadius: 1 }}>
         <Tabs
           value={selectedTab}
           onChange={(e, newValue) => setSelectedTab(newValue)}
           centered
-          sx={{ mb: 2 }}
+          sx={{
+            '& .MuiTab-root': {
+              minHeight: 64,
+              fontWeight: 500
+            }
+          }}
         >
-          {Object.keys(parameterGroups).map((group, index) => (
+          {Object.keys(parameterGroups).map((group) => (
             <Tab
               key={group}
               label={parameterGroups[group].title}
               icon={parameterGroups[group].icon}
               iconPosition="start"
+              sx={{
+                color: parameterGroups[group].color,
+                '&.Mui-selected': {
+                  color: parameterGroups[group].color
+                }
+              }}
             />
           ))}
         </Tabs>
       </Paper>
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 8 }}>
+          <CircularProgress size={48} />
         </Box>
       ) : (
-        <Grid container spacing={3}>
-          {Object.entries(parameterGroups)[selectedTab][1].items.map((paramId) => {
-            const paramData = statsData[paramId] || {};
-            const limits = parameterLimits[paramId];
-            
-            return (
-              <Grid item xs={12} md={4} key={paramId}>
-                <Card sx={{ height: '100%', '&:hover': { transform: 'translateY(-4px)', boxShadow: 4 }, transition: 'transform 0.2s' }}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                      <Typography variant="h6" sx={{ color: '#333' }}>
-                        {paramId.replace(/([A-Z])/g, ' $1').trim()}
-                      </Typography>
-                      <Tooltip title={`Range: ${limits.min} - ${limits.max} ${limits.unit}`}>
-                        <IconButton size="small">
-                          {getStatusIcon(paramData.average, limits.min, limits.max)}
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 600, color: getStatusColor(paramData.average, limits.min, limits.max) }}>
-                        {paramData.average?.toFixed(1) || 'N/A'}
-                      </Typography>
-                      <Typography variant="body1" sx={{ ml: 1, color: '#666' }}>
-                        {limits.unit}
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ mb: 1 }}>
-                      <LinearProgress
-                        variant="determinate"
-                        value={calculateProgress(paramData.average, limits.min, limits.max)}
-                        sx={{
-                          height: 8,
-                          borderRadius: 4,
-                          backgroundColor: '#e0e0e0',
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: getStatusColor(paramData.average, limits.min, limits.max),
-                            borderRadius: 4
-                          }
-                        }}
-                      />
-                    </Box>
-
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                      <Chip label={`Min: ${limits.min}`} size="small" sx={{ backgroundColor: '#f5f5f5' }} />
-                      <Chip label={`Max: ${limits.max}`} size="small" sx={{ backgroundColor: '#f5f5f5' }} />
-                    </Box>
-
-                    {paramData.date && (
-                      <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 2, color: '#666' }}>
-                        Last Updated: {paramData.date}
-                      </Typography>
-                    )}
-                  </CardContent>
-                </Card>
+        <Fade in={!loading}>
+          <Grid container spacing={3}>
+            {Object.entries(parameterGroups)[selectedTab][1].items.map((paramId) => (
+              <Grid item xs={12} sm={6} md={4} key={paramId}>
+                <MetricCard
+                  paramId={paramId}
+                  data={statsData[paramId]}
+                  groupColor={Object.entries(parameterGroups)[selectedTab][1].color}
+                />
               </Grid>
-            );
-          })}
-        </Grid>
+            ))}
+          </Grid>
+        </Fade>
       )}
     </Box>
   );

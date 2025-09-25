@@ -18,6 +18,7 @@ import SandTesting from './components/SandTesting/SandTesting';
 import DeveloperPage from './components/User Management/DeveloperPage';
 import FishboneDiagramExample from './components/fishbone';
 import RunnerData from './components/SandTesting/RunnerData';
+import Aianalysis from './components/SandTesting/Aianalysis'
 function App() {
   return (
 
@@ -25,7 +26,7 @@ function App() {
         {/* Public Route */}
         <Route path="/" element={<Login />} />
         <Route path="/fish" element={<FishboneDiagramExample />} />
-
+<Route path="/ai-analysis" element={<Aianalysis/>}/>
         {/* Protected Routes */}
         <Route
           path="/foundry-reading"

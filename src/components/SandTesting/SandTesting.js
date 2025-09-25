@@ -34,13 +34,13 @@ import {
   Air as AirIcon,
   Close as CloseIcon,
   CompareArrows as CompareArrowsIcon,
+  Psychology as PsychologyIcon, // Added new icon for AI Analysis
 } from '@mui/icons-material';
 import BackButton from './BackButton';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const DashboardTile = ({ title, description, Icon, color, onClick }) => {
   const [elevated, setElevated] = useState(false);
-
   return (
     <Zoom in={true} style={{ transitionDelay: '150ms' }}>
       <Card
@@ -121,7 +121,6 @@ const AddReadingModal = ({
   isLoading 
 }) => {
   const theme = useTheme();
-
   return (
     <Modal 
       open={open} 
@@ -217,7 +216,6 @@ const AddReadingModal = ({
                   </Select>
                 </FormControl>
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   label="Remarks (Optional)"
@@ -230,7 +228,6 @@ const AddReadingModal = ({
                 />
               </Grid>
             </Grid>
-
             <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
               <Button
                 variant="outlined"
@@ -280,7 +277,6 @@ const AddCSVImportModal = ({
       setSelectedFile(null);
       return;
     }
-
     setSelectedFile(file);
     setFileError('');
   };
@@ -293,12 +289,10 @@ const AddCSVImportModal = ({
       setFileError('Please select a CSV file');
       return;
     }
-
     if (!selectedType) {
       setFileError('Please select a measurement type');
       return;
     }
-
     // Proceed with file upload
     handleFileUpload(selectedFile, selectedType);
   };
@@ -381,7 +375,6 @@ const AddCSVImportModal = ({
                 </FormControl>
               </Grid>
             </Grid>
-
             <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
               <Button
                 variant="outlined"
@@ -435,7 +428,7 @@ const SandTesting = () => {
     const fetchReadings = async () => {
       try {
         setDataLoading(true);
-        const response = await axios.get('https://akp.niraj.site/api/runner/runnerData');
+        const response = await axios.get('http://localhost:5500/api/runner/runnerData');
         
         if (response.data && response.data.success) {
           setReadings(response.data.data);
@@ -453,7 +446,6 @@ const SandTesting = () => {
         setDataLoading(false);
       }
     };
-
     fetchReadings();
   }, []);
 
@@ -476,7 +468,7 @@ const SandTesting = () => {
     setIsLoading(true);
   
     try {
-      const response = await axios.post('https://akp.niraj.site/api/runner/runnerData', formData);
+      const response = await axios.post('http://localhost:5500/api/runner/runnerData', formData);
       
       if (response.status === 200 && response.data.success) {
         // Optimistically update local state
@@ -508,12 +500,12 @@ const SandTesting = () => {
     formData.append('type', type);
   
     try {
-      const response = await axios.post('https://akp.niraj.site/api/runner/runnerData/import', formData, {
+      const response = await axios.post('http://localhost:5500/api/runner/runnerData/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       // Fetch updated readings after import
-      const fetchResponse = await axios.get('https://akp.niraj.site/api/runner/runnerData');
+      const fetchResponse = await axios.get('http://localhost:5500/api/runner/runnerData');
       
       if (fetchResponse.data && fetchResponse.data.success) {
         setReadings(fetchResponse.data.data);
@@ -532,7 +524,6 @@ const SandTesting = () => {
       setIsLoading(false);
     }
   };
-
 
   const handleNavigate = () => {
     navigate("/view-readings"); // Replace with your actual route
@@ -570,12 +561,17 @@ const SandTesting = () => {
     {
       title: "Comparison",
       description: "Analyze and compare gas escape capabilities during the casting process.",
-      Icon: CompareArrowsIcon, // Updated to a more relevant icon for comparison
-      color: theme.palette.info.main, // Adjusted to a calmer blue tone for a better UI aesthetic
+      Icon: CompareArrowsIcon,
+      color: theme.palette.info.main,
       path: '/comparison',
-
+    },
+    {
+      title: "AI Analysis",
+      description: "Get intelligent insights and predictive analytics for sand testing parameters",
+      Icon: PsychologyIcon,
+      color: theme.palette.error.main, // Using error.main for a distinct purple/red color
+      path: '/ai-analysis',
     }
-    
   ];
 
   return (
@@ -654,10 +650,9 @@ const SandTesting = () => {
             </Tooltip>
           </Box>
         </Box>
-
         <Grid container spacing={3}>
           {tiles.map((tile, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+            <Grid item xs={12} sm={6} md={4} key={index}>
               <DashboardTile
                 {...tile}
                 onClick={() => navigate(tile.path)}
@@ -665,7 +660,6 @@ const SandTesting = () => {
             </Grid>
           ))}
         </Grid>
-
         <AddReadingModal
           open={openModal}
           handleClose={handleClose}
@@ -674,14 +668,12 @@ const SandTesting = () => {
           handleSubmit={handleSubmit}
           isLoading={isLoading}
         />
-
         <AddCSVImportModal
           open={openCSVModal}
           handleClose={handleCloseCSV}
           handleFileUpload={handleFileUpload}
           isLoading={isLoading}
         />
-
         <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}
@@ -690,11 +682,11 @@ const SandTesting = () => {
         >
           <Alert 
             onClose={() => setOpenSnackbar(false)} 
-            severity="success"
+            severity={snackbarSeverity}
             variant="filled"
             sx={{ width: '100%' }}
           >
-            Reading added successfully!
+            {snackbarMessage}
           </Alert>
         </Snackbar>
       </Box>

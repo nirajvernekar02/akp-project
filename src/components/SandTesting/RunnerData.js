@@ -27,15 +27,23 @@ import {
   Typography,
   Container,
   Grid,
+  useTheme,
+  useMediaQuery,
+  Tooltip,
+  DialogContentText,
 } from "@mui/material";
-import { Edit, Trash2, FileDown } from "lucide-react";
+import { Edit, Trash2, FileDown, Delete } from "lucide-react";
 import "react-toastify/dist/ReactToastify.css";
 import BackButton from "./BackButton";
 
 const RunnerData = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   const [data, setData] = useState([]);
   const [selectedReading, setSelectedReading] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [typeFilter, setTypeFilter] = useState("");
   const [type, setType] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -51,7 +59,7 @@ const RunnerData = () => {
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
 
-      const response = await axios.get("https://akp.niraj.site/api/runner/runner", {
+      const response = await axios.get("http://localhost:5500/api/runner/runner", {
         params,
       });
       setData(response.data.data);
@@ -63,13 +71,33 @@ const RunnerData = () => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    try {
+      const selectedData = data.filter(row => selectedRows.includes(row.id));
+      const deletePromises = selectedData.flatMap(row =>
+        row.readings.map(reading =>
+          axios.delete(`http://localhost:5500/api/runner/runnerData/${row._id}/readings/${reading._id}`)
+        )
+      );
+
+      await Promise.all(deletePromises);
+      toast.success("Selected readings deleted successfully");
+      setSelectedRows([]);
+      setOpenDeleteDialog(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting readings:", error);
+      toast.error("Failed to delete readings");
+    }
+  };
+
   const handleUpdate = async () => {
     try {
       const { _id: id, readings } = selectedReading;
       const readingId = readings[0]._id;
 
       await axios.put(
-        `https://akp.niraj.site/api/runner/runnerData/${id}/readings/${readingId}`,
+        `http://localhost:5500/api/runner/runnerData/${id}/readings/${readingId}`,
         { ...readings[0], type }
       );
       toast.success("Reading updated successfully");
@@ -84,7 +112,7 @@ const RunnerData = () => {
   const handleDelete = async (id, readingId) => {
     try {
       await axios.delete(
-        `https://akp.niraj.site/api/runner/runnerData/${id}/readings/${readingId}`
+        `http://localhost:5500/api/runner/runnerData/${id}/readings/${readingId}`
       );
       toast.success("Reading deleted successfully");
       fetchData();
@@ -104,7 +132,6 @@ const RunnerData = () => {
       return;
     }
 
-    // Remove _id fields and flatten the data structure for export
     const formattedData = exportData.map(({ readings, ...row }) =>
       readings.map((reading) => ({
         date: new Date(row.date).toLocaleDateString(),
@@ -141,19 +168,44 @@ const RunnerData = () => {
         <BackButton />
       </Box>
 
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ 
+        mb: 4, 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? 2 : 0,
+        justifyContent: 'space-between', 
+        alignItems: isMobile ? 'stretch' : 'center' 
+      }}>
         <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
           Runner Data
         </Typography>
 
-        <Button
-          variant="contained"
-          startIcon={<FileDown />}
-          onClick={handleExport}
-          sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
-        >
-          Export to Excel
-        </Button>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2,
+          flexDirection: isMobile ? 'column' : 'row',
+        }}>
+          {selectedRows.length > 0 && (
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<Delete />}
+              onClick={() => setOpenDeleteDialog(true)}
+              fullWidth={isMobile}
+            >
+              Delete Selected ({selectedRows.length})
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            startIcon={<FileDown />}
+            onClick={handleExport}
+            sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
+            fullWidth={isMobile}
+          >
+            Export to Excel
+          </Button>
+        </Box>
       </Box>
 
       <Paper sx={{ p: 3, mb: 4 }}>
@@ -208,7 +260,8 @@ const RunnerData = () => {
                       e.target.checked ? data.map((row) => row.id) : []
                     )
                   }
-                  checked={selectedRows.length === data.length}
+                  checked={data.length > 0 && selectedRows.length === data.length}
+                  indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
                 />
               </TableCell>
               <TableCell>Date</TableCell>
@@ -235,7 +288,11 @@ const RunnerData = () => {
             ) : (
               data.map((row) =>
                 row.readings.map((reading) => (
-                  <TableRow key={reading._id} hover>
+                  <TableRow 
+                    key={reading._id} 
+                    hover
+                    selected={selectedRows.includes(row.id)}
+                  >
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={selectedRows.includes(row.id)}
@@ -248,22 +305,26 @@ const RunnerData = () => {
                     <TableCell>{reading.time}</TableCell>
                     <TableCell>{reading.remark}</TableCell>
                     <TableCell align="center">
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                          setSelectedReading({ ...row, readings: [reading] });
-                          setType(row.type);
-                          setOpenDialog(true);
-                        }}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDelete(row._id, reading._id)}
-                      >
-                        <Trash2 />
-                      </IconButton>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            setSelectedReading({ ...row, readings: [reading] });
+                            setType(row.type);
+                            setOpenDialog(true);
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDelete(row._id, reading._id)}
+                        >
+                          <Trash2 />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))
@@ -273,6 +334,7 @@ const RunnerData = () => {
         </Table>
       </TableContainer>
 
+      {/* Edit Dialog */}
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
@@ -353,6 +415,27 @@ const RunnerData = () => {
             sx={{ minWidth: 100 }}
           >
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete {selectedRows.length} selected readings? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteDialog(false)} color="inherit">
+            Cancel
+          </Button>
+          <Button onClick={handleBulkDelete} color="error" variant="contained">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
