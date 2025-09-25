@@ -46,3 +46,957 @@ Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInter
 2025-01-18 09:13:25 - Send SIGINT 8076
 2025-01-18 09:13:25 - SIGINT to 8076 failed - Killing as fallback
 2025-01-18 09:13:25 - Finished akpbackendservice.exe
+2025-01-22 12:51:04 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-22 12:51:04 - Started 19128
+2025-01-29 22:25:10 - Stopping akpbackendservice.exe
+2025-01-29 22:25:10 - ProcessKill 19128
+2025-01-29 22:25:10 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-01-29 22:26:40 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-29 22:26:40 - Started 6852
+2025-01-30 17:21:32 - Stopping akpbackendservice.exe
+2025-01-30 17:21:32 - ProcessKill 6852
+2025-01-30 17:21:32 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-01-30 17:22:48 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-30 17:22:48 - Started 7736
+2025-01-30 17:22:55 - Stopping akpbackendservice.exe
+2025-01-30 17:22:55 - ProcessKill 7736
+2025-01-30 17:22:55 - Shutdown exception
+Message:Class not registered
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-01-30 17:27:01 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-01-30 17:27:01 - Started 7920
+2025-02-05 20:51:39 - Stopping akpbackendservice.exe
+2025-02-05 20:51:39 - ProcessKill 7920
+2025-02-05 20:51:39 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-05 20:52:01 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-05 20:52:01 - Started 8800
+2025-02-06 14:45:40 - Stopping akpbackendservice.exe
+2025-02-06 14:45:40 - ProcessKill 8800
+2025-02-06 14:45:41 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-06 14:46:04 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-06 14:46:04 - Started 8740
+2025-02-12 23:11:41 - Stopping akpbackendservice.exe
+2025-02-12 23:11:41 - ProcessKill 8740
+2025-02-12 23:11:42 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-12 23:12:05 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-12 23:12:05 - Started 7836
+2025-02-12 23:12:26 - Stopping akpbackendservice.exe
+2025-02-12 23:12:26 - ProcessKill 7836
+2025-02-12 23:12:27 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-12 23:12:50 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-12 23:12:50 - Started 8112
+2025-02-16 14:28:00 - Stopping akpbackendservice.exe
+2025-02-16 14:28:00 - ProcessKill 8112
+2025-02-16 14:28:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-16 14:28:28 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-16 14:28:28 - Started 8452
+2025-02-17 20:16:33 - Stopping akpbackendservice.exe
+2025-02-17 20:16:33 - ProcessKill 8452
+2025-02-17 20:16:33 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-17 20:16:58 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-17 20:16:58 - Started 7708
+2025-02-20 22:52:32 - Stopping akpbackendservice.exe
+2025-02-20 22:52:32 - ProcessKill 7708
+2025-02-20 22:52:32 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-20 22:52:56 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-20 22:52:56 - Started 8488
+2025-02-21 21:32:07 - Stopping akpbackendservice.exe
+2025-02-21 21:32:07 - ProcessKill 8488
+2025-02-21 21:32:07 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-21 21:32:30 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-21 21:32:30 - Started 8492
+2025-02-21 23:06:30 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-21 23:06:30 - Started 7712
+2025-02-22 19:07:44 - Stopping akpbackendservice.exe
+2025-02-22 19:07:44 - ProcessKill 7712
+2025-02-22 19:07:44 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-02-22 19:08:06 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-02-22 19:08:06 - Started 8392
+2025-03-06 15:30:23 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-06 15:30:23 - Started 7560
+2025-03-06 15:30:41 - Stopping akpbackendservice.exe
+2025-03-06 15:30:41 - ProcessKill 7560
+2025-03-06 15:30:41 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-06 15:31:07 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-06 15:31:07 - Started 7540
+2025-03-14 00:28:00 - Stopping akpbackendservice.exe
+2025-03-14 00:28:00 - ProcessKill 7540
+2025-03-14 00:28:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-14 00:28:26 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-14 00:28:26 - Started 8100
+2025-03-14 00:29:00 - Stopping akpbackendservice.exe
+2025-03-14 00:29:00 - ProcessKill 8100
+2025-03-14 00:29:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-14 10:14:52 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-14 10:14:52 - Started 8096
+2025-03-17 16:34:20 - Stopping akpbackendservice.exe
+2025-03-17 16:34:20 - ProcessKill 8096
+2025-03-17 16:34:20 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-17 16:34:45 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-17 16:34:45 - Started 8348
+2025-03-19 12:09:21 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-19 12:09:21 - Started 8272
+2025-03-20 11:18:31 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-20 11:18:31 - Started 7180
+2025-03-20 22:18:11 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-20 22:18:11 - Started 6628
+2025-03-21 22:29:21 - Stopping akpbackendservice.exe
+2025-03-21 22:29:21 - ProcessKill 6628
+2025-03-21 22:29:21 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-21 22:29:48 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-21 22:29:48 - Started 7288
+2025-03-22 14:48:21 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-22 14:48:21 - Started 8008
+2025-03-22 14:57:42 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-22 14:57:42 - Started 7828
+2025-03-22 15:14:12 - Stopping akpbackendservice.exe
+2025-03-22 15:14:12 - ProcessKill 7828
+2025-03-22 15:14:12 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-22 15:14:36 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-22 15:14:36 - Started 8136
+2025-03-27 10:12:33 - Stopping akpbackendservice.exe
+2025-03-27 10:12:33 - ProcessKill 8136
+2025-03-27 10:12:33 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-27 10:12:59 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-27 10:12:59 - Started 7200
+2025-03-27 22:58:47 - Stopping akpbackendservice.exe
+2025-03-27 22:58:47 - ProcessKill 7200
+2025-03-27 22:58:47 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-27 22:59:11 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-27 22:59:11 - Started 8344
+2025-03-27 22:59:17 - Stopping akpbackendservice.exe
+2025-03-27 22:59:17 - ProcessKill 8344
+2025-03-27 22:59:17 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-27 23:07:44 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-27 23:07:44 - Started 8628
+2025-03-30 10:03:00 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-30 10:03:00 - Started 7796
+2025-03-30 12:45:06 - Stopping akpbackendservice.exe
+2025-03-30 12:45:06 - ProcessKill 7796
+2025-03-30 12:45:06 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-30 12:45:29 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-30 12:45:29 - Started 8864
+2025-03-31 10:26:33 - Stopping akpbackendservice.exe
+2025-03-31 10:26:33 - ProcessKill 8864
+2025-03-31 10:26:33 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-03-31 10:26:58 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-03-31 10:26:58 - Started 8988
+2025-04-04 09:53:48 - Stopping akpbackendservice.exe
+2025-04-04 09:53:48 - ProcessKill 8988
+2025-04-04 09:53:48 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-04 09:54:12 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-04 09:54:12 - Started 8500
+2025-04-08 09:55:17 - Stopping akpbackendservice.exe
+2025-04-08 09:55:17 - ProcessKill 8500
+2025-04-08 09:55:17 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-08 09:55:39 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-08 09:55:39 - Started 8776
+2025-04-09 17:05:25 - Stopping akpbackendservice.exe
+2025-04-09 17:05:25 - ProcessKill 8776
+2025-04-09 17:05:25 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-09 17:05:48 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-09 17:05:48 - Started 7664
+2025-04-09 17:06:23 - Stopping akpbackendservice.exe
+2025-04-09 17:06:23 - ProcessKill 7664
+2025-04-09 17:06:23 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-09 17:06:47 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-09 17:06:47 - Started 7980
+2025-04-10 12:43:48 - Stopping akpbackendservice.exe
+2025-04-10 12:43:48 - ProcessKill 7980
+2025-04-10 12:43:48 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-10 12:44:14 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-10 12:44:14 - Started 8404
+2025-04-12 12:56:28 - Stopping akpbackendservice.exe
+2025-04-12 12:56:28 - ProcessKill 8404
+2025-04-12 12:56:29 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-12 12:56:52 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-12 12:56:52 - Started 8284
+2025-04-17 09:16:38 - Stopping akpbackendservice.exe
+2025-04-17 09:16:38 - ProcessKill 8284
+2025-04-17 09:16:38 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-17 09:17:00 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-17 09:17:00 - Started 8472
+2025-04-29 12:36:06 - Stopping akpbackendservice.exe
+2025-04-29 12:36:06 - ProcessKill 8472
+2025-04-29 12:36:06 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-29 12:36:30 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-29 12:36:30 - Started 8960
+2025-04-29 12:37:17 - Stopping akpbackendservice.exe
+2025-04-29 12:37:17 - ProcessKill 8960
+2025-04-29 12:37:18 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-04-29 12:37:41 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-04-29 12:37:41 - Started 8112
+2025-05-17 11:24:01 - Stopping akpbackendservice.exe
+2025-05-17 11:24:01 - ProcessKill 8112
+2025-05-17 11:24:01 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-05-17 11:24:25 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-05-17 11:24:25 - Started 7764
+2025-05-17 11:25:10 - Stopping akpbackendservice.exe
+2025-05-17 11:25:10 - ProcessKill 7764
+2025-05-17 11:25:11 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-05-17 11:25:34 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-05-17 11:25:34 - Started 7704
+2025-05-20 15:28:11 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-05-20 15:28:12 - Started 7672
+2025-05-23 18:44:11 - Stopping akpbackendservice.exe
+2025-05-23 18:44:11 - ProcessKill 7672
+2025-05-23 18:44:11 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-05-23 18:44:37 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-05-23 18:44:37 - Started 7276
+2025-06-07 22:15:06 - Stopping akpbackendservice.exe
+2025-06-07 22:15:06 - ProcessKill 7276
+2025-06-07 22:15:06 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-07 22:15:35 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-07 22:15:35 - Started 8160
+2025-06-12 18:09:29 - Stopping akpbackendservice.exe
+2025-06-12 18:09:29 - ProcessKill 8160
+2025-06-12 18:09:29 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-12 18:09:58 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-12 18:09:58 - Started 6924
+2025-06-17 11:09:37 - Stopping akpbackendservice.exe
+2025-06-17 11:09:37 - ProcessKill 6924
+2025-06-17 11:09:37 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-17 11:10:00 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-17 11:10:00 - Started 6772
+2025-06-17 16:37:08 - Stopping akpbackendservice.exe
+2025-06-17 16:37:08 - ProcessKill 6772
+2025-06-17 16:37:08 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-17 16:37:30 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-17 16:37:30 - Started 8148
+2025-06-27 22:36:55 - Stopping akpbackendservice.exe
+2025-06-27 22:36:55 - ProcessKill 8148
+2025-06-27 22:36:55 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-27 22:37:29 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-27 22:37:29 - Started 7684
+2025-06-27 22:59:45 - Stopping akpbackendservice.exe
+2025-06-27 22:59:45 - ProcessKill 7684
+2025-06-27 22:59:46 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-27 23:00:07 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-27 23:00:07 - Started 7888
+2025-06-27 23:27:32 - Stopping akpbackendservice.exe
+2025-06-27 23:27:32 - ProcessKill 7888
+2025-06-27 23:27:32 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-27 23:27:54 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-27 23:27:54 - Started 8292
+2025-06-27 23:41:09 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-27 23:41:09 - Started 8364
+2025-06-28 22:25:40 - Stopping akpbackendservice.exe
+2025-06-28 22:25:40 - ProcessKill 8364
+2025-06-28 22:25:41 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-28 22:26:41 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-28 22:26:41 - Started 8076
+2025-06-29 17:27:30 - Stopping akpbackendservice.exe
+2025-06-29 17:27:30 - ProcessKill 8076
+2025-06-29 17:27:30 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-06-29 17:27:54 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-06-29 17:27:54 - Started 7604
+2025-07-10 10:01:45 - Stopping akpbackendservice.exe
+2025-07-10 10:01:45 - ProcessKill 7604
+2025-07-10 10:01:45 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-10 10:02:06 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-10 10:02:06 - Started 8124
+2025-07-10 10:21:31 - Stopping akpbackendservice.exe
+2025-07-10 10:21:31 - ProcessKill 8124
+2025-07-10 10:21:31 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-10 10:22:10 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-10 10:22:10 - Started 8080
+2025-07-10 10:39:47 - Stopping akpbackendservice.exe
+2025-07-10 10:39:47 - ProcessKill 8080
+2025-07-10 10:39:47 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-10 10:40:13 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-10 10:40:13 - Started 7952
+2025-07-11 13:20:57 - Stopping akpbackendservice.exe
+2025-07-11 13:20:57 - ProcessKill 7952
+2025-07-11 13:20:57 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-11 13:21:22 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-11 13:21:22 - Started 7408
+2025-07-15 14:30:42 - Stopping akpbackendservice.exe
+2025-07-15 14:30:42 - ProcessKill 7408
+2025-07-15 14:30:43 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-15 14:31:09 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-15 14:31:09 - Started 8016
+2025-07-18 13:35:44 - Stopping akpbackendservice.exe
+2025-07-18 13:35:44 - ProcessKill 8016
+2025-07-18 13:35:44 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-18 13:55:32 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-18 13:55:33 - Started 8500
+2025-07-23 16:59:13 - Stopping akpbackendservice.exe
+2025-07-23 16:59:13 - ProcessKill 8500
+2025-07-23 16:59:13 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-23 17:07:08 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-23 17:07:08 - Started 7568
+2025-07-26 10:30:39 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-26 10:30:39 - Started 7812
+2025-07-31 10:27:54 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-31 10:27:54 - Started 6440
+2025-07-31 10:28:14 - Stopping akpbackendservice.exe
+2025-07-31 10:28:14 - ProcessKill 6440
+2025-07-31 10:28:14 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-07-31 10:28:39 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-07-31 10:28:39 - Started 7420
+2025-08-03 11:02:00 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-03 11:02:00 - Started 7756
+2025-08-03 18:24:10 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-03 18:24:10 - Started 7812
+2025-08-10 10:34:40 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-10 10:34:40 - Started 7592
+2025-08-10 16:41:40 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-10 16:41:40 - Started 6880
+2025-08-13 13:59:12 - Stopping akpbackendservice.exe
+2025-08-13 13:59:12 - ProcessKill 6880
+2025-08-13 13:59:12 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-08-13 13:59:36 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-13 13:59:36 - Started 6948
+2025-08-30 21:15:34 - Stopping akpbackendservice.exe
+2025-08-30 21:15:34 - ProcessKill 6948
+2025-08-30 21:15:34 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-08-30 21:16:00 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-30 21:16:00 - Started 7560
+2025-08-30 21:17:26 - Stopping akpbackendservice.exe
+2025-08-30 21:17:26 - ProcessKill 7560
+2025-08-30 21:17:26 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-08-30 21:17:51 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-08-30 21:17:51 - Started 7980
+2025-09-11 13:41:14 - Stopping akpbackendservice.exe
+2025-09-11 13:41:14 - ProcessKill 7980
+2025-09-11 13:41:14 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-09-11 13:41:41 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-09-11 13:41:41 - Started 7960
+2025-09-18 15:25:08 - Stopping akpbackendservice.exe
+2025-09-18 15:25:08 - ProcessKill 7960
+2025-09-18 15:25:08 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-09-18 15:25:38 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-09-18 15:25:38 - Started 8092
+2025-09-19 16:04:09 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-09-19 16:04:09 - Started 6968
+2025-09-20 11:06:39 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-09-20 11:06:39 - Started 8312
+2025-09-24 12:22:41 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-09-24 12:22:41 - Started 8372
+2025-09-25 15:23:26 - Starting C:\Program Files\nodejs\node.exe  --harmony "D:\AKP Project\Backend\node_modules\node-windows\lib\wrapper.js" --file "D:\AKP Project\Backend\index.js" --scriptoptions= --log "AKP Backend Service wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-09-25 15:23:27 - Started 8160
